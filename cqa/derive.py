@@ -20,38 +20,23 @@ def kind_of(criterion: dict) -> str | None:
     return None
 
 
-def _id_prop():
-    return {"type": "string", "description": "ID реплики (m1, m2…)"}
-
-
 def extra_schema(kind: str) -> tuple[dict, list[str]]:
-    """Дополнительные поля-факты для схемы ответа."""
+    """Дополнительные поля-факты для схемы ответа (плоские списки меток — компактная грамматика)."""
+    arr = lambda enum, desc: {"type": "array", "items": {"type": "string", "enum": enum}, "description": desc}  # noqa: E731
     if kind == "needs":
         props = {
-            "request_formulated_before_operator": {"type": "boolean", "description": "Клиент назвал суть вопроса до первой реплики оператора (в том числе боту)."},
-            "operator_questions": {"type": "array", "description": "Все вопросы оператора клиенту о его ситуации (не «чем ещё помочь» в конце).", "items": {
-                "type": "object", "additionalProperties": False, "required": ["id", "kind"],
-                "properties": {"id": _id_prop(), "kind": {"type": "string", "enum": ["needed", "known_repeat"],
-                               "description": "needed — уточнение, без которого нельзя точно ответить; known_repeat — клиент это уже сообщил."}}}},
-            "answered_by_guess": {"type": "boolean", "description": "Оператор ответил по догадке, не уточнив нужное, и ответ не подошёл ситуации клиента."},
-            "ignored_request": {"type": "boolean", "description": "Оператор проигнорировал суть запроса клиента."},
+            "operator_questions": arr(["needed", "known_repeat"], "По одной метке на каждый вопрос оператора о ситуации клиента: needed — нужное уточнение; known_repeat — клиент это уже сообщил (в том числе боту)."),
+            "answered_by_guess": {"type": "boolean", "description": "Ответил по догадке без нужного уточнения, и ответ не подошёл ситуации клиента."},
+            "ignored_request": {"type": "boolean", "description": "Оператор проигнорировал суть запроса."},
         }
     elif kind == "consult":
-        props = {
-            "client_questions": {"type": "array", "description": "Все вопросы и просьбы клиента за диалог, включая заданные боту до оператора.", "items": {
-                "type": "object", "additionalProperties": False, "required": ["id", "essential", "status"],
-                "properties": {"id": _id_prop(),
-                               "essential": {"type": "boolean", "description": "Существенный вопрос (суть обращения), а не второстепенная деталь."},
-                               "status": {"type": "string", "enum": ["closed", "partial", "ignored", "wrong"],
-                                          "description": "closed — ответ или корректный следующий шаг, в том числе понятный косвенный ответ, который клиент принял; partial — общая подсказка, клиенту неясно, как действовать; ignored — без ответа; wrong — ответ ошибочен."}}}},
-        }
+        props = {"client_questions": arr(["essential_closed", "essential_partial", "essential_ignored", "essential_wrong", "minor_closed", "minor_open"],
+            "По одной метке на каждый вопрос или просьбу клиента за диалог (включая заданные боту). essential — суть обращения, minor — второстепенная деталь. closed — ответ или корректный следующий шаг, в том числе понятный косвенный ответ, который клиент принял; partial — общая подсказка, клиенту неясно, как действовать; ignored — без ответа; wrong — ошибочный ответ.")}
     elif kind == "flow":
         props = {
-            "glitches": {"type": "array", "description": "Сбои в ясности и последовательности ответов оператора. Ошибки распознавания речи не сбой.", "items": {
-                "type": "object", "additionalProperties": False, "required": ["id", "type", "client_confused"],
-                "properties": {"id": _id_prop(),
-                               "type": {"type": "string", "enum": ["missed_question", "repeat_known", "off_topic", "unclear_wording", "confusing_order", "unwarned_wait", "contradiction"]},
-                               "client_confused": {"type": "boolean", "description": "Клиенту пришлось переспросить, потому что он не понял сам ответ (а не потому, что вопрос пропущен)."}}}},
+            "glitches": arr(["missed_question", "repeat_known", "off_topic", "unclear_wording", "confusing_order", "unwarned_wait", "contradiction"],
+                "По одной метке на каждый сбой в ясности и последовательности оператора. Ошибки распознавания речи — не сбой."),
+            "client_confused": {"type": "boolean", "description": "Клиенту пришлось переспросить, потому что он не понял сам ответ (а не потому, что вопрос пропущен)."},
         }
     else:
         return {}, []
@@ -64,9 +49,9 @@ def derive(kind: str, item: dict, criterion: dict):
         qs = item.get("operator_questions")
         if qs is None:
             return None
-        if item.get("ignored_request") or item.get("answered_by_guess") or any(q["kind"] == "known_repeat" for q in qs):
+        if item.get("ignored_request") or item.get("answered_by_guess") or "known_repeat" in qs:
             return "no"
-        if any(q["kind"] == "needed" for q in qs):
+        if "needed" in qs:
             return "yes"
         return "na" if criterion.get("na_allowed") else "yes"
     if kind == "consult":
@@ -75,25 +60,26 @@ def derive(kind: str, item: dict, criterion: dict):
             return None
         if not qs:
             return "na" if criterion.get("na_allowed") else 0
-        ess = [q for q in qs if q["essential"]] or qs
-        if any(q["status"] == "wrong" for q in ess):
+        ess = [q for q in qs if q.startswith("essential")]
+        if not ess:
+            return 15 if "minor_open" in qs else 20
+        if "essential_wrong" in ess:
             return 0
-        closed = sum(q["status"] == "closed" for q in ess)
+        closed = ess.count("essential_closed")
         if closed == len(ess):
-            minor_open = any(q["status"] != "closed" for q in qs if not q["essential"])
-            return 15 if minor_open else 20
+            return 15 if "minor_open" in qs else 20
         if closed >= 1:
             return 10
-        if any(q["status"] == "partial" for q in ess):
+        if "essential_partial" in ess:
             return 5
         return 0
     if kind == "flow":
         gl = item.get("glitches")
         if gl is None:
             return None
-        if any(g["type"] == "contradiction" for g in gl):
+        if "contradiction" in gl:
             return 0
-        if len(gl) >= 2 or any(g["client_confused"] for g in gl):
+        if len(gl) >= 2 or (gl and item.get("client_confused")):
             return 4
         return 7 if gl else 10
     return None

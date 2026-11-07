@@ -85,15 +85,13 @@ def facts_for(criterion, answer):
     from cqa.derive import kind_of
     k = kind_of(criterion); a = str(answer)
     if k == "needs":
-        qs = {"yes": [{"id": "m4", "kind": "needed"}], "no": [{"id": "m4", "kind": "known_repeat"}]}.get(a, [])
-        return {"request_formulated_before_operator": True, "operator_questions": qs, "answered_by_guess": False, "ignored_request": False}
+        qs = {"yes": ["needed"], "no": ["known_repeat"]}.get(a, [])
+        return {"operator_questions": qs, "answered_by_guess": False, "ignored_request": False}
     if k == "consult":
-        st = {"20": [("closed", True)], "15": [("closed", True), ("ignored", False)], "10": [("closed", True), ("ignored", True)],
-              "5": [("partial", True)], "0": [("wrong", True)], "na": []}[a]
-        return {"client_questions": [{"id": "m4", "essential": e, "status": x} for x, e in st]}
+        st = {"20": ["essential_closed"], "15": ["essential_closed", "minor_open"], "10": ["essential_closed", "essential_ignored"],
+              "5": ["essential_partial"], "0": ["essential_wrong"], "na": []}[a]
+        return {"client_questions": st}
     if k == "flow":
-        gl = {"10": [], "7": [{"id": "m4", "type": "missed_question", "client_confused": False}],
-              "4": [{"id": "m4", "type": "unclear_wording", "client_confused": True}],
-              "0": [{"id": "m4", "type": "contradiction", "client_confused": False}]}[a]
-        return {"glitches": gl}
+        gl = {"10": [], "7": ["missed_question"], "4": ["unclear_wording"], "0": ["contradiction"]}[a]
+        return {"glitches": gl, "client_confused": a == "4"}
     return {}

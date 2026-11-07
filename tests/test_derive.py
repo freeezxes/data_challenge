@@ -9,28 +9,26 @@ def test_kinds_by_title(checklist):
 
 def test_needs_rules(checklist):
     c = criterion_map(checklist)["c02"]
-    assert derive("needs", {"operator_questions": [{"id": "m1", "kind": "needed"}]}, c) == "yes"
-    assert derive("needs", {"operator_questions": [{"id": "m1", "kind": "needed"}, {"id": "m2", "kind": "known_repeat"}]}, c) == "no"
+    assert derive("needs", {"operator_questions": ["needed"]}, c) == "yes"
+    assert derive("needs", {"operator_questions": ["needed", "known_repeat"]}, c) == "no"
     assert derive("needs", {"operator_questions": [], "answered_by_guess": True}, c) == "no"
     assert derive("needs", {"operator_questions": []}, c) == "na"
 
 
 def test_consult_rules(checklist):
     c = criterion_map(checklist)["c04"]
-    q = lambda s, e=True: {"id": "m1", "essential": e, "status": s}  # noqa: E731
-    assert derive("consult", {"client_questions": [q("closed")]}, c) == 20
-    assert derive("consult", {"client_questions": [q("closed"), q("ignored", False)]}, c) == 15
-    assert derive("consult", {"client_questions": [q("closed"), q("partial")]}, c) == 10
-    assert derive("consult", {"client_questions": [q("partial")]}, c) == 5
-    assert derive("consult", {"client_questions": [q("closed"), q("wrong")]}, c) == 0
+    assert derive("consult", {"client_questions": ["essential_closed"]}, c) == 20
+    assert derive("consult", {"client_questions": ["essential_closed", "minor_open"]}, c) == 15
+    assert derive("consult", {"client_questions": ["essential_closed", "essential_partial"]}, c) == 10
+    assert derive("consult", {"client_questions": ["essential_partial"]}, c) == 5
+    assert derive("consult", {"client_questions": ["essential_closed", "essential_wrong"]}, c) == 0
     assert derive("consult", {"client_questions": []}, c) == "na"
 
 
 def test_flow_rules(checklist):
     c = criterion_map(checklist)["c06"]
-    g = lambda t, conf=False: {"id": "m1", "type": t, "client_confused": conf}  # noqa: E731
     assert derive("flow", {"glitches": []}, c) == 10
-    assert derive("flow", {"glitches": [g("missed_question")]}, c) == 7
-    assert derive("flow", {"glitches": [g("unclear_wording", True)]}, c) == 4
-    assert derive("flow", {"glitches": [g("off_topic"), g("repeat_known")]}, c) == 4
-    assert derive("flow", {"glitches": [g("contradiction")]}, c) == 0
+    assert derive("flow", {"glitches": ["missed_question"]}, c) == 7
+    assert derive("flow", {"glitches": ["unclear_wording"], "client_confused": True}, c) == 4
+    assert derive("flow", {"glitches": ["off_topic", "repeat_known"]}, c) == 4
+    assert derive("flow", {"glitches": ["contradiction"]}, c) == 0
