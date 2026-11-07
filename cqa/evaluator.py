@@ -13,6 +13,7 @@ from .facts import extract_facts, public_facts
 from .prompt import build_system_prompt, build_user_message
 from .schema import output_schema
 from .scoring import score
+from .verify import check_rationale
 
 # $ за 1M токенов: вход, выход, чтение кэша, запись кэша (5 мин). Цены Anthropic на 2026-10.
 PRICES = {
@@ -76,8 +77,9 @@ def validate_run(checklist: dict, conv: dict, facts: dict, raw: dict) -> tuple[d
         bad = [e for e in item.get("evidence_ids", []) if e not in ids]
         if bad:
             issues.append(f"{cid}: несуществующие ID реплик {bad}")
-        d = {"answer": answer, "evidence_ids": evidence,
-             "checked_range": item.get("checked_range", ""), "reasoning": item.get("reasoning", "")}
+        d = {"answer": answer, "evidence_ids": evidence, "checked_range": item.get("checked_range", ""),
+             "quote": item.get("quote", ""), "reasoning": item.get("reasoning", "")}
+        issues += [i for i in check_rationale(conv, facts, c, answer, d) if "несуществующие" not in i]
         if c["type"] == "critical":
             d["violations"] = item.get("violations", [])
             if answer == "yes" and not d["violations"]:

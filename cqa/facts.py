@@ -9,8 +9,7 @@ import re
 
 from .dataset import format_offset
 
-FIRST_RESPONSE_LIMIT_S = 180  # порог первой реакции из чек-листа
-LONG_GAP_S = 180
+LONG_GAP_S = 180  # справочно: порог первой реакции в 3 мин в оценку не входит (стр. 2 чек-листа)
 
 _I = re.IGNORECASE
 
@@ -106,7 +105,6 @@ def extract_facts(conv: dict) -> dict:
         "last_operator_id": last_op["id"] if last_op else None,
         "operator_message_count": len(operators),
         "first_response_s": round(first_response_s) if first_response_s is not None else None,
-        "first_response_over_limit": (first_response_s is not None and first_response_s > FIRST_RESPONSE_LIMIT_S),
         "identity_confirmed_ids": identity,
         "end_events": end_events,
         "final_event": final_event,
@@ -137,8 +135,7 @@ def render_facts(facts: dict) -> str:
     if facts["first_operator_id"]:
         resp = facts["first_response_s"]
         resp_txt = f", через {format_offset(resp)} после эскалации" if resp is not None else ""
-        over = " — ДОЛЬШЕ порога 3 мин" if facts["first_response_over_limit"] else (" — в пределах порога 3 мин" if resp is not None else "")
-        lines.append(f"- Первая реплика оператора: {_fmt_t(facts, facts['first_operator_id'])}{resp_txt}{over}")
+        lines.append(f"- Первая реплика оператора: {_fmt_t(facts, facts['first_operator_id'])}{resp_txt} (скорость первой реакции не оценивается)")
         lines.append(f"- Последняя реплика оператора: {_fmt_t(facts, facts['last_operator_id'])}")
     else:
         lines.append("- Оператор в диалоге не писал")
@@ -162,7 +159,7 @@ def render_facts(facts: dict) -> str:
         for g in gaps:
             lines.append(f"- Пауза перед {g['id']}: {format_offset(g['seconds'])}; предупреждение об ожидании перед паузой: {yes(g['warned_before'])}")
     else:
-        lines.append("- Пауз перед ответами оператора длиннее 3 мин: нет")
+        lines.append("- Длинных пауз перед ответами оператора нет")
     h = facts["heuristic_first_reply"]
     lines.append(
         f"- Эвристика по первой реплике оператора (проверь сам): приветствие на языке клиента={yes(h['greeting_in_client_language'])}, "

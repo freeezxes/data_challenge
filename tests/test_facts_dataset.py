@@ -30,7 +30,6 @@ def test_facts(chat_record):
     f = extract_facts(normalize(chat_record))
     assert f["escalation_id"] == "m3"
     assert f["first_operator_id"] == "m4" and f["first_response_s"] == 60
-    assert not f["first_response_over_limit"]
     assert f["identity_confirmed_ids"] == ["m5"]
     assert f["final_event"] == {"type": "client_left", "id": "m8"}
     assert f["client_messages_before_operator"] == ["m1"]

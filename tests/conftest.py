@@ -67,11 +67,12 @@ class FakeAPI:
         )
 
 
-def model_payload(checklist, answers, evidence=("m4",), violations=None):
+def model_payload(checklist, answers, evidence=("m4", "m5", "m6", "m8"), violations=None, quote="меня зовут Алина"):
     crit = {}
     for c in checklist["criteria"]:
         a = answers[c["id"]]
-        item = {"evidence_ids": list(evidence), "checked_range": "m4–m6", "reasoning": "тест", "answer": str(a)}
+        item = {"evidence_ids": list(evidence), "checked_range": "m4–m6", "quote": quote,
+                "reasoning": "тестовое обоснование", "answer": str(a)}
         if c["type"] == "critical":
             item["violations"] = violations or []
         crit[c["id"]] = item

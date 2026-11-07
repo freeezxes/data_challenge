@@ -18,13 +18,17 @@ def criterion_schema(criterion: dict) -> dict:
             "type": "string",
             "description": "Проверенный участок, например «m10–m14». Для пропущенного действия — где оно ожидалось.",
         },
+        "quote": {
+            "type": "string",
+            "description": "Дословный фрагмент одной из реплик-доказательств (на языке оригинала), подтверждающий вывод.",
+        },
         "reasoning": {
             "type": "string",
             "description": "Коротко по-русски: что подтверждают реплики; для N/A — какое условие неприменимости выполнено.",
         },
         "answer": {"type": "string", "enum": allowed_answers(criterion)},
     }
-    required = ["evidence_ids", "checked_range", "reasoning", "answer"]
+    required = ["evidence_ids", "checked_range", "quote", "reasoning", "answer"]
     if criterion["type"] == "critical":
         props["violations"] = {
             "type": "array",

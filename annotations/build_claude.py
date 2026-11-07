@@ -12,7 +12,7 @@ sys.path.insert(0, str(ROOT))
 from cqa.gold import load_gold
 from cqa.scoring import score
 
-SOURCE_COMMIT = '98e87b7984a6ba9ddd34cea241c0d5fb5e7e8810'
+SOURCE_COMMIT = 'working-tree (gold v2)'
 
 
 def build():
@@ -35,6 +35,7 @@ def build():
         if raw.get('na_when'):
             rule += ' Не применяется: ' + raw['na_when']
         criterion['rule'] = rule
+    raw_items = {i['conversation_id']: i for i in original['items']}
     annotations = []
     for record in dataset:
         cid = record['conversation_id']
@@ -44,10 +45,17 @@ def build():
         for criterion, row in zip(criteria, result['criteria']):
             answer = {'yes': 'Да', 'no': 'Нет', 'na': 'N/A'}.get(row['answer'], row['answer'])
             ambiguous = row['id'] in item['ambiguous']
+            rat = raw_items[cid].get('rationale', {}).get(row['id'], {})
+            evidence = []
+            for mid in rat.get('evidence', []):
+                idx = int(mid[1:])
+                msg = record['transcript'][idx - 1]
+                quote = rat['quote'] if rat.get('quote') and rat['quote'] in msg['text'] else msg['text']
+                evidence.append({'message_index': idx, 'timestamp': msg['timestamp'], 'speaker': msg['speaker'], 'quote': quote})
             verdicts.append({
                 'criterion_id': criterion['id'], 'value': answer, 'raw_points': row['raw_points'],
-                'rationale': 'В исходной разметке Claude указана оценка; отдельного обоснования для этого критерия нет.',
-                'evidence': [], 'inspected_range': None, 'review_required': ambiguous,
+                'rationale': rat.get('text') or 'Обоснование не указано.',
+                'evidence': evidence, 'inspected_range': None, 'review_required': ambiguous,
                 'review_note': 'Claude пометил этот критерий как спорный.' if ambiguous else None,
             })
         weighted = [r for r in result['criteria'] if r['raw_points'] is not None]
@@ -62,7 +70,7 @@ def build():
             'notes': [item['note']] if item['note'] else [], 'closing_type': item['closing'],
         })
     output = {
-        'schema_version': '1.0', 'annotation_version': 'claude-draft-v1',
+        'schema_version': '1.0', 'annotation_version': 'claude-draft-v2',
         'provenance': {'author': 'claude', 'attribution': 'Attributed to Claude by the user',
                        'official_ground_truth': False, 'human_reviewed': False,
                        'source_commit': SOURCE_COMMIT, 'source_path': 'data/gold/dev_gold.json',
@@ -73,7 +81,8 @@ def build():
             'Разметка Claude из GitHub. Это рабочая версия команды, а не эталон организаторов.',
             'Показаны исходные оценки Claude. Итоги рассчитаны по весам и правилам исключения неприменимых критериев.',
             'Завершение: засчитываются итог, предложение помощи или вежливая формула вместе с прощанием; одно прощание не засчитывается.',
-            'В исходном файле есть общие заметки и спорные критерии, но нет отдельных цитат-доказательств. Обоснования ChatGPT сюда не переносились.',
+            'У каждого критерия — обоснование Claude с репликами-доказательствами и дословной цитатой (проверено cqa/verify.py). Обоснования ChatGPT сюда не переносились.',
+            'Версия v2 сверена с разметкой ChatGPT: 14 правок принято, остальные расхождения помечены спорными (docs/comparisons/ADJUDICATION.md).',
             'Неприменимый критерий исключается из расчёта; остальные веса пересчитываются до 100. Грубые нарушения отмечаются отдельным флагом.',
         ],
         'criteria': criteria, 'counts': {'annotated': len(annotations), 'dataset': len(dataset),

@@ -38,10 +38,15 @@ def test_claude_matches_original_github_labels_and_scores(checklist):
 
 def test_claude_evidence_is_not_invented_or_copied():
     source = load_gold(ROOT / 'data/gold/dev_gold.json')['items']
+    dataset = {r['conversation_id']: r for r in read('public/dataset.json')['data']['records']}
     for record in read('public/annotations-claude.json')['annotations']:
         original = source[record['conversation_id']]
         assert record['notes'] == ([original['note']] if original['note'] else [])
-        assert all(not c['evidence'] and c['inspected_range'] is None for c in record['criteria'])
+        transcript = dataset[record['conversation_id']]['transcript']
+        for c in record['criteria']:
+            assert c['evidence'], (record['conversation_id'], c['criterion_id'])
+            for e in c['evidence']:
+                assert e['quote'] in transcript[e['message_index'] - 1]['text']
 
 
 def test_real_disagreement_survives_conversion():
@@ -53,9 +58,9 @@ def test_real_disagreement_survives_conversion():
     assert gpt['p1-ru-001']['total_score'] == 92.31
     assert claude['p1-ru-001']['total_score'] == 100
     assert gpt['p1-ru-005']['total_score'] == 70.77
-    assert claude['p1-ru-005']['total_score'] == 86.15
+    assert claude['p1-ru-005']['total_score'] == 70.77
     changed = sum(any(a['value'] != b['value'] for a, b in zip(gpt[cid]['criteria'], claude[cid]['criteria'])) for cid in gpt)
-    assert changed == 43
+    assert changed == 39
 
 
 def test_published_dataset_keeps_transcripts_and_local_audio():

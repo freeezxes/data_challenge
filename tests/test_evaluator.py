@@ -11,7 +11,7 @@ def test_schema_enums_follow_checklist(checklist):
     assert s["c04"]["properties"]["answer"]["enum"] == ["20", "15", "10", "5", "0", "na"]
     assert s["c06"]["properties"]["answer"]["enum"] == ["10", "7", "4", "0"]
     assert s["c08"]["properties"]["violations"]["items"]["enum"] == ["insult", "bypass", "disclosure"]
-    assert list(s["c01"]["properties"]) == ["evidence_ids", "checked_range", "reasoning", "answer"]
+    assert list(s["c01"]["properties"]) == ["evidence_ids", "checked_range", "quote", "reasoning", "answer"]
 
 
 def test_evaluate_with_fake_client(checklist, chat_record):
@@ -34,7 +34,7 @@ def test_evaluate_with_fake_client(checklist, chat_record):
 def test_repair_on_contradiction(checklist, chat_record):
     chat_record["transcript"][4]["text"] = "Клиент написал сообщение."  # убираем подтверждение личности
     bad = model_payload(checklist, all_answers(checklist, c03="yes", c07="na"), evidence=("m99",))
-    good = model_payload(checklist, all_answers(checklist, c03="no", c07="na"))
+    good = model_payload(checklist, all_answers(checklist, c03="no", c07="na"), evidence=("m4", "m6", "m8"))
     api = FakeAPI([bad, good])
     res = Evaluator(checklist, client=api).evaluate(normalize(chat_record))
     assert len(api.calls) == 2
