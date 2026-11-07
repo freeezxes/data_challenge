@@ -417,6 +417,22 @@ def _preview(app, m, q, body):
     return app.store.preview(int(m["id"]), body["criterion_id"], body["new_answer"])
 
 
+@route("GET", r"/api/conversations/(?P<ds>[^/]+)/(?P<cid>[^/]+)/voice")
+def _voice(app, m, q, body):
+    """Голос оператора по записи звонка — считает код, Claude звук не принимает."""
+    from .voice import VoiceUnavailable, voice_report
+    record = app.store.record(m["ds"], m["cid"])
+    if record.get("variant_of"):
+        raise StoreError("у изменённой копии расшифровка не совпадает с записью — голос смотрите в исходном звонке")
+    src = RECORDINGS.get(m["cid"]) or record.get("audio_url")
+    if not src:
+        raise StoreError("у диалога нет записи")
+    try:
+        return voice_report(normalize(record), src, PUBLIC, ROOT / "data/voice")
+    except VoiceUnavailable as exc:
+        raise StoreError(str(exc)) from exc
+
+
 @route("POST", r"/api/evaluations/(?P<id>\d+)/coach")
 def _coach(app, m, q, body):
     return coach(app, int(m["id"]), body["criterion_id"])

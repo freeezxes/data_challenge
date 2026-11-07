@@ -164,7 +164,8 @@ table.list{width:100%;border-collapse:collapse}
 .msg.flash{background:rgba(47,224,138,.12)!important}
 .msg.range{box-shadow:inset 3px 0 0 var(--na)}
 mark.q{background:rgba(47,224,138,.18);color:inherit;border-radius:3px;padding:0 2px}
-.player{position:sticky;top:73px;z-index:5;display:flex;align-items:center;gap:14px;padding:12px 20px;border-bottom:1px solid var(--line);background:var(--panel2)}
+.player{position:sticky;top:73px;z-index:5;display:grid;gap:10px;padding:12px 20px;border-bottom:1px solid var(--line);background:var(--panel2)}
+.player-row{display:flex;align-items:center;gap:14px}
 .player audio{flex:1;height:36px;min-width:0}
 .player small{color:var(--muted)}
 
@@ -322,3 +323,18 @@ details summary{cursor:pointer;padding:6px 0;color:var(--ink2);font-size:13px}
 .opinion .op-head{display:flex;align-items:center;gap:10px}
 .opinion.empty-op{grid-template-columns:1fr auto;align-items:center;gap:12px}
 .opinion.empty-op span{display:block;font-size:12.5px}
+
+/* голос оператора */
+.voice{display:grid;gap:8px}
+.voice canvas{width:100%;height:72px;cursor:pointer;border-radius:8px;background:#050807}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;color:var(--muted);font-size:11.5px}
+.legend .lg{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.lg.op{background:#2fe08a}.lg.cl{background:#8b9cb0}.lg.bot{background:#4a5a55}.lg.pitch{height:2px;background:#f5b544;vertical-align:3px}.lg.sil{background:rgba(255,107,107,.35)}
+.voice-stats{display:flex;flex-wrap:wrap;gap:8px}
+.vchip{display:grid;padding:6px 10px;border-radius:9px;background:var(--raise);border:1px solid var(--line);max-width:260px}
+.vchip b{font-size:12.5px;font-weight:600}.vchip small{color:var(--muted);font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vchip.warn{border-color:rgba(245,181,68,.35)}.vchip.warn b{color:var(--amber)}
+.voice-note{margin:0;font-size:11.5px}
+.voice-extra{display:grid;gap:8px;padding:14px 20px;border-bottom:1px solid var(--line)}
+.voice-extra:empty{display:none}
+.voice-head{display:flex;gap:10px;align-items:baseline}

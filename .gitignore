@@ -19,3 +19,4 @@ annotations/task-guide.pdf
 .venv/
 *.db-wal
 *.db-shm
+data/voice/

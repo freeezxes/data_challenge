@@ -65,7 +65,8 @@ export default async function card(root, params) {
       <div class="card">
         <section class="panel transcript" aria-label="Транскрипт">
           <header><h2>${isCall ? "Расшифровка звонка" : "Переписка"}</h2><span class="meta">${conv.language} · ${conv.messages.length} реплик · бот и системные события — контекст</span></header>
-          ${isCall ? html`<div class="player">${data.audio ? html`<audio id="audio" controls preload="metadata" src="${data.audio}"></audio><small>Нажмите время реплики, чтобы перейти к месту записи</small>` : html`<small>Записи нет</small>`}</div>` : ""}
+          ${isCall ? html`<div class="player">${data.audio ? html`<div class="player-row"><audio id="audio" controls preload="metadata" src="${data.audio}"></audio><small>Клик по волне или времени реплики — переход к месту записи</small></div>${variant ? "" : html`<div id="voice" class="voice"><div class="muted" style="font-size:12.5px">Разбираем запись…</div></div>`}` : html`<small>Записи нет</small>`}</div>
+            ${data.audio && !variant ? html`<div id="voice-extra" class="voice-extra"></div>` : ""}` : ""}
           ${conv.messages.map((m) => {
             const n = notes[m.id] || [];
             const worst = n.some((x) => x.tone === "bad") ? "bad" : n.some((x) => x.tone === "mid") ? "mid" : n.length && m.role === "operator" ? "ok" : "";
@@ -80,6 +81,7 @@ export default async function card(root, params) {
         <aside class="panel scores" aria-label="Оценка">${scoresPanel(conv, ev, checklist)}</aside>
       </div>`);
     wire(conv, ev, checklist);
+    if (isCall && data.audio && !variant) loadVoice(conv, notes);
     if (params.m) jump(params.m);
   }
 
@@ -212,6 +214,74 @@ export default async function card(root, params) {
       d.querySelectorAll("[data-tab]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
       d.querySelectorAll("[data-pane]").forEach((p) => (p.hidden = p.dataset.pane !== b.dataset.tab));
     }));
+  }
+
+  async function loadVoice(conv, notes) {
+    const box = root.querySelector("#voice");
+    let v;
+    try { v = await api(`/conversations/${encodeURIComponent(ds)}/${encodeURIComponent(cid)}/voice`); }
+    catch (x) { box.innerHTML = String(html`<div class="muted" style="font-size:12.5px">Голос не разобран: ${x.message}</div>`); return; }
+    if (!root.contains(box)) return;
+    const o = v.operator, fmt = (n) => String(n).replace(".", ",");
+    const gap = o.loudness_gap_db;
+    const chips = [
+      o.wpm ? [`Темп ≈ ${o.wpm} слов/мин`, o.wpm_label, o.wpm_label === "обычный темп" ? "" : "warn"] : null,
+      [`Говорит оператор ${Math.round(o.talk_share * 100)}%`, "доля речи в разговоре", ""],
+      o.intonation_label ? [`Интонация: ${o.intonation_label}`, `разброс высоты ${fmt(o.intonation_range_st)} полутона, средняя ${o.pitch_median_hz} Гц`, o.intonation_label.startsWith("ровная") ? "warn" : ""] : null,
+      gap != null ? [Math.abs(gap) < 6 ? "Громкость наравне с клиентом" : gap < 0 ? `Тише клиента на ${fmt(Math.abs(gap))} дБ` : `Громче клиента на ${fmt(gap)} дБ`, "медиана по речи в записи", Math.abs(gap) < 6 ? "" : "warn"] : null,
+      [v.silences.length ? `Пауз от 8 с: ${v.silences.length}` : "Долгих пауз нет", v.silences.length ? v.silences.map((x) => `${offset(x.start)} — ${fmt(x.dur)} с${x.warned ? ", предупредил" : ", без предупреждения"}`).join("; ") : "тишина не дольше 8 с", v.silences.some((x) => !x.warned) ? "warn" : ""],
+    ].filter(Boolean);
+    box.innerHTML = String(html`<canvas id="wave" height="72" aria-label="Волна записи: зелёным — оператор, серым — клиент"></canvas>
+      <div class="legend"><span><i class="lg op"></i>оператор</span><span><i class="lg cl"></i>клиент</span><span><i class="lg bot"></i>бот</span><span><i class="lg pitch"></i>высота голоса оператора</span><span><i class="lg sil"></i>пауза от 8 с</span><span>▼ доказательство критерия</span></div>`);
+    const extra = root.querySelector("#voice-extra");
+    if (extra) extra.innerHTML = String(html`<div class="voice-head"><b>Голос оператора</b><span class="muted">по записи звонка</span></div>
+      <div class="voice-stats">${chips.map(([t, sub, tone]) => html`<span class="vchip ${tone}" title="${sub}"><b>${t}</b><small>${sub}</small></span>`)}</div>
+      <p class="muted voice-note">${v.method}</p>`);
+    const cv = box.querySelector("#wave"), audio = root.querySelector("#audio");
+    const byId = Object.fromEntries(v.segments.map((x) => [x.id, x]));
+    const marks = Object.entries(notes).filter(([id]) => byId[id]).map(([id, n]) => ({ t: byId[id].start, tone: n.some((x) => x.tone === "bad") ? "bad" : n.some((x) => x.tone === "mid") ? "mid" : "ok" }));
+    const col = { operator: "#2fe08a", client: "#8b9cb0", bot: "#4a5a55" }, tone = { ok: "#2fe08a", mid: "#f5b544", bad: "#ff6b6b" };
+    function draw() {
+      const dpr = window.devicePixelRatio || 1, w = cv.clientWidth, h = 72;
+      cv.width = w * dpr; cv.height = h * dpr;
+      const g = cv.getContext("2d"); g.scale(dpr, dpr); g.clearRect(0, 0, w, h);
+      const X = (t) => (t / v.duration) * w, mid = 40, amp = 26;
+      for (const s of v.silences) { g.fillStyle = s.warned ? "rgba(245,181,68,.12)" : "rgba(255,107,107,.14)"; g.fillRect(X(s.start), 8, X(s.end) - X(s.start), h - 8); }
+      const roleAt = (t) => { const s = v.segments.find((x) => t >= x.start && t < x.end); return s ? s.role : null; };
+      const n = v.peaks.length, bw = w / n;
+      for (let i = 0; i < n; i++) {
+        const t = ((i + 0.5) / n) * v.duration, r = roleAt(t);
+        g.fillStyle = r ? col[r] : "#2a3531"; g.globalAlpha = r === "operator" ? 0.9 : 0.55;
+        const hh = Math.max(1, (v.peaks[i] / 100) * amp);
+        g.fillRect(i * bw, mid - hh, Math.max(1, bw - 0.4), hh * 2);
+      }
+      g.globalAlpha = 1;
+      if (v.pitch?.length && o.pitch_median_hz) {  // высота голоса: ±6 полутонов от средней
+        g.strokeStyle = "rgba(245,181,68,.85)"; g.lineWidth = 1.2; g.beginPath(); let on = false;
+        v.pitch.forEach((f, i) => {
+          if (f == null) { on = false; return; }
+          const st = 12 * Math.log2(f / o.pitch_median_hz), y = mid - Math.max(-1, Math.min(1, st / 6)) * amp;
+          const x = (i + 0.5) * v.pitch_step_s / v.duration * w;
+          on ? g.lineTo(x, y) : g.moveTo(x, y); on = true;
+        });
+        g.stroke();
+      }
+      for (const m of marks) { const x = X(m.t); g.fillStyle = tone[m.tone]; g.beginPath(); g.moveTo(x - 4, 0); g.lineTo(x + 4, 0); g.lineTo(x, 7); g.fill(); }
+      if (audio && audio.duration) { const x = (audio.currentTime / v.duration) * w; g.fillStyle = "#eef3f0"; g.fillRect(x - 0.75, 6, 1.5, h - 6); }
+    }
+    draw();
+    let raf = 0;
+    const tick = () => { draw(); raf = audio && !audio.paused ? requestAnimationFrame(tick) : 0; };
+    audio?.addEventListener("play", () => { if (!raf) tick(); });
+    audio?.addEventListener("seeked", draw);
+    window.addEventListener("resize", draw);
+    cv.onclick = (e) => {
+      const t = ((e.clientX - cv.getBoundingClientRect().left) / cv.clientWidth) * v.duration;
+      const seg = [...v.segments].reverse().find((x) => x.start <= t);
+      if (audio) { audio.currentTime = t; audio.play().catch(() => {}); }
+      if (seg) document.getElementById(seg.id)?.scrollIntoView({ block: "center", behavior: "smooth" });
+      draw();
+    };
   }
 
   async function coachDialog(ev, checklist, critId) {
