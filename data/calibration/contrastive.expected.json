@@ -1,0 +1,39 @@
+{
+  "source": "assistant-authored diagnostic cases, not independent human gold; fictional interface details only",
+  "pairs": [
+    [
+      "new-ru-export-single",
+      "new-ru-export-double"
+    ],
+    [
+      "new-en-frequency-enough",
+      "new-en-frequency-missing"
+    ],
+    [
+      "new-en-export-clear",
+      "new-en-export-unclear"
+    ]
+  ],
+  "expected": {
+    "new-ru-export-single": {
+      "c04": 20
+    },
+    "new-ru-export-double": {
+      "c04": 10
+    },
+    "new-en-frequency-enough": {
+      "c02": "na",
+      "c04": 20
+    },
+    "new-en-frequency-missing": {
+      "c02": "yes",
+      "c04": 20
+    },
+    "new-en-export-clear": {
+      "c06": 10
+    },
+    "new-en-export-unclear": {
+      "c06": 4
+    }
+  }
+}

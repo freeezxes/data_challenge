@@ -1,0 +1,107 @@
+{
+  "model": "claude-sonnet-5-5",
+  "seed": 991358553,
+  "method": "Uniform sample without replacement from DEV IDs not used in calibration-1 runs. Two sets of 8; draw fixed before API responses. No outcome-based resampling.",
+  "sets": {
+    "random_a": [
+      "p1-ru-009",
+      "p1-kz-011",
+      "p1-kz-014",
+      "p1-en-001",
+      "p1-ru-029",
+      "p1-ru-007",
+      "p1-ru-013",
+      "p1-kz-008"
+    ],
+    "random_b": [
+      "p1-kz-001",
+      "p1-ru-017",
+      "p1-kz-009",
+      "p1-kz-015",
+      "p4-ru-002",
+      "p1-en-011",
+      "p1-kz-007",
+      "p1-en-004"
+    ]
+  },
+  "excluded_ids": [
+    "p1-en-002",
+    "p1-en-008",
+    "p1-en-014",
+    "p1-en-015",
+    "p1-kz-003",
+    "p1-kz-005",
+    "p1-kz-012",
+    "p1-kz-013",
+    "p1-ru-001",
+    "p1-ru-005",
+    "p1-ru-016",
+    "p1-ru-018",
+    "p1-ru-025",
+    "p1-ru-028",
+    "p4-ru-001",
+    "p4-ru-005"
+  ],
+  "pool_size": 49,
+  "baseline_checklist": "config/experiments/checklist.calibration-1.json",
+  "candidate_checklist": "config/experiments/checklist.calibration-2.json",
+  "checklist_sha256": {
+    "config/experiments/checklist.calibration-1.json": "dae56d4fce835da294bbefa313516972bce9b55152a9b47b7495433f865dcd09",
+    "config/experiments/checklist.calibration-2.json": "bbc230fcb28539d5ee9509cc4e1bdbb190af6ad2e0eda4aa74d4ef3333869d0b"
+  },
+  "annotation_sha256": {
+    "data/gold/dev_gold.json": "e8b6efa94c40e67963a635c45a15f5cfe082529012b0037d095957e4940596a0",
+    "annotations/decisions.tsv": "05a0013189dbe14e7195f0c6f12fa484e30b15de9225b662b6a01fea5b4eff1f",
+    "annotations/details.json": "910185a65f23234cf61620996031add7e6339f97e2a23abba544b6783dbe0080",
+    "public/annotations.json": "4e8bd6d18d55f3db72c72e10c3363132845e69ddfffc8bf97bd62aa6af001d79",
+    "public/annotations-claude.json": "b3e71c25fded735191fec15d49e764ff4d18c4505560db486ff0a5b565fffc8d"
+  },
+  "acceptance": "Compare c02 for each set and aggregate; inspect other-criterion regressions; no promotion on tuning cases alone. New cases are assistant-authored diagnostics, not independent human gold. No edits to candidate after outputs.",
+  "limitations": [
+    "Random DEV subsets may contain translations or related scenarios; they measure regressions, not independent generalization.",
+    "All DEV labels were available before this work. The random sets are fresh for API comparison, not a blind benchmark.",
+    "A separate 8-case diagnostic set uses new texts and topics, and includes yes/no/na and changes in amount of available information.",
+    "One paired run is exploratory; repeat with uncached API calls if apparent improvement needs confirmation."
+  ],
+  "new_scenarios": {
+    "dataset": "data/calibration/needs-v2-new.json",
+    "expected": "data/calibration/needs-v2-new.expected.json",
+    "ids": [
+      "fresh-en-04",
+      "fresh-en-03",
+      "fresh-ru-08",
+      "fresh-ru-01",
+      "fresh-ru-02",
+      "fresh-kz-05",
+      "fresh-ru-07",
+      "fresh-kz-06"
+    ],
+    "dataset_sha256": "501cf2881bba1d5ad672fe22a8cdc37f8be25d0f3d8e4046c1c6f4d18f86d705",
+    "expected_sha256": "4eaa9c2ed09183de9bf29b2c0b03a7cf4e3496588b84af8ef8a8a9aaf005a5ad"
+  },
+  "repeats": {
+    "new_scenarios": 2,
+    "reason": "Повтор обеих версий на всём новом наборе для оценки вариативности; ответы первого запуска до назначения повтора не разбирались. Оба повтора будут включены в отчёт."
+  },
+  "regression_ids": [
+    "p1-ru-025",
+    "p1-kz-003",
+    "p1-ru-016",
+    "p1-en-008",
+    "p1-en-002",
+    "p1-ru-028",
+    "p1-en-015",
+    "p1-kz-012"
+  ],
+  "regression_note": "Два известных c02-сбоя и 6 случайных ранее просмотренных диалогов; проверка исправлений, не generalization. Не влияет на продвижение без новых наборов.",
+  "review_notes": [
+    {
+      "conversation_id": "p4-ru-002",
+      "criterion": "c02",
+      "reference": "yes",
+      "both_versions": "na",
+      "assessment": "Unresolved interpretation; reference preserved.",
+      "reason": "Входящий звонок продолжает предыдущий контакт. Разметка засчитывает сбор данных для передачи трейдеру; обе модели считают запрос уже понятным, а последующие данные — идентификацией/маршрутизацией. Не добавлять исключение по ID или универсальное засчитывание любого сбора ФИО в c02."
+    }
+  ]
+}

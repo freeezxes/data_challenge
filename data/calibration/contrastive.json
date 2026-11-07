@@ -1,0 +1,200 @@
+[
+  {
+    "conversation_id": "new-ru-export-single",
+    "language": "RU",
+    "channel": "agent chat",
+    "audio_url": null,
+    "transcript": [
+      {
+        "timestamp": "00:00",
+        "speaker": "client",
+        "text": "Где скачать историю сделок в CSV за прошлый месяц?"
+      },
+      {
+        "timestamp": "00:10",
+        "speaker": "operator",
+        "text": "Здравствуйте! Меня зовут Ольга. Откройте «Отчёты», выберите прошлый месяц и нажмите «Скачать CSV»."
+      },
+      {
+        "timestamp": "00:20",
+        "speaker": "client",
+        "text": "CSV скачался."
+      },
+      {
+        "timestamp": "00:30",
+        "speaker": "operator",
+        "text": "Файл за месяц получен. Если понадобится помощь, обращайтесь. До свидания!"
+      }
+    ]
+  },
+  {
+    "conversation_id": "new-ru-export-double",
+    "language": "RU",
+    "channel": "agent chat",
+    "audio_url": null,
+    "transcript": [
+      {
+        "timestamp": "00:00",
+        "speaker": "client",
+        "text": "Где скачать историю сделок в CSV за прошлый месяц и доступны ли архивы за прошлые годы?"
+      },
+      {
+        "timestamp": "00:10",
+        "speaker": "operator",
+        "text": "Здравствуйте! Меня зовут Ольга. Откройте «Отчёты», выберите прошлый месяц и нажмите «Скачать CSV»."
+      },
+      {
+        "timestamp": "00:20",
+        "speaker": "client",
+        "text": "CSV скачался."
+      },
+      {
+        "timestamp": "00:30",
+        "speaker": "operator",
+        "text": "Файл за месяц получен. Если понадобится помощь, обращайтесь. До свидания!"
+      }
+    ]
+  },
+  {
+    "conversation_id": "new-en-frequency-enough",
+    "language": "EN",
+    "channel": "agent chat",
+    "audio_url": null,
+    "transcript": [
+      {
+        "timestamp": "00:00",
+        "speaker": "client",
+        "text": "How can I change notification frequency in the web version?"
+      },
+      {
+        "timestamp": "00:10",
+        "speaker": "operator",
+        "text": "Hello, I'm Morgan. In the web version, open Notifications, choose Frequency, select Daily, and save."
+      },
+      {
+        "timestamp": "00:20",
+        "speaker": "client",
+        "text": "Saved, thank you."
+      },
+      {
+        "timestamp": "00:30",
+        "speaker": "operator",
+        "text": "Your frequency setting is saved. Let us know if you need more help. Goodbye."
+      }
+    ]
+  },
+  {
+    "conversation_id": "new-en-frequency-missing",
+    "language": "EN",
+    "channel": "agent chat",
+    "audio_url": null,
+    "transcript": [
+      {
+        "timestamp": "00:00",
+        "speaker": "client",
+        "text": "How can I change notification frequency?"
+      },
+      {
+        "timestamp": "00:10",
+        "speaker": "operator",
+        "text": "Hello, I'm Morgan. Are you using the web version or the mobile app?"
+      },
+      {
+        "timestamp": "00:20",
+        "speaker": "client",
+        "text": "The web version."
+      },
+      {
+        "timestamp": "00:30",
+        "speaker": "operator",
+        "text": "In the web version, open Notifications, choose Frequency, select Daily, and save."
+      },
+      {
+        "timestamp": "00:40",
+        "speaker": "client",
+        "text": "Saved, thank you."
+      },
+      {
+        "timestamp": "00:50",
+        "speaker": "operator",
+        "text": "Your frequency setting is saved. Let us know if you need more help. Goodbye."
+      }
+    ]
+  },
+  {
+    "conversation_id": "new-en-export-clear",
+    "language": "EN",
+    "channel": "agent chat",
+    "audio_url": null,
+    "transcript": [
+      {
+        "timestamp": "00:00",
+        "speaker": "client",
+        "text": "How do I choose a date range for my report?"
+      },
+      {
+        "timestamp": "00:10",
+        "speaker": "operator",
+        "text": "Hello, I'm Morgan. Open Reports, select Start date and End date, then click Download."
+      },
+      {
+        "timestamp": "00:20",
+        "speaker": "client",
+        "text": "Why do I have to choose both dates?"
+      },
+      {
+        "timestamp": "00:30",
+        "speaker": "operator",
+        "text": "They define the beginning and end of the reporting period."
+      },
+      {
+        "timestamp": "00:40",
+        "speaker": "client",
+        "text": "Understood, downloaded."
+      },
+      {
+        "timestamp": "00:50",
+        "speaker": "operator",
+        "text": "Your report is downloaded. Goodbye."
+      }
+    ]
+  },
+  {
+    "conversation_id": "new-en-export-unclear",
+    "language": "EN",
+    "channel": "agent chat",
+    "audio_url": null,
+    "transcript": [
+      {
+        "timestamp": "00:00",
+        "speaker": "client",
+        "text": "How do I choose a date range for my report?"
+      },
+      {
+        "timestamp": "00:10",
+        "speaker": "operator",
+        "text": "Hello, I'm Morgan. Go to that section and choose those things, then press it."
+      },
+      {
+        "timestamp": "00:20",
+        "speaker": "client",
+        "text": "Which section and which things? I can't follow that instruction."
+      },
+      {
+        "timestamp": "00:30",
+        "speaker": "operator",
+        "text": "Open Reports, select Start date and End date, then click Download."
+      },
+      {
+        "timestamp": "00:40",
+        "speaker": "client",
+        "text": "Understood, downloaded."
+      },
+      {
+        "timestamp": "00:50",
+        "speaker": "operator",
+        "text": "Your report is downloaded. Goodbye."
+      }
+    ]
+  }
+]

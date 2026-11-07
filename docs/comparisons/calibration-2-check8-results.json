@@ -1,0 +1,91 @@
+{
+  "matches": 56,
+  "n_labels": 64,
+  "n_dialogs": 8,
+  "all_criteria_exact": 1,
+  "c02_accuracy": 1.0,
+  "mae": 10.51,
+  "unambiguous_matches": 55,
+  "n_unambiguous": 59,
+  "api_calls": 13,
+  "repair_calls": 5,
+  "cost_usd": 0.230427,
+  "differences": [
+    {
+      "id": "p1-ru-006",
+      "criterion": "c04",
+      "reference": 20,
+      "prediction": 15,
+      "reason": "Оператор передал обращение о зачислении специалистам, добавил валюту и назвал канал ответа (этот чат). Конкретного срока нет, но канал обратной связи указан, поэтому основной запрос закрыт, а срок ответа остаётся второстепенной деталью.",
+      "ambiguous": false
+    },
+    {
+      "id": "p1-ru-004",
+      "criterion": "c07",
+      "reference": "yes",
+      "prediction": "no",
+      "reason": "Оператор ограничился коротким пожеланием без итога, предложения помощи и вежливой формулы завершения, это голое прощание.",
+      "ambiguous": false
+    },
+    {
+      "id": "p1-ru-010",
+      "criterion": "c04",
+      "reference": 20,
+      "prediction": 15,
+      "reason": "Вопросы клиента закрыты: позиция передана на проверку, путь к отчёту дан, период и поведение при появлении бумаги объяснены. Но срок или канал обратной связи по проверке не назван, поэтому результат по пропавшей бумаге остался без понятного срока.",
+      "ambiguous": false
+    },
+    {
+      "id": "p1-ru-022",
+      "criterion": "c06",
+      "reference": 7,
+      "prediction": 4,
+      "reason": "Ответ оператора невпопад к вопросу об облигациях, клиенту пришлось поправлять его и напоминать суть запроса.",
+      "ambiguous": false
+    },
+    {
+      "id": "p1-en-007",
+      "criterion": "c05",
+      "reference": "yes",
+      "prediction": "no",
+      "reason": "Клиент выразил неудобство (не может вывести средства), оператор не отреагировал на проблему и закрыл разговор, проигнорировав вопрос клиента; вежливости недостаточно для такой реакции.",
+      "ambiguous": true
+    },
+    {
+      "id": "p1-ru-024",
+      "criterion": "c04",
+      "reference": 20,
+      "prediction": 15,
+      "reason": "Оператор ответил на основной вопрос о выборе счёта, но не пояснил, как использовать деньги с D-счёта (например, перевод на торговый), хотя клиент спрашивал именно про них. Пропущена второстепенная деталь.",
+      "ambiguous": true
+    },
+    {
+      "id": "p1-en-013",
+      "criterion": "c05",
+      "reference": "yes",
+      "prediction": "no",
+      "reason": "Клиент возразил против предложения оператора, но оператор никак не отреагировал и закрыл чат; также не отреагировал на слова клиента о том, что он раньше не пользовался разделом.",
+      "ambiguous": true
+    },
+    {
+      "id": "p1-en-013",
+      "criterion": "c06",
+      "reference": 10,
+      "prediction": 7,
+      "reason": "Реплика m12 неуместна и не по теме запроса, клиенту пришлось её отвергнуть; это один заметный сбой, но ход диалога остаётся понятным.",
+      "ambiguous": true
+    }
+  ],
+  "annotations_unchanged": true,
+  "previous_experiment_cost_explanation": {
+    "dialogs": 80,
+    "runs": 10,
+    "api_calls": 128,
+    "repair_calls": 48,
+    "total_usd": 2.252672,
+    "input_and_cache_usd": 0.711577,
+    "output_usd": 1.54112,
+    "most_common_retry_issue": "c08=yes with empty violations (45 initial responses); schema validates types but not this semantic dependency."
+  },
+  "limitation": "8 fresh DEV IDs, not independent unseen scenario families; these 8 contain RU and EN, no KZ. Single run, no changes to prompt or reference."
+}

@@ -17,7 +17,7 @@ def test_schema_enums_follow_checklist(checklist):
 def test_evaluate_with_fake_client(checklist, chat_record):
     answers = all_answers(checklist, c03="yes", c07="na")
     api = FakeAPI([model_payload(checklist, answers)])
-    ev = Evaluator(checklist, client=api, config=EvalConfig(votes=1))
+    ev = Evaluator(checklist, client=api, config=EvalConfig(votes=1, use_fallback=True))
     res = ev.evaluate(normalize(chat_record))
     assert res["answers"]["c04"] == 20 and res["answers"]["c07"] == "na"
     assert res["score"]["total"] == 100.0

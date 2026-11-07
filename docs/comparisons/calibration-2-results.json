@@ -1,0 +1,398 @@
+{
+  "seed": 991358553,
+  "model": "claude-sonnet-5-5",
+  "annotations_unchanged": true,
+  "candidate_frozen": true,
+  "comparisons": {
+    "random-a": {
+      "before": {
+        "c02_hits": 8,
+        "c02_n": 8,
+        "c02_confusion": {
+          "na->na": 6,
+          "no->no": 1,
+          "yes->yes": 1
+        },
+        "other_hits": 52,
+        "other_n": 56,
+        "n_valid": 8,
+        "n_requested": 8,
+        "cost_usd": 0.298406,
+        "cost_complete": true,
+        "mae": 5.21,
+        "differences": [
+          {
+            "id": "p1-kz-011",
+            "criterion": "c04",
+            "expected": 20,
+            "predicted": 15,
+            "reason": "Оператор ответил, что средства D-счёта напрямую не используются для покупки акций, и подтвердил, что нужно выбрать торговый счёт; однако не объяснил, как перевести средства или чем ещё отличаются счета (вопрос о различии из m1 раскрыт лишь ботом общей фразой)."
+          },
+          {
+            "id": "p1-ru-007",
+            "criterion": "c07",
+            "expected": "yes",
+            "predicted": "no",
+            "reason": "Оператор ограничился голым прощанием без итога и вежливой формулы, вопрос клиента остался без ответа."
+          },
+          {
+            "id": "p1-kz-008",
+            "criterion": "c05",
+            "expected": "yes",
+            "predicted": "no",
+            "reason": "Клиент выразил раздражение из-за повторного вопроса, но оператор никак не отреагировал и не извинился."
+          },
+          {
+            "id": "p1-ru-029",
+            "criterion": "c06",
+            "expected": 7,
+            "predicted": 4,
+            "reason": "Клиенту пришлось переспрашивать, потому что первая реплика оператора содержала упрёк вместо ответа по существу. После этого инструкция была ясной."
+          }
+        ]
+      },
+      "after": {
+        "c02_hits": 8,
+        "c02_n": 8,
+        "c02_confusion": {
+          "na->na": 6,
+          "no->no": 1,
+          "yes->yes": 1
+        },
+        "other_hits": 53,
+        "other_n": 56,
+        "n_valid": 8,
+        "n_requested": 8,
+        "cost_usd": 0.280857,
+        "cost_complete": true,
+        "mae": 4.17,
+        "differences": [
+          {
+            "id": "p1-ru-007",
+            "criterion": "c07",
+            "expected": "yes",
+            "predicted": "no",
+            "reason": "Оператор ограничился фактически голым прощанием «Хорошего дня!», фраза про путь не является итогом, так как вопрос клиента остался без ответа, и вежливой формулы или предложения помощи нет."
+          },
+          {
+            "id": "p1-kz-008",
+            "criterion": "c05",
+            "expected": "yes",
+            "predicted": "no",
+            "reason": "Клиент выразил раздражение из-за повторного вопроса, а оператор не отреагировал на это и сразу перешёл к ответу."
+          },
+          {
+            "id": "p1-ru-029",
+            "criterion": "c06",
+            "expected": 7,
+            "predicted": 4,
+            "reason": "Первая реплика оператора не содержала ответа по существу, и клиенту пришлось переспрашивать, на какой сайт идти; конкретный ответ последовал только в m12."
+          }
+        ]
+      },
+      "target_distribution": {
+        "na": 6,
+        "no": 1,
+        "yes": 1
+      }
+    },
+    "random-b": {
+      "before": {
+        "c02_hits": 7,
+        "c02_n": 8,
+        "c02_confusion": {
+          "na->na": 6,
+          "yes->yes": 1,
+          "yes->na": 1
+        },
+        "other_hits": 54,
+        "other_n": 56,
+        "n_valid": 8,
+        "n_requested": 8,
+        "cost_usd": 0.257684,
+        "cost_complete": true,
+        "mae": 1.85,
+        "differences": [
+          {
+            "id": "p1-kz-015",
+            "criterion": "c07",
+            "expected": "yes",
+            "predicted": "no",
+            "reason": "Есть голое прощание без внятного итога (нет срока и канала) и без вежливой формулы или предложения помощи."
+          },
+          {
+            "id": "p1-ru-017",
+            "criterion": "c04",
+            "expected": 20,
+            "predicted": 15,
+            "reason": "Клиент спрашивал, куда нажимать при покупке облигации и как найти нужную бумагу. Оператор подсказал искать по точному тикеру и проверить бумагу, клиент нашёл её. Но дальнейшие шаги самой покупки (где открыть форму приказа) не объяснены, это второстепенная деталь."
+          },
+          {
+            "id": "p4-ru-002",
+            "criterion": "c02",
+            "expected": "yes",
+            "predicted": "na",
+            "reason": "Это повторный звонок по уже известной проблеме, данных хватало, и оператор сразу предложил решение. Дополнительное уточнение запроса не требовалось."
+          }
+        ]
+      },
+      "after": {
+        "c02_hits": 7,
+        "c02_n": 8,
+        "c02_confusion": {
+          "na->na": 6,
+          "yes->yes": 1,
+          "yes->na": 1
+        },
+        "other_hits": 55,
+        "other_n": 56,
+        "n_valid": 8,
+        "n_requested": 8,
+        "cost_usd": 0.278833,
+        "cost_complete": true,
+        "mae": 0.99,
+        "differences": [
+          {
+            "id": "p1-kz-015",
+            "criterion": "c06",
+            "expected": 4,
+            "predicted": 7,
+            "reason": "Ответ m12 невнятный и неуместный по отношению к возражению клиента, но в целом ход диалога понятен; один заметный сбой."
+          },
+          {
+            "id": "p4-ru-002",
+            "criterion": "c02",
+            "expected": "yes",
+            "predicted": "na",
+            "reason": "Запрос (покупка бумаги, отказ лимитного приказа) известен из прошлого контакта, оператор сразу предложил лимитный приказ, а данные запросил лишь для соединения с трейдером. Содержательных уточнений не требовалось."
+          }
+        ]
+      },
+      "target_distribution": {
+        "na": 6,
+        "yes": 2
+      }
+    },
+    "new": {
+      "before": {
+        "c02_hits": 8,
+        "c02_n": 8,
+        "c02_confusion": {
+          "yes->yes": 3,
+          "no->no": 3,
+          "na->na": 2
+        },
+        "other_hits": 0,
+        "other_n": 0,
+        "n_valid": 8,
+        "n_requested": 8,
+        "cost_usd": 0.179107,
+        "cost_complete": true,
+        "mae": null,
+        "differences": []
+      },
+      "after": {
+        "c02_hits": 8,
+        "c02_n": 8,
+        "c02_confusion": {
+          "yes->yes": 3,
+          "no->no": 3,
+          "na->na": 2
+        },
+        "other_hits": 0,
+        "other_n": 0,
+        "n_valid": 8,
+        "n_requested": 8,
+        "cost_usd": 0.169122,
+        "cost_complete": true,
+        "mae": null,
+        "differences": []
+      },
+      "target_distribution": {
+        "yes": 3,
+        "no": 3,
+        "na": 2
+      }
+    },
+    "new-repeat1": {
+      "before": {
+        "c02_hits": 8,
+        "c02_n": 8,
+        "c02_confusion": {
+          "yes->yes": 3,
+          "no->no": 3,
+          "na->na": 2
+        },
+        "other_hits": 0,
+        "other_n": 0,
+        "n_valid": 8,
+        "n_requested": 8,
+        "cost_usd": 0.212524,
+        "cost_complete": true,
+        "mae": null,
+        "differences": []
+      },
+      "after": {
+        "c02_hits": 8,
+        "c02_n": 8,
+        "c02_confusion": {
+          "yes->yes": 3,
+          "no->no": 3,
+          "na->na": 2
+        },
+        "other_hits": 0,
+        "other_n": 0,
+        "n_valid": 8,
+        "n_requested": 8,
+        "cost_usd": 0.14527,
+        "cost_complete": true,
+        "mae": null,
+        "differences": []
+      },
+      "target_distribution": {
+        "yes": 3,
+        "no": 3,
+        "na": 2
+      }
+    },
+    "regression": {
+      "before": {
+        "c02_hits": 7,
+        "c02_n": 8,
+        "c02_confusion": {
+          "yes->na": 1,
+          "na->na": 3,
+          "no->no": 2,
+          "yes->yes": 2
+        },
+        "other_hits": 51,
+        "other_n": 56,
+        "n_valid": 8,
+        "n_requested": 8,
+        "cost_usd": 0.219177,
+        "cost_complete": true,
+        "mae": 4.98,
+        "differences": [
+          {
+            "id": "p1-ru-025",
+            "criterion": "c02",
+            "expected": "yes",
+            "predicted": "na",
+            "reason": "Клиент ещё не сформулировал суть запроса (просил только человека), поэтому приглашение изложить вопрос не является переспросом известного; уточнять было нечего."
+          },
+          {
+            "id": "p1-kz-003",
+            "criterion": "c04",
+            "expected": 20,
+            "predicted": 15,
+            "reason": "Вопрос о платеже передан специалистам с указанием канала ответа (в этот чат), хотя срок не назван; вопросы про отчёт решены полностью. Срок ответа отсутствует — второстепенная деталь."
+          },
+          {
+            "id": "p1-kz-012",
+            "criterion": "c04",
+            "expected": 20,
+            "predicted": 10,
+            "reason": "Оператор назвал следующий шаг (прислать тикер и сообщение для проверки), но причина отклонения не выяснена, а канал и срок ответа не обозначены. Существенный вопрос остался открытым, отчасти потому что клиент ушёл."
+          },
+          {
+            "id": "p1-en-008",
+            "criterion": "c04",
+            "expected": 20,
+            "predicted": 15,
+            "reason": "Поиск бумаги по тикеру и отключение Use Margin объяснены; на вопрос о существующей позиции дан по сути верный ответ, но вторая фраза оператора невнятна, и это второстепенный недочёт."
+          },
+          {
+            "id": "p1-en-008",
+            "criterion": "c06",
+            "expected": 10,
+            "predicted": 7,
+            "reason": "Одна заметная невнятная реплика о существующей позиции, остальные ответы ясные, и клиент смог продолжить."
+          },
+          {
+            "id": "p1-en-008",
+            "criterion": "c07",
+            "expected": "yes",
+            "predicted": "no",
+            "reason": "Оператор ограничился согласием и пожеланием хорошего дня, без итога, предложения помощи или вежливой формулы завершения."
+          }
+        ]
+      },
+      "after": {
+        "c02_hits": 8,
+        "c02_n": 8,
+        "c02_confusion": {
+          "yes->yes": 3,
+          "na->na": 3,
+          "no->no": 2
+        },
+        "other_hits": 51,
+        "other_n": 56,
+        "n_valid": 8,
+        "n_requested": 8,
+        "cost_usd": 0.211692,
+        "cost_complete": true,
+        "mae": 4.98,
+        "differences": [
+          {
+            "id": "p1-kz-003",
+            "criterion": "c04",
+            "expected": 20,
+            "predicted": 15,
+            "reason": "Обращение по переводу передано специалистам, ответ обещан в этом же чате. Срок ответа и сумма не названы, поэтому вторичная деталь пропущена. Вопросы про отчёт закрыты корректно."
+          },
+          {
+            "id": "p1-kz-012",
+            "criterion": "c04",
+            "expected": 20,
+            "predicted": 10,
+            "reason": "Причина отклонения не выяснена; оператор дал следующий шаг (прислать тикер и сообщение для передачи на проверку), но без срока или канала обратной связи, поэтому существенный вопрос остаётся открытым."
+          },
+          {
+            "id": "p1-en-008",
+            "criterion": "c04",
+            "expected": 20,
+            "predicted": 15,
+            "reason": "Поиск акции, следующий шаг и отключение маржи решены. На вопрос о существующей позиции оператор по сути ответил, что настройка относится только к текущему ордеру, но второй фразой смазал вывод и не сказал прямо «нет»."
+          },
+          {
+            "id": "p1-en-008",
+            "criterion": "c06",
+            "expected": 10,
+            "predicted": 7,
+            "reason": "Ответ на m17 двусмысленный: вторая фраза не говорит прямо, влияет ли настройка на позицию. Это один заметный сбой, клиент смог продолжить без переспроса."
+          },
+          {
+            "id": "p1-en-008",
+            "criterion": "c07",
+            "expected": "yes",
+            "predicted": "no",
+            "reason": "Оператор ограничился пожеланием хорошего дня, без итога, предложения помощи или вежливой формулы завершения."
+          }
+        ]
+      },
+      "target_distribution": {
+        "yes": 3,
+        "na": 3,
+        "no": 2
+      }
+    }
+  },
+  "limitations": [
+    "Random DEV subsets may contain translations or related scenarios; they measure regressions, not independent generalization.",
+    "All DEV labels were available before this work. The random sets are fresh for API comparison, not a blind benchmark.",
+    "A separate 8-case diagnostic set uses new texts and topics, and includes yes/no/na and changes in amount of available information.",
+    "One paired run is exploratory; repeat with uncached API calls if apparent improvement needs confirmation."
+  ],
+  "total_cost_usd": 2.252672,
+  "new_stability": {
+    "before": {
+      "hits_across_two_runs": 16,
+      "n": 16
+    },
+    "after": {
+      "hits_across_two_runs": 16,
+      "n": 16
+    }
+  },
+  "decision": "Результат экспериментальной калибровки. Значения gold и рабочая конфигурация по умолчанию сохранены. Повторные ответы на те же восемь ситуаций не являются шестнадцатью независимыми примерами."
+}

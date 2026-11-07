@@ -1,0 +1,605 @@
+{
+  "runs": {
+    "sonnet_tuning_before": {
+      "path": "data/runs/sonnet-smoke.json",
+      "model": "claude-sonnet-5-5",
+      "prompt_hash": "f2a033d48d5c",
+      "checklist_hash": "9c47d40af8ab3172d2751974e41073843f434b6b29d75fedae5c0f01764d8e0c",
+      "reference_hash": "a7be53127adc248741d2d1784196acdf8fa0d0cdc5f2351a26f576c9d3580386",
+      "n_dialogs": 4,
+      "n_valid": 4,
+      "n_errors": 0,
+      "matches": 23,
+      "n_labels": 32,
+      "unambiguous_matches": 19,
+      "n_unambiguous": 26,
+      "mae": 18.45,
+      "known_cost_usd": 0.164172,
+      "differences": [
+        {
+          "conversation_id": "p1-ru-005",
+          "criterion": "c04",
+          "reference": 10,
+          "prediction": 15,
+          "ambiguous": false,
+          "reason": "На вопрос о комиссии оператор ответил, что она зависит от банка, и посоветовал уточнить у банка; путь к реквизитам в итоге дан верно. Не сказано прямо, берёт ли комиссию брокер, поэтому небольшая деталь пропущена."
+        },
+        {
+          "conversation_id": "p1-en-014",
+          "criterion": "c04",
+          "reference": 10,
+          "prediction": 5,
+          "ambiguous": true,
+          "reason": "Причина блокировки не названа, оператор передал вопрос команде, но на вопрос о канале ответа не ответил, клиенту неясен следующий шаг."
+        },
+        {
+          "conversation_id": "p1-en-014",
+          "criterion": "c06",
+          "reference": 7,
+          "prediction": 4,
+          "ambiguous": false,
+          "reason": "Клиент переспросил из-за неясного ответа о проверке и затем остался без ответа на вопрос о канале связи; оператор невпопад попрощался."
+        },
+        {
+          "conversation_id": "p1-kz-013",
+          "criterion": "c02",
+          "reference": "na",
+          "prediction": "no",
+          "ambiguous": false,
+          "reason": "Клиент написал, что раньше не покупал облигации, и просил оператора, который объяснит. Оператор ничего не уточнил и повторил подсказку бота."
+        },
+        {
+          "conversation_id": "p1-kz-013",
+          "criterion": "c04",
+          "reference": 20,
+          "prediction": 10,
+          "ambiguous": false,
+          "reason": "Где искать облигации, клиент выяснил и нашёл. Просьба объяснить, какие бумаги выбрать новичку, осталась открытой: оператор предложил платную консультацию вместо объяснения."
+        },
+        {
+          "conversation_id": "p1-kz-013",
+          "criterion": "c06",
+          "reference": 10,
+          "prediction": 7,
+          "ambiguous": true,
+          "reason": "Реплика m12 неуместна после «Таптым» — один заметный сбой. Клиент всё же понял ответ и смог отказаться."
+        },
+        {
+          "conversation_id": "p4-ru-001",
+          "criterion": "c02",
+          "reference": "na",
+          "prediction": "yes",
+          "ambiguous": false,
+          "reason": "Клиент выбрал только пункты меню, подробностей запроса оператор не знал, поэтому вопрос «чем помочь» уместен; далее клиент сам описал запрос и оператор ответил по сути."
+        },
+        {
+          "conversation_id": "p4-ru-001",
+          "criterion": "c04",
+          "reference": 20,
+          "prediction": 5,
+          "ambiguous": false,
+          "reason": "Оператор объяснил роль техподдержки, но на вопрос клиента о том, что делать без персонального менеджера, не дал внятного следующего шага (канал, куда обратиться), а в m43 переложил вину на клиента и не предложил решения."
+        },
+        {
+          "conversation_id": "p4-ru-001",
+          "criterion": "c06",
+          "reference": 7,
+          "prediction": 4,
+          "ambiguous": false,
+          "reason": "Клиент переспрашивала (m29 про отсутствие менеджера), оператор повторял одно и то же, не ответив на вопрос; есть невнятные реплики (m38) и неуместный встречный вопрос в m43."
+        }
+      ]
+    },
+    "sonnet_tuning_after": {
+      "path": "data/runs/calibration-1-tuning.json",
+      "model": "claude-sonnet-5-5",
+      "prompt_hash": "92026f548437",
+      "checklist_hash": "04b61cb795b241553f15228af351b208d4b7c1ec847b8c574b07a6d86a8f335a",
+      "reference_hash": "a7be53127adc248741d2d1784196acdf8fa0d0cdc5f2351a26f576c9d3580386",
+      "n_dialogs": 4,
+      "n_valid": 4,
+      "n_errors": 0,
+      "matches": 29,
+      "n_labels": 32,
+      "unambiguous_matches": 24,
+      "n_unambiguous": 26,
+      "mae": 9.58,
+      "known_cost_usd": 0.257896,
+      "differences": [
+        {
+          "conversation_id": "p1-kz-013",
+          "criterion": "c04",
+          "reference": 20,
+          "prediction": 5,
+          "ambiguous": false,
+          "reason": "Оператор лишь повторил подсказку бота о разделе «Котировки». Клиент новичок и просил объяснение, а оператор не объяснил, как выбрать облигации, и предложил платную консультацию вместо этого. Общая подсказка есть, но клиенту непонятно, как действовать дальше."
+        },
+        {
+          "conversation_id": "p1-kz-013",
+          "criterion": "c06",
+          "reference": 10,
+          "prediction": 7,
+          "ambiguous": true,
+          "reason": "Реплики понятны и связны, клиент не переспрашивал. Но предложение платной консультации в m12 — неуместная реплика, один заметный сбой."
+        },
+        {
+          "conversation_id": "p4-ru-001",
+          "criterion": "c04",
+          "reference": 20,
+          "prediction": 15,
+          "ambiguous": false,
+          "reason": "Оператор объяснил границы услуги, ответил, что делать без персонального менеджера, и пояснил, что значит «техническая часть». Не уточнил, как клиенту решить вопрос с закреплением менеджера, что осталось второстепенным пробелом."
+        }
+      ]
+    },
+    "sonnet_validation_before": {
+      "path": "data/runs/calibration-1-validation-before.json",
+      "model": "claude-sonnet-5-5",
+      "prompt_hash": "f2a033d48d5c",
+      "checklist_hash": "9c47d40af8ab3172d2751974e41073843f434b6b29d75fedae5c0f01764d8e0c",
+      "reference_hash": "a7be53127adc248741d2d1784196acdf8fa0d0cdc5f2351a26f576c9d3580386",
+      "n_dialogs": 12,
+      "n_valid": 12,
+      "n_errors": 0,
+      "matches": 86,
+      "n_labels": 96,
+      "unambiguous_matches": 82,
+      "n_unambiguous": 89,
+      "mae": 4.69,
+      "known_cost_usd": 0.35469,
+      "differences": [
+        {
+          "conversation_id": "p1-ru-018",
+          "criterion": "c06",
+          "reference": 0,
+          "prediction": 4,
+          "ambiguous": true,
+          "reason": "Клиенту пришлось поправлять оператора из-за необоснованного ответа, затем последовала невнятная реплика «Тогда не знаю»."
+        },
+        {
+          "conversation_id": "p1-kz-003",
+          "criterion": "c04",
+          "reference": 20,
+          "prediction": 15,
+          "ambiguous": false,
+          "reason": "Вопрос о платеже передан специалистам, но срок ответа не назван; оператор лишь сказал, что ответ придёт в чат. Вопросы об отчёте решены корректно."
+        },
+        {
+          "conversation_id": "p1-kz-005",
+          "criterion": "c04",
+          "reference": 20,
+          "prediction": 15,
+          "ambiguous": false,
+          "reason": "В итоге клиенту дан верный путь, и он нашёл раздел; вопрос решён, но первая рекомендация про профиль была неточной."
+        },
+        {
+          "conversation_id": "p1-kz-012",
+          "criterion": "c06",
+          "reference": 10,
+          "prediction": 7,
+          "ambiguous": false,
+          "reason": "Реплики ясные, но оператор повторно попросил сообщение с экрана, хотя клиент уже написал, что там «отклонён» (один заметный сбой)."
+        },
+        {
+          "conversation_id": "p1-en-008",
+          "criterion": "c04",
+          "reference": 20,
+          "prediction": 10,
+          "ambiguous": false,
+          "reason": "Поиск бумаги и отключение маржи решены, но на вопрос о влиянии на уже имеющуюся позицию оператор не дал внятного ответа и следующего шага."
+        },
+        {
+          "conversation_id": "p1-en-008",
+          "criterion": "c06",
+          "reference": 10,
+          "prediction": 7,
+          "ambiguous": true,
+          "reason": "Ответ на m17 невнятный и уходит от вопроса. Это один заметный сбой, клиент смог продолжить диалог."
+        },
+        {
+          "conversation_id": "p1-en-008",
+          "criterion": "c07",
+          "reference": "yes",
+          "prediction": "no",
+          "ambiguous": false,
+          "reason": "Оператор ограничился «Have a good day!» без итога, предложения помощи или вежливой формулы завершения, то есть голым прощанием."
+        },
+        {
+          "conversation_id": "p4-ru-005",
+          "criterion": "c03",
+          "reference": "no",
+          "prediction": "na",
+          "ambiguous": true,
+          "reason": "Подтверждения личности нет. Но оператор не раскрывал данные счёта, а удаление отложено на завтра через линию поддержки, поэтому запрос не потребовал идентификации."
+        },
+        {
+          "conversation_id": "p4-ru-005",
+          "criterion": "c04",
+          "reference": 20,
+          "prediction": 15,
+          "ambiguous": false,
+          "reason": "Оператор объяснил, как исправить регистрацию, назвал канал и время обращения (с 09:00) и подсказал, какой паспорт указывать. Срок удаления счёта остался неопределённым, и часть объяснений противоречива."
+        },
+        {
+          "conversation_id": "p4-ru-005",
+          "criterion": "c06",
+          "reference": 10,
+          "prediction": 4,
+          "ambiguous": false,
+          "reason": "Реплики оператора расплывчаты и противоречивы: сначала «если успеем сегодня», потом «позвоните завтра». Клиент переспрашивал, займётся ли оператор этим сейчас, и уточнял сроки."
+        }
+      ]
+    },
+    "sonnet_validation_after": {
+      "path": "data/runs/calibration-1-validation-after.json",
+      "model": "claude-sonnet-5-5",
+      "prompt_hash": "92026f548437",
+      "checklist_hash": "04b61cb795b241553f15228af351b208d4b7c1ec847b8c574b07a6d86a8f335a",
+      "reference_hash": "a7be53127adc248741d2d1784196acdf8fa0d0cdc5f2351a26f576c9d3580386",
+      "n_dialogs": 12,
+      "n_valid": 12,
+      "n_errors": 0,
+      "matches": 85,
+      "n_labels": 96,
+      "unambiguous_matches": 81,
+      "n_unambiguous": 89,
+      "mae": 5.69,
+      "known_cost_usd": 0.363503,
+      "differences": [
+        {
+          "conversation_id": "p1-ru-018",
+          "criterion": "c06",
+          "reference": 0,
+          "prediction": 4,
+          "ambiguous": true,
+          "reason": "Клиент был вынужден поправить оператора из-за неверного по контексту ответа; диалог оборвался фразой «Тогда не знаю»."
+        },
+        {
+          "conversation_id": "p1-ru-016",
+          "criterion": "c05",
+          "reference": "no",
+          "prediction": "yes",
+          "ambiguous": false,
+          "reason": "Клиент не выражал явного недовольства, оператор был вежлив, хотя тон суховат; грубости нет."
+        },
+        {
+          "conversation_id": "p1-ru-025",
+          "criterion": "c02",
+          "reference": "yes",
+          "prediction": "na",
+          "ambiguous": false,
+          "reason": "Клиент не сформулировал суть запроса (хотел объяснить оператору), поэтому приглашение изложить вопрос уместно, а клиент сразу ушёл; недостающих деталей для уточнения ещё не было."
+        },
+        {
+          "conversation_id": "p1-kz-012",
+          "criterion": "c04",
+          "reference": 20,
+          "prediction": 10,
+          "ambiguous": false,
+          "reason": "Клиент сформулировал проблему, но без тикера оператор не мог её решить; оператор предложил следующий шаг (прислать данные для проверки), а клиент сам отложил обращение. Причина отклонения не раскрыта, и общих подсказок о возможных причинах нет."
+        },
+        {
+          "conversation_id": "p1-en-008",
+          "criterion": "c04",
+          "reference": 20,
+          "prediction": 15,
+          "ambiguous": false,
+          "reason": "Поиск по тикеру и отключение Use Margin объяснены; на вопрос о существующей позиции оператор лишь сказал, что настройка относится к текущему ордеру, без прямого ответа и следующего шага. Основной вопрос решён, пропущена второстепенная деталь."
+        },
+        {
+          "conversation_id": "p1-en-008",
+          "criterion": "c06",
+          "reference": 10,
+          "prediction": 7,
+          "ambiguous": true,
+          "reason": "Ответ о существующей позиции невнятный и двусмысленный, но клиент не переспрашивал и продолжил диалог; один заметный сбой."
+        },
+        {
+          "conversation_id": "p1-en-008",
+          "criterion": "c07",
+          "reference": "yes",
+          "prediction": "no",
+          "ambiguous": false,
+          "reason": "Оператор ограничился коротким пожеланием без итога и без предложения дальнейшей помощи."
+        },
+        {
+          "conversation_id": "p4-ru-005",
+          "criterion": "c03",
+          "reference": "no",
+          "prediction": "na",
+          "ambiguous": true,
+          "reason": "Подтверждения личности нет, но данные счёта не раскрывались и защищённых действий не выполнялось: оператор лишь объяснил общий порядок. Идентификация в этом разговоре не требовалась."
+        },
+        {
+          "conversation_id": "p4-ru-005",
+          "criterion": "c04",
+          "reference": 20,
+          "prediction": 15,
+          "ambiguous": false,
+          "reason": "Оператор объяснил, как выйти из приложения, что завтра нужно позвонить с 09:00 для удаления счёта и повторной регистрации, и какой паспорт указывать. Точный срок появления возможности удаления не назван."
+        },
+        {
+          "conversation_id": "p4-ru-005",
+          "criterion": "c06",
+          "reference": 10,
+          "prediction": 7,
+          "ambiguous": false,
+          "reason": "Из-за неоднозначных ответов клиент переспрашивал о сроках и думал, что оператор удалит счёт сейчас, и оператору пришлось поправлять это. Один заметный сбой, но диалог понятен."
+        },
+        {
+          "conversation_id": "p4-ru-005",
+          "criterion": "c07",
+          "reference": "na",
+          "prediction": "yes",
+          "ambiguous": false,
+          "reason": "Оператор поблагодарил за обращение до того, как клиент завершил звонок, после согласования следующего шага."
+        }
+      ]
+    },
+    "opus_tuning_after": {
+      "path": "data/runs/calibration-1-opus-tuning.json",
+      "model": "claude-opus-5-5",
+      "prompt_hash": "92026f548437",
+      "checklist_hash": "04b61cb795b241553f15228af351b208d4b7c1ec847b8c574b07a6d86a8f335a",
+      "reference_hash": "a7be53127adc248741d2d1784196acdf8fa0d0cdc5f2351a26f576c9d3580386",
+      "n_dialogs": 4,
+      "n_valid": 4,
+      "n_errors": 0,
+      "matches": 32,
+      "n_labels": 32,
+      "unambiguous_matches": 26,
+      "n_unambiguous": 26,
+      "mae": 0.0,
+      "known_cost_usd": 0.454577,
+      "differences": []
+    },
+    "opus_validation_before": {
+      "path": "data/runs/calibration-1-opus-validation-before.json",
+      "model": "claude-opus-5-5",
+      "prompt_hash": "f2a033d48d5c",
+      "checklist_hash": "9c47d40af8ab3172d2751974e41073843f434b6b29d75fedae5c0f01764d8e0c",
+      "reference_hash": "a7be53127adc248741d2d1784196acdf8fa0d0cdc5f2351a26f576c9d3580386",
+      "n_dialogs": 12,
+      "n_valid": 12,
+      "n_errors": 0,
+      "matches": 83,
+      "n_labels": 96,
+      "unambiguous_matches": 78,
+      "n_unambiguous": 89,
+      "mae": 7.69,
+      "known_cost_usd": 0.696962,
+      "differences": [
+        {
+          "conversation_id": "p1-ru-018",
+          "criterion": "c03",
+          "reference": "na",
+          "prediction": "no",
+          "ambiguous": false,
+          "reason": "Оператор сделал утверждение о конкретном приказе клиента, хотя подтверждения личности в диалоге нет."
+        },
+        {
+          "conversation_id": "p1-ru-018",
+          "criterion": "c06",
+          "reference": 0,
+          "prediction": 4,
+          "ambiguous": true,
+          "reason": "Ответ оператора не соответствовал контексту, и клиенту пришлось переспросить и поправить его. Затем оператор отказался от своего же категоричного утверждения."
+        },
+        {
+          "conversation_id": "p1-kz-003",
+          "criterion": "c02",
+          "reference": "yes",
+          "prediction": "no",
+          "ambiguous": false,
+          "reason": "Клиент ещё в m1 написал, что перевёл деньги вчера. Оператор всё равно спросил, когда был сделан перевод, то есть переспросил уже известное. Уточнение валюты при этом было уместным."
+        },
+        {
+          "conversation_id": "p1-kz-003",
+          "criterion": "c06",
+          "reference": 10,
+          "prediction": 7,
+          "ambiguous": false,
+          "reason": "В целом ответы ясные и последовательные. Есть один сбой — повторный вопрос о дате перевода, которую клиент уже называл."
+        },
+        {
+          "conversation_id": "p1-kz-005",
+          "criterion": "c02",
+          "reference": "na",
+          "prediction": "no",
+          "ambiguous": false,
+          "reason": "Клиент написал, что не понимает, в каком меню искать раздел, но оператор не уточнил платформу и дал неточный путь наугад. Совет не подошёл клиенту."
+        },
+        {
+          "conversation_id": "p1-kz-012",
+          "criterion": "c02",
+          "reference": "yes",
+          "prediction": "no",
+          "ambiguous": false,
+          "reason": "Тикер уточнён по делу, но оператор повторно запросил текст сообщения на экране. Клиент уже написал боту, что там только «отклонён»."
+        },
+        {
+          "conversation_id": "p1-kz-012",
+          "criterion": "c06",
+          "reference": 10,
+          "prediction": 7,
+          "ambiguous": false,
+          "reason": "Ответы ясные, но есть один сбой: повторный запрос уже известного текста сообщения."
+        },
+        {
+          "conversation_id": "p1-en-008",
+          "criterion": "c04",
+          "reference": 20,
+          "prediction": 15,
+          "ambiguous": false,
+          "reason": "Поиск по тикеру, переход к заявке и отключение маржи объяснены. На вопрос о существующей позиции оператор ответил лишь косвенно (настройка касается текущей заявки), без чёткого «нет, не влияет»."
+        },
+        {
+          "conversation_id": "p1-en-008",
+          "criterion": "c06",
+          "reference": 10,
+          "prediction": 7,
+          "ambiguous": true,
+          "reason": "Ответы в целом ясные. Одна невнятная формулировка в m18 — заметный сбой, но клиент переспрашивать не стал."
+        },
+        {
+          "conversation_id": "p1-en-008",
+          "criterion": "c07",
+          "reference": "yes",
+          "prediction": "no",
+          "ambiguous": false,
+          "reason": "Оператор ограничился прощанием: не подвёл итог и не предложил дальнейшую помощь."
+        },
+        {
+          "conversation_id": "p4-ru-005",
+          "criterion": "c04",
+          "reference": 20,
+          "prediction": 15,
+          "ambiguous": false,
+          "reason": "Оператор закрыл основные вопросы: выход из приложения, удаление счёта через линию с 09:00, выбор паспорта Кыргызстана с добавлением ВНЖ. Срок появления возможности удаления остался размытым."
+        },
+        {
+          "conversation_id": "p4-ru-005",
+          "criterion": "c06",
+          "reference": 10,
+          "prediction": 7,
+          "ambiguous": false,
+          "reason": "Был один заметный сбой: про сроки удаления оператор отвечал путано («если успеем сегодня», затем «звоните завтра»). Клиент всё же понял, как действовать дальше."
+        },
+        {
+          "conversation_id": "p4-ru-005",
+          "criterion": "c07",
+          "reference": "na",
+          "prediction": "yes",
+          "ambiguous": false,
+          "reason": "Оператор предложил дополнительную помощь и завершил разговор вежливой формулой до того, как клиент положил трубку."
+        }
+      ]
+    },
+    "opus_validation_after": {
+      "path": "data/runs/calibration-1-opus-validation.json",
+      "model": "claude-opus-5-5",
+      "prompt_hash": "92026f548437",
+      "checklist_hash": "04b61cb795b241553f15228af351b208d4b7c1ec847b8c574b07a6d86a8f335a",
+      "reference_hash": "a7be53127adc248741d2d1784196acdf8fa0d0cdc5f2351a26f576c9d3580386",
+      "n_dialogs": 12,
+      "n_valid": 12,
+      "n_errors": 0,
+      "matches": 88,
+      "n_labels": 96,
+      "unambiguous_matches": 83,
+      "n_unambiguous": 89,
+      "mae": 3.96,
+      "known_cost_usd": 0.488992,
+      "differences": [
+        {
+          "conversation_id": "p1-ru-025",
+          "criterion": "c02",
+          "reference": "yes",
+          "prediction": "na",
+          "ambiguous": false,
+          "reason": "Клиент так и не сформулировал запрос и покинул чат. Уточнять детали было нечего, а приглашение изложить вопрос выявлением потребности не считается."
+        },
+        {
+          "conversation_id": "p1-kz-003",
+          "criterion": "c02",
+          "reference": "yes",
+          "prediction": "no",
+          "ambiguous": false,
+          "reason": "Клиент ещё в m1 сообщил, что перевёл деньги вчера, а оператор снова спросил, когда был сделан перевод. Это повторный вопрос об уже известном."
+        },
+        {
+          "conversation_id": "p1-kz-003",
+          "criterion": "c06",
+          "reference": 10,
+          "prediction": 7,
+          "ambiguous": false,
+          "reason": "Ответы в целом ясные и последовательные. Один сбой — повторный вопрос о дате перевода, уже известной из m1."
+        },
+        {
+          "conversation_id": "p1-en-008",
+          "criterion": "c04",
+          "reference": 20,
+          "prediction": 15,
+          "ambiguous": false,
+          "reason": "Поиск бумаги, переход к заявке и отключение маржи разобраны корректно. На вопрос о существующей позиции дан лишь косвенный ответ (настройка относится к текущей заявке), и эта второстепенная деталь осталась не до конца прояснённой."
+        },
+        {
+          "conversation_id": "p1-en-008",
+          "criterion": "c06",
+          "reference": 10,
+          "prediction": 7,
+          "ambiguous": true,
+          "reason": "Ответы в целом ясные и последовательные. Одна формулировка в m18 невнятна, но клиент понял ответ и продолжил без переспроса."
+        },
+        {
+          "conversation_id": "p4-ru-005",
+          "criterion": "c03",
+          "reference": "no",
+          "prediction": "na",
+          "ambiguous": true,
+          "reason": "Конкретные данные счёта не раскрывались, защищённое действие (удаление счёта) не выполнялось и было перенесено на следующий звонок. Отдельная идентификация в этом диалоге не требовалась."
+        },
+        {
+          "conversation_id": "p4-ru-005",
+          "criterion": "c06",
+          "reference": 10,
+          "prediction": 7,
+          "ambiguous": false,
+          "reason": "Оператор сначала сказал, что удаление будет не сегодня, затем — «если успеем сегодня». Из-за этой неясности клиент уточнял, займётся ли оператор удалением сейчас; это один заметный сбой, понимание в итоге восстановлено."
+        },
+        {
+          "conversation_id": "p4-ru-005",
+          "criterion": "c07",
+          "reference": "na",
+          "prediction": "yes",
+          "ambiguous": false,
+          "reason": "Оператор предложил дальнейшую помощь и завершил разговор вежливой формулой до того, как клиент положил трубку."
+        }
+      ]
+    },
+    "contrastive_before": {
+      "path": "data/runs/calibration-1-contrastive-before.json",
+      "model": "claude-sonnet-5-5",
+      "prompt_hash": "f2a033d48d5c",
+      "checklist_hash": "9c47d40af8ab3172d2751974e41073843f434b6b29d75fedae5c0f01764d8e0c",
+      "reference_hash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+      "n_dialogs": 6,
+      "n_valid": 6,
+      "n_errors": 0,
+      "matches": 8,
+      "n_labels": 8,
+      "unambiguous_matches": 8,
+      "n_unambiguous": 8,
+      "mae": null,
+      "known_cost_usd": 0.11418,
+      "differences": []
+    },
+    "contrastive_after": {
+      "path": "data/runs/calibration-1-contrastive-after.json",
+      "model": "claude-sonnet-5-5",
+      "prompt_hash": "92026f548437",
+      "checklist_hash": "04b61cb795b241553f15228af351b208d4b7c1ec847b8c574b07a6d86a8f335a",
+      "reference_hash": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+      "n_dialogs": 6,
+      "n_valid": 6,
+      "n_errors": 0,
+      "matches": 8,
+      "n_labels": 8,
+      "unambiguous_matches": 8,
+      "n_unambiguous": 8,
+      "mae": null,
+      "known_cost_usd": 0.147299,
+      "differences": []
+    }
+  },
+  "limitations": [
+    "DEV уже использовался при создании разметки и оценщика; это регрессионная проверка.",
+    "По одному прогону каждой конфигурации: стохастическая вариативность не измерена.",
+    "Validation подобран до получения ответов и не включает прямые языковые аналоги tuning. Полного группового разбиения 65 диалогов пока нет.",
+    "В validation нет положительных примеров c08: полнота обнаружения грубых нарушений на этом срезе не измеряется.",
+    "Новые парные кейсы написаны ассистентом и проверяют только указанные критерии; независимой человеческой разметки у них нет."
+  ],
+  "new_experiment_cost_usd": 2.878099,
+  "reference_file_sha256": "99814bec36e7bdaa8a9589864be49c0dbd0956985b38786d70283b450c99f699",
+  "decision": "Кандидат остаётся экспериментальным. Исходная разметка и конфигурация по умолчанию не изменены. Перед продвижением нужны повторные прогоны и дополнительные семейства сценариев, особенно грубые нарушения."
+}

@@ -44,7 +44,7 @@ def compare(checklist: dict, gold: dict, predictions: dict[str, dict]) -> dict:
     for conv_id in ids:
         g = gold["items"][conv_id]["answers"]
         p = predictions[conv_id]
-        if not all(c["id"] in p for c in checklist["criteria"]):
+        if not all(c["id"] in p and c["id"] in g for c in checklist["criteria"]):
             continue
         gs, ps = score(checklist, g), score(checklist, p)
         if gs["total"] is not None and ps["total"] is not None:

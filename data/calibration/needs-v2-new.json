@@ -1,0 +1,296 @@
+[
+  {
+    "conversation_id": "fresh-en-04",
+    "channel": "agent chat",
+    "language": "EN",
+    "audio_url": null,
+    "transcript": [
+      {
+        "timestamp": "00:00",
+        "speaker": "client",
+        "text": "My last weekly market digest arrived on 14 October. I checked my inbox: that is the exact date."
+      },
+      {
+        "timestamp": "00:10",
+        "speaker": "operator",
+        "text": "Hello, I'm Jordan. What date did you receive the last digest?"
+      },
+      {
+        "timestamp": "00:20",
+        "speaker": "client",
+        "text": "14 October, as I just wrote."
+      },
+      {
+        "timestamp": "00:30",
+        "speaker": "operator",
+        "text": "Thank you. I will send that date with your delivery issue to the mail service team. We will reply here."
+      },
+      {
+        "timestamp": "00:40",
+        "speaker": "client",
+        "text": "Thanks."
+      },
+      {
+        "timestamp": "00:50",
+        "speaker": "operator",
+        "text": "The team will investigate delivery. Goodbye."
+      }
+    ]
+  },
+  {
+    "conversation_id": "fresh-en-03",
+    "channel": "agent chat",
+    "language": "EN",
+    "audio_url": null,
+    "transcript": [
+      {
+        "timestamp": "00:00",
+        "speaker": "client",
+        "text": "The weekly market digest stopped reaching me a while ago."
+      },
+      {
+        "timestamp": "00:10",
+        "speaker": "operator",
+        "text": "Hello, I'm Jordan. Around which date did you receive the last digest? That will help us locate the delivery logs."
+      },
+      {
+        "timestamp": "00:20",
+        "speaker": "client",
+        "text": "It was on 14 October."
+      },
+      {
+        "timestamp": "00:30",
+        "speaker": "operator",
+        "text": "Thank you. I will send that date with your delivery issue to the mail service team. We will reply here."
+      },
+      {
+        "timestamp": "00:40",
+        "speaker": "client",
+        "text": "Thanks."
+      },
+      {
+        "timestamp": "00:50",
+        "speaker": "operator",
+        "text": "The team will investigate delivery. Goodbye."
+      }
+    ]
+  },
+  {
+    "conversation_id": "fresh-ru-08",
+    "channel": "agent chat",
+    "language": "RU",
+    "audio_url": null,
+    "transcript": [
+      {
+        "timestamp": "00:00",
+        "speaker": "operator",
+        "text": "Здравствуйте, я Илья. Чем могу помочь?"
+      },
+      {
+        "timestamp": "00:10",
+        "speaker": "client",
+        "text": "Подскажите, как сделать тёмный фон в веб-кабинете?"
+      },
+      {
+        "timestamp": "00:20",
+        "speaker": "operator",
+        "text": "Откройте настройки отображения и выберите тёмную тему."
+      },
+      {
+        "timestamp": "00:30",
+        "speaker": "client",
+        "text": "Готово, благодарю."
+      },
+      {
+        "timestamp": "00:40",
+        "speaker": "operator",
+        "text": "Тёмная тема включена. Обращайтесь, если понадобится помощь. До свидания!"
+      }
+    ]
+  },
+  {
+    "conversation_id": "fresh-ru-01",
+    "channel": "agent chat",
+    "language": "RU",
+    "audio_url": null,
+    "transcript": [
+      {
+        "timestamp": "00:00",
+        "speaker": "client",
+        "text": "Мне нужна помощь с сервисом."
+      },
+      {
+        "timestamp": "00:10",
+        "speaker": "operator",
+        "text": "Здравствуйте, я Марина. Расскажите, пожалуйста, что вы хотите сделать?"
+      },
+      {
+        "timestamp": "00:20",
+        "speaker": "system",
+        "text": "Клиент покинул чат."
+      }
+    ]
+  },
+  {
+    "conversation_id": "fresh-ru-02",
+    "channel": "agent chat",
+    "language": "RU",
+    "audio_url": null,
+    "transcript": [
+      {
+        "timestamp": "00:00",
+        "speaker": "client",
+        "text": "Как увеличить размер шрифта в веб-кабинете?"
+      },
+      {
+        "timestamp": "00:10",
+        "speaker": "operator",
+        "text": "Здравствуйте, я Марина. Расскажите, пожалуйста, что вы хотите сделать?"
+      },
+      {
+        "timestamp": "00:20",
+        "speaker": "client",
+        "text": "Увеличить шрифт. Я уже написала, что в веб-кабинете."
+      },
+      {
+        "timestamp": "00:30",
+        "speaker": "operator",
+        "text": "Откройте настройки отображения и выберите крупный шрифт."
+      },
+      {
+        "timestamp": "00:40",
+        "speaker": "client",
+        "text": "Получилось."
+      },
+      {
+        "timestamp": "00:50",
+        "speaker": "operator",
+        "text": "Размер изменён. Если понадобится помощь, обращайтесь. До свидания!"
+      }
+    ]
+  },
+  {
+    "conversation_id": "fresh-kz-05",
+    "channel": "agent chat",
+    "language": "KZ",
+    "audio_url": null,
+    "transcript": [
+      {
+        "timestamp": "00:00",
+        "speaker": "client",
+        "text": "Есепті қазақ тілінде қалай жүктеймін?"
+      },
+      {
+        "timestamp": "00:10",
+        "speaker": "bot",
+        "text": "Операторды қосамын."
+      },
+      {
+        "timestamp": "00:20",
+        "speaker": "system",
+        "text": "Чат операторға жіберілді."
+      },
+      {
+        "timestamp": "00:30",
+        "speaker": "operator",
+        "text": "Сәлеметсіз бе, мен Әселмін. Мобильді қосымшаны ма, әлде веб-нұсқаны ма пайдаланасыз?"
+      },
+      {
+        "timestamp": "00:40",
+        "speaker": "client",
+        "text": "Веб-нұсқаны."
+      },
+      {
+        "timestamp": "00:50",
+        "speaker": "operator",
+        "text": "Веб-нұсқада «Есептер» бөлімін ашып, тіл тізімінен қазақ тілін таңдаңыз. Содан кейін жүктеу батырмасын басыңыз."
+      },
+      {
+        "timestamp": "01:00",
+        "speaker": "client",
+        "text": "Жүктелді, рақмет."
+      },
+      {
+        "timestamp": "01:10",
+        "speaker": "operator",
+        "text": "Есеп жүктелді. Қосымша көмек қажет болса, жазыңыз. Сау болыңыз!"
+      }
+    ]
+  },
+  {
+    "conversation_id": "fresh-ru-07",
+    "channel": "agent chat",
+    "language": "RU",
+    "audio_url": null,
+    "transcript": [
+      {
+        "timestamp": "00:00",
+        "speaker": "client",
+        "text": "Я впервые пользуюсь кабинетом. Как выключить звук уведомлений в браузерной версии?"
+      },
+      {
+        "timestamp": "00:10",
+        "speaker": "operator",
+        "text": "Здравствуйте, я Илья. В веб-кабинете откройте настройки уведомлений и выключите переключатель «Звук»."
+      },
+      {
+        "timestamp": "00:20",
+        "speaker": "client",
+        "text": "Выключилось, спасибо."
+      },
+      {
+        "timestamp": "00:30",
+        "speaker": "operator",
+        "text": "Звуковые уведомления выключены. Обращайтесь, если понадобится помощь. До свидания!"
+      }
+    ]
+  },
+  {
+    "conversation_id": "fresh-kz-06",
+    "channel": "agent chat",
+    "language": "KZ",
+    "audio_url": null,
+    "transcript": [
+      {
+        "timestamp": "00:00",
+        "speaker": "client",
+        "text": "Есепті қазақ тілінде қалай жүктеймін? Веб-нұсқаны пайдаланып отырмын."
+      },
+      {
+        "timestamp": "00:10",
+        "speaker": "bot",
+        "text": "Операторды қосамын."
+      },
+      {
+        "timestamp": "00:20",
+        "speaker": "system",
+        "text": "Чат операторға жіберілді."
+      },
+      {
+        "timestamp": "00:30",
+        "speaker": "operator",
+        "text": "Сәлеметсіз бе, мен Әселмін. Мобильді қосымшаны ма, әлде веб-нұсқаны ма пайдаланасыз?"
+      },
+      {
+        "timestamp": "00:40",
+        "speaker": "client",
+        "text": "Жоғарыда жаздым: веб-нұсқаны."
+      },
+      {
+        "timestamp": "00:50",
+        "speaker": "operator",
+        "text": "Веб-нұсқада «Есептер» бөлімін ашып, тіл тізімінен қазақ тілін таңдаңыз. Содан кейін жүктеу батырмасын басыңыз."
+      },
+      {
+        "timestamp": "01:00",
+        "speaker": "client",
+        "text": "Жүктелді, рақмет."
+      },
+      {
+        "timestamp": "01:10",
+        "speaker": "operator",
+        "text": "Есеп жүктелді. Қосымша көмек қажет болса, жазыңыз. Сау болыңыз!"
+      }
+    ]
+  }
+]

@@ -5,6 +5,8 @@ import hashlib
 import json
 import statistics
 import time
+
+from jsonschema import validate
 from collections import Counter
 from dataclasses import dataclass
 
@@ -18,7 +20,7 @@ from .verify import check_rationale
 # $ за 1M токенов: вход, выход, чтение кэша, запись кэша (5 мин). Цены Anthropic на 2026-10.
 PRICES = {
     "claude-opus-5-5": (4.00, 20.00, 0.20, 5.00),
-    "claude-sonnet-5-5": (2.00, 10.00, 0.20, 2.50),
+    "claude-sonnet-5-5": (2.00, 10.00, 0.10, 2.50),
     "claude-haiku-5-5": (0.10, 0.50, 0.01, 0.125),
 }
 # Модели, для которых включаем серверный fallback при отказе классификатора безопасности.
@@ -32,11 +34,11 @@ class EvaluationError(RuntimeError):
 
 @dataclass
 class EvalConfig:
-    model: str = "claude-opus-5-5"
+    model: str = "claude-sonnet-5-5"
     effort: str = "high"  # low | medium | high | xhigh | max
     votes: int = 1
     max_tokens: int = 16000
-    use_fallback: bool = True
+    use_fallback: bool = False
     repair: bool = True  # одна повторная попытка, если ответ противоречит фактам
 
 
@@ -132,14 +134,14 @@ class Evaluator:
         self.config = config or EvalConfig()
         if client is None:
             import anthropic
-            client = anthropic.Anthropic()
+            client = anthropic.Anthropic(timeout=120.0, max_retries=2)
         self.client = client
         self.system_prompt = build_system_prompt(checklist, examples)
         self.schema = output_schema(checklist)
         self.prompt_hash = hashlib.sha256(
             (self.system_prompt + json.dumps(self.schema, sort_keys=True)).encode()).hexdigest()[:12]
 
-    def _call(self, user_text: str) -> tuple[dict, dict, str]:
+    def _call(self, user_text: str, calls: list) -> tuple[dict, dict, str]:
         cfg = self.config
         kwargs = dict(
             model=cfg.model,
@@ -152,6 +154,9 @@ class Evaluator:
             resp = self.client.beta.messages.create(betas=[FALLBACK_BETA], fallbacks="default", **kwargs)
         else:
             resp = self.client.messages.create(**kwargs)
+        calls.append({"model": getattr(resp, "model", cfg.model), "usage": _usage_dict(resp.usage),
+                      "stop_reason": resp.stop_reason,
+                      "content": [{"type": b.type, "text": b.text} for b in resp.content if getattr(b, "type", None) == "text"]})
         if resp.stop_reason == "refusal":
             raise EvaluationError("модель отказалась отвечать (refusal)")
         if resp.stop_reason == "max_tokens":
@@ -159,19 +164,21 @@ class Evaluator:
         texts = [b.text for b in resp.content if getattr(b, "type", None) == "text"]
         if not texts:
             raise EvaluationError("в ответе нет текстового блока")
-        return json.loads(texts[-1]), _usage_dict(resp.usage), getattr(resp, "model", cfg.model)
+        raw = json.loads(texts[-1])
+        validate(raw, self.schema)
+        return raw, _usage_dict(resp.usage), getattr(resp, "model", cfg.model)
 
-    def evaluate_once(self, conv: dict, facts: dict) -> dict:
+    def evaluate_once(self, conv: dict, facts: dict, calls: list) -> dict:
         user_text = build_user_message(conv, facts)
         usage: dict = {}
-        raw, u, served = self._call(user_text)
+        raw, u, served = self._call(user_text, calls)
         _add_usage(usage, u)
         details, issues = validate_run(self.checklist, conv, facts, raw)
         repaired = False
         if issues and self.config.repair:
             note = ("\n\nВНИМАНИЕ: предыдущая попытка оценки содержала ошибки, перепроверь эти места:\n- "
                     + "\n- ".join(issues))
-            raw2, u2, served = self._call(user_text + note)
+            raw2, u2, served = self._call(user_text + "\nПредыдущий ответ:\n" + json.dumps(raw, ensure_ascii=False) + note, calls)
             _add_usage(usage, u2)
             details2, issues2 = validate_run(self.checklist, conv, facts, raw2)
             if len(issues2) <= len(issues):
@@ -182,7 +189,13 @@ class Evaluator:
     def evaluate(self, conv: dict) -> dict:
         started = time.monotonic()
         facts = extract_facts(conv)
-        runs = [self.evaluate_once(conv, facts) for _ in range(max(1, self.config.votes))]
+        calls = []
+        try:
+            runs = [self.evaluate_once(conv, facts, calls) for _ in range(max(1, self.config.votes))]
+        except Exception as exc:
+            error = EvaluationError(str(exc))
+            error.calls = calls
+            raise error from exc
         criteria = aggregate(self.checklist, runs)
         answers = {cid: d["answer"] for cid, d in criteria.items()}
         usage: dict = {}
@@ -191,7 +204,10 @@ class Evaluator:
         return {
             "conversation_id": conv["conversation_id"],
             "model": self.config.model,
-            "served_models": sorted({r["served_model"] for r in runs}),
+            "served_models": sorted({c["model"] for c in calls}),
+            "calls": calls,
+            "status": "needs_review" if any(r["issues"] for r in runs) else "ok",
+            "language": conv.get("language"), "channel": conv.get("channel"),
             "effort": self.config.effort,
             "votes": len(runs),
             "checklist_id": self.checklist.get("id"),
@@ -204,6 +220,7 @@ class Evaluator:
             "issues": sorted({i for r in runs for i in r["issues"]}),
             "facts": public_facts(facts),
             "usage": usage,
-            "cost_usd": cost_usd(self.config.model, usage),
+            "cost_usd": sum(cost_usd(c["model"], c["usage"]) for c in calls)
+                        if all(cost_usd(c["model"], c["usage"]) is not None for c in calls) else None,
             "latency_s": round(time.monotonic() - started, 2),
         }

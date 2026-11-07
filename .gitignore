@@ -16,3 +16,4 @@ data/runs/
 # Original organizer URLs contain access signatures; local recordings are published instead.
 docs/sources/student-guide.pdf
 annotations/task-guide.pdf
+.venv/

@@ -1,0 +1,71 @@
+{
+  "model": "claude-sonnet-5-5",
+  "run": "data/runs/calibration-3-check8.json",
+  "checklist": "config/experiments/checklist.calibration-3.json",
+  "annotation_files_unchanged": true,
+  "original_dataset_unchanged": true,
+  "generated_dialogues": false,
+  "api_calls": 8,
+  "repairs": 0,
+  "sdk_retries": 0,
+  "cost_usd": 0.221064,
+  "n_dialogs": 8,
+  "valid_dialogs": 7,
+  "needs_review": [
+    {
+      "id": "p4-ru-004",
+      "issues": [
+        "c02: цитата «Какие облигации хотели приобрести?» не найдена в репликах ['m19', 'm20', 'm30', 'm34', 'm38']",
+        "c08: цитата «Подскажите, пожалуйста, шестизначный код, о который я вам на» не найдена в репликах ['m79', 'm63']"
+      ]
+    }
+  ],
+  "matches_on_valid_outputs": 52,
+  "labels_on_valid_outputs": 56,
+  "valid_output_agreement": 0.9285714285714286,
+  "validated_matching_labels_out_of_all_requested": "52/64",
+  "raw_label_agreement_diagnostic_only": "60/64 (includes invalid evidence; not accepted quality)",
+  "fully_matching_valid_dialogs": 4,
+  "mae_on_valid_outputs": 4.39,
+  "differences": [
+    {
+      "id": "p1-ru-012",
+      "criterion": "c04",
+      "reference": 20,
+      "prediction": 15,
+      "status": "ok",
+      "reason": "Клиент спрашивал о наличии формы на русском, оператор лишь повторил ответ бота про английский язык, не ответив прямо про русский вариант и не предложив следующего шага. Основной вопрос закрыт лишь косвенно, но клиент подтвердил, что узнал всё."
+    },
+    {
+      "id": "p1-ru-012",
+      "criterion": "c07",
+      "reference": "na",
+      "prediction": "no",
+      "status": "ok",
+      "reason": "Оператор не завершил диалог ни итогом, ни прощанием, хотя возможность была в m10: после ответа клиент написал m11, а оператор не отреагировал, и соединение прервалось лишь через 18 секунд."
+    },
+    {
+      "id": "p1-ru-021",
+      "criterion": "c04",
+      "reference": 20,
+      "prediction": 15,
+      "status": "ok",
+      "reason": "Клиент просил объяснить различия простыми словами; оператор дал краткое отличие, но не упомянул ключевые различия (например, электронная торговля против биржевого зала, правила листинга, владельцы), так что объяснение поверхностное, хотя клиент поблагодарил."
+    },
+    {
+      "id": "p1-en-010",
+      "criterion": "c04",
+      "reference": 20,
+      "prediction": 15,
+      "status": "ok",
+      "reason": "Основной вопрос решён: D-счёт напрямую не используется для покупки, ордер нужно размещать с торгового счёта. Клиент также спрашивал, что это значит при размещении ордера, но оператор не объяснил, как перевести средства на торговый счёт, поэтому пропущена важная деталь."
+    }
+  ],
+  "limitations": [
+    "Different random DEV sample; no paired baseline, so improvement attributable to rules cannot be measured.",
+    "7 accepted dialogues all have c02/c03=N/A and c08=no; this sample does not test all answer classes.",
+    "Previous runs allowed repairs, this one does not; success-only percentages are not directly comparable.",
+    "Previously unrun IDs may have related or translated scenarios in prior datasets."
+  ],
+  "decision": "Candidate remains experimental. Do not change labels, retry failed evidence, or retune candidate after viewing this run without a new task."
+}
