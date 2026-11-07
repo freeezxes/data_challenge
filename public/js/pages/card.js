@@ -1,4 +1,4 @@
-import { factsText } from "../core.js";
+import { factsText, checklistPicker } from "../core.js";
 import { api, html, raw, hero, esc, fmtTotal, scoreClass, answerLabel, answerTone, role, toast, dialog, watchJobs, onJobs, money, CHANNEL } from "../core.js";
 
 const ROLE = { client: "Клиент", operator: "Оператор", bot: "Бот", system: "Система" };
@@ -21,6 +21,8 @@ function rangeIds(range, conv) {
 export default async function card(root, params) {
   const { ds, cid } = params;
   let data = await api(`/conversations/${encodeURIComponent(ds)}/${encodeURIComponent(cid)}`);
+  const versions = await api("/checklists");
+  let pick = versions.find((v) => v.active)?.key;
   let evIndex = 0;
 
   function paint() {
@@ -43,8 +45,9 @@ export default async function card(root, params) {
         title: `${CHANNEL[conv.channel] || "Диалог"} ${conv.conversation_id}`,
         tag: fin?.score.critical ? html`<span class="tag bad" style="vertical-align:middle;font-size:13px">Грубое нарушение</span>` : "",
         text: ok ? ev.result.summary : `${conv.language} · ${conv.messages.length} реплик${opName ? ` · оператор ${opName}` : ""}`,
-        aside: ok ? html`<div class="big"><b class="num ${scoreClass(total)}">${fmtTotal(total)}</b><small>из 100${fin.changed && Object.keys(fin.changed).length ? html` · до апелляции ${fmtTotal(ev.result.score.total)}` : ""}</small></div>` : "",
+        aside: ok ? html`<div class="big"><b class="num ${scoreClass(total)}">${fmtTotal(total)}</b><small>${total == null ? "итог не рассчитывается: нет применимых критериев с весом" : "из 100"}${fin.changed && Object.keys(fin.changed).length ? html` · до апелляции ${fmtTotal(ev.result.score.total)}` : ""}</small></div>` : "",
         actions: html`${data.evaluations.length > 1 ? html`<select class="input" id="hist" aria-label="История оценок" style="width:auto">${data.evaluations.map((e, i) => html`<option value="${i}" ${raw(i === evIndex ? "selected" : "")}>#${e.id} · ${e.checklist_key} · ${new Date(e.created_at).toLocaleString("ru-RU", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}${e.status === "error" ? " · ошибка" : ""}</option>`)}</select>` : ""}
+          ${checklistPicker(versions, pick)}
           <button class="btn ${ok ? "" : "primary"}" id="eval">${ok ? "Оценить заново" : "Оценить"}</button>` })}
       <div id="run"></div>
       <div class="card">
@@ -55,7 +58,7 @@ export default async function card(root, params) {
             const n = notes[m.id] || [];
             const worst = n.some((x) => x.tone === "bad") ? "bad" : n.some((x) => x.tone === "mid") ? "mid" : n.length && m.role === "operator" ? "ok" : "";
             return html`<article class="msg ${m.role} ${worst ? "mark-" + worst : ""}" id="${m.id}" data-t="${m.t}">
-              <div class="ts">${isCall && data.audio ? html`<button type="button" data-seek="${m.t}" title="Слушать с этого места">${tsOf(conv, m)}</button>` : tsOf(conv, m)}</div>
+              <div class="ts" title="${isCall ? `Исходная метка: ${m.timestamp}` : ""}">${isCall && data.audio ? html`<button type="button" data-seek="${m.t}" title="Слушать с этого места">${tsOf(conv, m)}</button>` : tsOf(conv, m)}</div>
               <div class="who">${ROLE[m.role] || m.role}${m.role === "operator" && opName ? " · " + opName : ""} <span class="muted" style="font-weight:400">${m.id}</span></div>
               <div class="text">${m.text}</div>
               ${n.length ? html`<div class="notes">${n.map((x) => html`<span class="note ${x.tone === "bad" ? "bad" : x.tone === "mid" ? "mid" : ""}">${short(x.c.title)}: ${answerLabel(x.c, x.a)}</span>`)}</div>` : ""}
@@ -69,7 +72,7 @@ export default async function card(root, params) {
   }
 
   function scoresPanel(conv, ev, checklist) {
-    if (!ev) return html`<header><h2>Оценка</h2></header><div class="empty"><b>Диалог ещё не оценён</b>Нажмите «Оценить»: модель проверит его по активному чек-листу, обычно за 20–40 секунд.</div>`;
+    if (!ev) return html`<header><h2>Оценка</h2></header><div class="empty"><b>Диалог ещё не оценён</b>Выберите версию чек-листа и нажмите «Оценить»: модель проверит диалог, обычно за 20–40 секунд.</div>`;
     if (!ev.result) return html`<header><h2>Оценка</h2></header><div class="alert"><b>Оценка не удалась</b>${ev.error}</div><div class="empty">Повторите попытку кнопкой «Оценить заново». Ошибка одного диалога не мешает остальным.</div>`;
     const fin = ev.final, rows = Object.fromEntries(fin.score.criteria.map((r) => [r.id, r]));
     const secs = Object.fromEntries((fin.score.sections || []).map((s) => [s.id, s]));
@@ -93,8 +96,8 @@ export default async function card(root, params) {
         ${ev.result.issues?.length ? html`<div class="alert warn"><b>Проверьте доказательства</b>${ev.result.issues.join("; ")}</div>` : ""}
       </div>
       <div class="sum"><div class="row"><span>Итог</span><b class="num ${scoreClass(fin.score.total)}">${Object.keys(fin.changed).length ? html`<span class="was">${fmtTotal(ev.result.score.total)}</span>` : ""}${fmtTotal(fin.score.total)}</b></div>
-        <div class="muted" style="font-size:12px">Вес «Не применяется» распределён между остальными критериями. ${appeals.length ? `Апелляций: ${appeals.length}, решено ${appeals.filter((a) => a.status === "decided").length}.` : ""}</div></div>
-      ${fin.score.critical ? html`<div class="alert"><b>Грубое нарушение</b>${checklist.criteria.filter((c) => c.type === "critical" && fin.answers[c.id] === "yes").map((c) => (ev.result.criteria[c.id].violations || []).map((v) => VIOL[v] || v).join(", ") || c.title).join("; ")}. На баллы не влияет, отмечается отдельно.</div>` : ""}
+        <div class="muted" style="font-size:12px">${fin.score.total == null ? "Итог не рассчитывается: все критерии с весом не применяются. " : "Вес «Не применяется» распределён между остальными критериями. "} ${appeals.length ? `Апелляций: ${appeals.length}, решено ${appeals.filter((a) => a.status === "decided").length}.` : ""}</div></div>
+      ${fin.score.critical ? html`<div class="alert"><b>Грубое нарушение</b>${checklist.criteria.filter((c) => c.type === "critical" && fin.answers[c.id] === "yes").map((c) => (ev.result.criteria[c.id].violations || []).map((v) => VIOL[v] || c.violations?.find((x) => x.id === v)?.text || v).join(", ") || c.title).join("; ")}. На баллы не влияет, отмечается отдельно.</div>` : ""}
       <div class="meta-line"><span>${ev.result.model}</span><span>чек-лист ${ev.checklist_key}</span><span>${money(ev.result.cost_usd)}</span><span>${ev.result.latency_s ? Math.round(ev.result.latency_s) + " с" : ""}</span><span>${ev.source === "live" ? "оценено в интерфейсе" : ev.source}</span><button class="link" id="trace">Как получена оценка</button></div>`;
   }
 
@@ -142,9 +145,13 @@ export default async function card(root, params) {
 
   function wire(conv, ev, checklist) {
     root.querySelector("#hist")?.addEventListener("change", (e) => { evIndex = Number(e.target.value); paint(); });
+    root.querySelector("#ck").onchange = (e) => { pick = e.target.value; };
     root.querySelector("#eval").onclick = async (e) => {
       e.target.disabled = true;
-      try { await api("/jobs", { dataset_id: ds, conversation_ids: [cid] }); toast("Оценка запущена"); watchJobs(); }
+      try {
+        await api("/jobs", { dataset_id: ds, conversation_ids: [cid], checklist_key: pick, votes: Number(localStorage.getItem("cqa-votes")) || undefined });
+        toast("Оценка запущена"); watchJobs();
+      }
       catch (x) { toast(x.message, true); e.target.disabled = false; }
     };
     root.querySelectorAll("[data-jump]").forEach((b) => (b.onclick = () => jump(b.dataset.jump, b.dataset.hl?.split(","))));

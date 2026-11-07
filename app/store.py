@@ -156,10 +156,12 @@ class Store:
         with self.lock:
             self.x("insert into datasets(id,name,source,created_at) values(?,?,?,?) on conflict(id) do update set name=excluded.name, source=excluded.source",
                    (ds_id, name, source, now()))
+            start = (self.q("select max(position) p from conversations where dataset_id=?", (ds_id,))[0]["p"] or -1) + 1
             for i, r in enumerate(records):
+                # новый диалог — в конец набора; уже известный — обновляем текст, место в очереди сохраняем
                 self.x("insert into conversations(dataset_id,conversation_id,position,record) values(?,?,?,?) "
-                       "on conflict(dataset_id,conversation_id) do update set record=excluded.record, position=excluded.position",
-                       (ds_id, r["conversation_id"], i, json.dumps(r, ensure_ascii=False)))
+                       "on conflict(dataset_id,conversation_id) do update set record=excluded.record",
+                       (ds_id, r["conversation_id"], start + i, json.dumps(r, ensure_ascii=False)))
         return len(records)
 
     def datasets(self):

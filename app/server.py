@@ -266,6 +266,12 @@ def _short(exc: Exception) -> str:
     return text[:400]
 
 
+# Явные типы: на Windows mimetypes берёт их из реестра и может отдать .js как text/plain —
+# тогда браузер не загрузит модули интерфейса.
+MIME = {".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".json": "application/json",
+        ".woff2": "font/woff2", ".ttf": "font/ttf", ".png": "image/png", ".jpg": "image/jpeg", ".svg": "image/svg+xml",
+        ".mp3": "audio/mpeg", ".wav": "audio/wav", ".txt": "text/plain", ".pdf": "application/pdf"}
+
 ROUTES = []
 
 
@@ -320,10 +326,25 @@ def _upload(app, m, q, body):
         if payload.get("isSuccess") is False:
             raise StoreError(f"в файле ответ API с ошибкой: {payload.get('error')}")
         payload = payload["data"]
-    records = payload["records"] if isinstance(payload, dict) else payload
-    ds_id = _slug(body.get("id") or (payload.get("dataset_group_id") if isinstance(payload, dict) else None) or body.get("name") or "upload")
-    n = app.store.save_dataset(ds_id, body.get("name") or ds_id, records, "upload")
-    return {"id": ds_id, "count": n}
+    if isinstance(payload, dict) and "records" in payload:
+        records = payload["records"]
+    elif isinstance(payload, dict) and "conversation_id" in payload:
+        records = [payload]  # один транскрипт
+    elif isinstance(payload, list):
+        records = payload
+    else:
+        raise StoreError("ожидается ответ API, объект data, массив records или одна запись с conversation_id и transcript")
+    if body.get("append_to"):
+        existing = {d["id"]: d for d in app.store.datasets()}
+        if body["append_to"] not in existing:
+            raise StoreError(f"набор {body['append_to']} не найден")
+        ds_id, name = body["append_to"], existing[body["append_to"]]["name"]
+    else:
+        ds_id = _slug(body.get("id") or (payload.get("dataset_group_id") if isinstance(payload, dict) else None)
+                      or body.get("name") or "upload")
+        name = body.get("name") or ds_id
+    n = app.store.save_dataset(ds_id, name, records, "upload")
+    return {"id": ds_id, "count": n, "ids": [r["conversation_id"] for r in records]}
 
 
 @route("POST", r"/api/datasets/fetch")
@@ -536,7 +557,7 @@ def make_handler(app: App):
             if PUBLIC.resolve() not in file.parents or not file.is_file():
                 return self.send_error(404, "Файл не найден")
             data = file.read_bytes()
-            ctype = mimetypes.guess_type(file.name)[0] or "application/octet-stream"
+            ctype = MIME.get(file.suffix.lower()) or mimetypes.guess_type(file.name)[0] or "application/octet-stream"
             if ctype.startswith("text/") or ctype in ("application/javascript", "application/json"):
                 ctype += "; charset=utf-8"
             rng = re.match(r"bytes=(\d*)-(\d*)$", self.headers.get("Range", ""))

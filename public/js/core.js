@@ -143,3 +143,9 @@ export function factsText(facts) {
     return v === true ? FACT_FIELD[k] || k : null;
   }).filter(Boolean).join(" · ");
 }
+
+// выбранная для запуска версия чек-листа (по умолчанию — активная)
+export function checklistPicker(versions, current, id = "ck") {
+  return html`<select class="input" id="${id}" aria-label="Чек-лист для оценки" title="Какой версией чек-листа оценивать" style="width:auto">${versions.map((v) =>
+    html`<option value="${v.key}" ${raw(v.key === current ? "selected" : "")}>${v.name} · v${v.version}${v.active ? " · активная" : ""}</option>`)}</select>`;
+}

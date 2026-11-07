@@ -111,7 +111,7 @@ def test_http_api_roundtrip(app):
         assert call("/api/state")[1]["has_key"] is True
         st, up = call("/api/datasets", {"name": "Контроль", "payload": {"isSuccess": True, "data": {
             "dataset_group_id": "CONTROL", "records": [json.loads(json.dumps(app.store.record("DEV", "p1-ru-001")))]}}})
-        assert st == 200 and up == {"id": "CONTROL", "count": 1}
+        assert st == 200 and up == {"id": "CONTROL", "count": 1, "ids": ["p1-ru-001"]}
         st, job = call("/api/jobs", {"dataset_id": "CONTROL"})
         assert st == 200
         _wait(app, job["id"])
@@ -182,3 +182,29 @@ def test_trace_shows_prompt_model_answers_and_code_facts(app):
     assert any(l.startswith("p1-kz-003;") and ";100.0;" in l for l in lines)
     js = json.loads(_export(app, {"ds": "DEV"}, {"format": "json"}, {}).data)
     assert js["criteria"][0] == "c01" and len(js["results"]) == 65
+
+
+def test_upload_single_transcript_and_append_keeps_order(app):
+    from app.server import _upload
+    one = {"conversation_id": "x-ru-001", "channel": "agent chat", "language": "RU", "audio_url": None,
+           "transcript": [{"timestamp": "00:01", "speaker": "client", "text": "Здравствуйте, где выписка?"}]}
+    r = _upload(app, {}, {}, {"name": "Один", "payload": json.dumps(one, ensure_ascii=False)})
+    assert r["count"] == 1 and r["ids"] == ["x-ru-001"]
+    r2 = _upload(app, {}, {}, {"append_to": "DEV", "payload": one})
+    assert r2["id"] == "DEV"
+    ids = [x["conversation_id"] for x in app.store.records("DEV")]
+    assert len(ids) == 66 and ids[0] == "p1-ru-001" and ids[-1] == "x-ru-001"
+    _upload(app, {}, {}, {"append_to": "DEV", "payload": one})  # повторная загрузка не дублирует
+    assert len(app.store.records("DEV")) == 66
+    with pytest.raises(StoreError):
+        _upload(app, {}, {}, {"payload": {"foo": 1}})
+
+
+def test_static_js_served_as_javascript(app):
+    srv = ThreadingHTTPServer(("127.0.0.1", 0), make_handler(app))
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    try:
+        with urllib.request.urlopen(f"http://127.0.0.1:{srv.server_address[1]}/js/main.js") as r:
+            assert r.headers["Content-Type"].startswith("text/javascript")
+    finally:
+        srv.shutdown()

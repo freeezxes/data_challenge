@@ -1,4 +1,4 @@
-import { API, api, html, raw, hero, fmtTotal, scoreClass, CHANNEL, store, toast, onJobs, watchJobs, icon, money } from "../core.js";
+import { API, api, html, raw, hero, checklistPicker, fmtTotal, scoreClass, CHANNEL, store, toast, onJobs, watchJobs, icon, money } from "../core.js";
 import { fetchDialog, uploadDialog } from "./home.js";
 
 const FILTERS = [
@@ -18,12 +18,14 @@ export default async function queue(root, params) {
   if (!st.datasets.some((d) => d.id === store.dataset)) store.dataset = st.datasets[0]?.id || "DEV";
   let rows = [], filter = params.f || "all", q = "", selected = new Set();
   let votes = Number(localStorage.getItem("cqa-votes") || st.votes || 3);
+  const versions = await api("/checklists");
+  let pick = st.active_checklist;
 
   async function load() { rows = await api(`/datasets/${encodeURIComponent(store.dataset)}/conversations`); }
   await load();
 
   root.innerHTML = String(html`
-    <div id="hero"></div><div id="run"></div>
+    <div id="hero"></div><div class="evalbar" id="evalbar"></div><div id="run"></div>
     <div class="toolbar" id="filters"></div>
     <div class="panel"><table class="list"><thead><tr>
       <th class="sel"><input type="checkbox" id="all" aria-label="Выбрать все видимые"></th><th>Диалог</th><th>Канал</th><th class="hide-m">Язык</th>
@@ -44,12 +46,20 @@ export default async function queue(root, params) {
       text: `${rows.length} диалогов, оценено ${done.length}` + (avg != null ? `, средний итог ${fmtTotal(Math.round(avg * 10) / 10)}` : "") + (open ? `. Апелляций ждут решения: ${open}.` : "."),
       actions: html`<select class="input" id="ds" aria-label="Набор" style="width:auto">${st.datasets.map((d) => html`<option value="${d.id}" ${raw(d.id === store.dataset ? "selected" : "")}>${d.name}</option>`)}</select>
         <button class="btn" id="load">Загрузить набор</button>
-        <a class="btn" href="${API}/api/datasets/${encodeURIComponent(store.dataset)}/export" download title="CSV: ответы по каждому критерию, итог, грубые нарушения">Скачать результаты</a>
-        <select class="input" id="votes" aria-label="Режим оценки" style="width:auto" title="Несколько прогонов модели одновременно; ответ — по большинству, у шкал — по медиане">
-          <option value="3" ${raw(votes === 3 ? "selected" : "")}>3 прогона · точнее · ≈ $0,12</option>
-          <option value="1" ${raw(votes === 1 ? "selected" : "")}>1 прогон · быстрее · ≈ $0,04</option></select>
-        <button class="btn primary" id="eval">${selected.size ? `Оценить выбранные · ${selected.size}` : "Оценить неоценённые"}</button>`,
+        <a class="btn" href="${API}/api/datasets/${encodeURIComponent(store.dataset)}/export" download title="CSV: ответы по каждому критерию, итог, грубые нарушения">Скачать результаты</a>`,
     }));
+    const todo = rows.filter((r) => !r.evaluation || r.evaluation.status === "error" || r.evaluation.checklist_key !== pick).length;
+    root.querySelector("#evalbar").innerHTML = String(html`<b>Оценка</b>
+      <label>Чек-лист ${checklistPicker(versions, pick)}</label>
+      <label>Режим <select class="input" id="votes" aria-label="Режим оценки" style="width:auto" title="Несколько прогонов модели одновременно; ответ — по большинству, у шкал — по медиане">
+          <option value="3" ${raw(votes === 3 ? "selected" : "")}>3 прогона · точнее · ≈ $0,12 за диалог</option>
+          <option value="1" ${raw(votes === 1 ? "selected" : "")}>1 прогон · быстрее · ≈ $0,04 за диалог</option></select></label>
+      <span class="muted">${selected.size ? `выбрано ${selected.size}` : `не оценено этой версией: ${todo}`}</span>
+      <button class="btn primary" id="eval">${selected.size ? `Оценить выбранные · ${selected.size}` : "Оценить неоценённые"}</button>`);
+    const eb = root.querySelector("#evalbar");
+    eb.querySelector("#eval").onclick = () => start();
+    eb.querySelector("#votes").onchange = (e) => { votes = Number(e.target.value); localStorage.setItem("cqa-votes", votes); };
+    eb.querySelector("#ck").onchange = (e) => { pick = e.target.value; paint(); };
     const h = root.querySelector("#hero");
     h.querySelector("#ds").onchange = async (e) => { store.dataset = e.target.value; selected.clear(); await load(); paint(); };
     h.querySelector("#load").onclick = (e) => {
@@ -59,15 +69,13 @@ export default async function queue(root, params) {
       h.querySelector("#b1").onclick = () => fetchDialog(st);
       h.querySelector("#b2").onclick = () => uploadDialog();
     };
-    h.querySelector("#eval").onclick = () => start();
-    h.querySelector("#votes").onchange = (e) => { votes = Number(e.target.value); localStorage.setItem("cqa-votes", votes); };
     void ds;
   }
 
   async function start() {
     const ids = [...selected];
     try {
-      await api("/jobs", { dataset_id: store.dataset, conversation_ids: ids.length ? ids : null, only_missing: !ids.length, votes });
+      await api("/jobs", { dataset_id: store.dataset, conversation_ids: ids.length ? ids : null, only_missing: !ids.length, votes, checklist_key: pick });
       selected.clear(); toast("Оценка запущена"); watchJobs();
     } catch (e) { toast(e.message, true); }
   }
@@ -101,7 +109,7 @@ export default async function queue(root, params) {
     }
     tb.innerHTML = String(html`${list.map((r) => {
       const ev = r.evaluation;
-      const old = ev && ev.checklist_key !== st.active_checklist;
+      const old = ev && ev.checklist_key !== pick;
       return html`<tr data-id="${r.conversation_id}">
         <td class="sel"><input type="checkbox" aria-label="Выбрать ${r.conversation_id}" ${raw(selected.has(r.conversation_id) ? "checked" : "")}></td>
         <td class="id">${r.conversation_id}</td>

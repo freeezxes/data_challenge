@@ -1,4 +1,4 @@
-import { api, html, hero, money, store, toast, dialog } from "../core.js";
+import { api, html, raw, hero, money, store, toast, dialog } from "../core.js";
 
 export default async function home(root) {
   const st = await api("/state");
@@ -60,23 +60,35 @@ export function fetchDialog(st) {
   };
 }
 
-export function uploadDialog() {
+export async function uploadDialog() {
+  const st = await api("/state");
   const d = dialog(html`<header><h2>Загрузить диалоги</h2></header><div class="content">
-    <p class="muted" style="margin:0">Файл в формате API организаторов: целиком ответ, объект data или массив records. Метки времени и роли сохраняются как есть.</p>
-    <label class="field">Название набора<input class="input" name="n" placeholder="Контрольный набор"></label>
-    <label class="field">Файл<input class="input" type="file" name="f" accept=".json,application/json"></label>
+    <p class="muted" style="margin:0">Формат API организаторов: целиком ответ, объект data, массив records или одна запись с conversation_id и transcript. Метки времени и роли сохраняются как есть.</p>
+    <label class="field">Куда<select class="input" name="to"><option value="">Новый набор</option>${st.datasets.map((x) => html`<option value="${x.id}" ${raw(x.id === store.dataset ? "selected" : "")}>Добавить в «${x.name}»</option>`)}</select></label>
+    <label class="field" data-newname>Название нового набора<input class="input" name="n" placeholder="Контрольный набор"></label>
+    <label class="field">Файл JSON<input class="input" type="file" name="f" accept=".json,application/json"></label>
+    <label class="field">или вставьте JSON<textarea class="input" name="j" placeholder='{"conversation_id": "…", "channel": "agent chat", "language": "RU", "transcript": [{"timestamp": "00:02", "speaker": "operator", "text": "…"}]}'></textarea></label>
     <div class="err-text"></div></div>
     <footer><button class="btn ghost" value="c">Отмена</button><button class="btn primary" value="ok">Загрузить</button></footer>`);
   const err = d.querySelector(".err-text");
+  const to = d.querySelector("[name=to]"), nameField = d.querySelector("[data-newname]");
+  const sync = () => (nameField.hidden = !!to.value);
+  to.onchange = sync; sync();
   d.querySelector('[value="c"]').onclick = () => d.close();
   d.querySelector('[value="ok"]').onclick = async (e) => {
     const file = d.querySelector("[name=f]").files[0];
-    if (!file) { err.textContent = "Выберите файл"; return; }
+    const pasted = d.querySelector("[name=j]").value.trim();
+    if (!file && !pasted) { err.textContent = "Выберите файл или вставьте JSON"; return; }
     e.target.disabled = true; err.textContent = "";
     try {
       const name = d.querySelector("[name=n]").value.trim();
-      const r = await api("/datasets", { name: name || file.name.replace(/\.json$/i, ""), id: name || undefined, payload: await file.text() });
-      store.dataset = r.id; d.close(); toast(`Загружено ${r.count} диалогов`); location.hash = "#/queue";
+      const payload = file ? await file.text() : pasted;
+      const body = to.value ? { append_to: to.value, payload }
+        : { name: name || (file ? file.name.replace(/\.json$/i, "") : "Загруженные диалоги"), id: name || undefined, payload };
+      const r = await api("/datasets", body);
+      store.dataset = r.id; d.close();
+      toast(r.count === 1 ? `Диалог ${r.ids[0]} загружен` : `Загружено ${r.count} диалогов`);
+      location.hash = r.count === 1 ? `#/c/${encodeURIComponent(r.id)}/${encodeURIComponent(r.ids[0])}` : "#/queue";
     } catch (x) { err.textContent = x.message; e.target.disabled = false; }
   };
 }
