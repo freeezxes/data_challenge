@@ -1,7 +1,18 @@
+.DS_Store
+node_modules/
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+*.session
+*.session-journal
+*.log
 # Данные организаторов: ссылки содержат подпись доступа — не публикуем
 data/raw/
 data/runs/
-.env
-__pycache__/
 .pytest_cache/
 *.db
+# Original organizer URLs contain access signatures; local recordings are published instead.
+docs/sources/student-guide.pdf
+annotations/task-guide.pdf

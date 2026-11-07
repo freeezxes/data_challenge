@@ -1,0 +1,246 @@
+### p1-en-001
+001 00:00 client: I'm opening a new account and the app says my login is taken.
+002 00:02 bot: Hello! I'm AIM, the Freedom Broker AI assistant. I can answer questions about products and services, provide information about your accounts, assets and fees, compare information in a table, share your account manager's contact details, and pass your question to our support team.
+003 00:03 bot: By continuing this conversation, you agree to the collection and processing of your personal data and confirm that you have read the company's Privacy Policy.
+004 00:08 bot: Did you previously use that login for another account?
+005 00:28 client: Yes, I closed that account. Can I talk to a support agent?
+006 00:30 bot: Would you like me to connect you with an agent?
+007 00:35 client: yes please
+008 00:36 bot: Please wait. An agent will join the chat shortly.
+009 00:38 system: Chat transferred to an agent.
+010 01:15 operator: Hi, I'm Maya from support. A login stays on record after the account is closed. Use a different login for the new registration.
+011 01:28 client: Right, I thought I'd just have to wait. Thanks.
+012 02:04 operator: You're welcome. Take care!
+
+### p1-en-002
+001 00:00 client: Where is the sign-in button? I'm on the Freedom Finance Global website.
+002 00:03 bot: Hello! I'm AIM, the Freedom Broker AI assistant. I can answer questions about products and services, provide information about your accounts, assets and fees, compare information in a table, share your account manager's contact details, and pass your question to our support team.
+003 00:03 bot: By continuing this conversation, you agree to the collection and processing of your personal data and confirm that you have read the company's Privacy Policy.
+004 00:09 bot: That site is for company information. You can access your account on the trading platform.
+005 00:42 client: Could you connect me with a person? I have a few tabs open and I'm not sure which is which.
+006 00:45 bot: Would you like me to connect you with an agent?
+007 00:53 client: Yes, please
+008 00:54 bot: Please wait. An agent will join the chat shortly.
+009 00:57 system: Chat transferred to an agent.
+010 01:53 operator: Hi, I'm Noah. Open tradernet.global for the browser version, or use the Freedom Broker app. The company information site doesn't have the sign-in page.
+011 02:13 client: I'm on a laptop. The web version works. Thanks.
+012 02:34 operator: Glad you got in. Have a good day!
+
+### p1-en-003
+001 00:00 client: Where can I see my current pricing plan? I'm using the website.
+002 00:04 bot: Hello! I'm AIM, the Freedom Broker AI assistant. I can answer questions about products and services, provide information about your accounts, assets and fees, compare information in a table, share your account manager's contact details, and pass your question to our support team.
+003 00:04 bot: By continuing this conversation, you agree to the collection and processing of your personal data and confirm that you have read the company's Privacy Policy.
+004 00:11 bot: The current plan is shown in the broker report.
+005 00:57 client: I don't want to download a report just for this. Can I speak to an agent?
+006 01:01 bot: Would you like me to connect you with an agent?
+007 01:12 client: Yes
+008 01:13 bot: Please wait. An agent will join the chat shortly.
+009 01:14 system: Chat transferred to an agent.
+010 02:29 operator: Hi, I'm Eva. Open the account area, labelled «Кабинет» in the Russian interface. You'll see your plan under your name.
+011 02:56 client: Found it.
+012 03:39 operator: Great. Thanks for reaching out, and goodbye!
+
+### p1-en-004
+001 00:00 client: I need my broker statement for last year, not just the current balance.
+002 00:01 bot: Hello! I'm AIM, the Freedom Broker AI assistant. I can answer questions about products and services, provide information about your accounts, assets and fees, compare information in a table, share your account manager's contact details, and pass your question to our support team.
+003 00:02 bot: By continuing this conversation, you agree to the collection and processing of your personal data and confirm that you have read the company's Privacy Policy.
+004 00:10 bot: The broker report is available in the app under Reports and Documents.
+005 00:23 client: Can an agent walk me through it?
+006 00:28 bot: Would you like me to connect you with an agent?
+007 00:42 client: yes please
+008 00:43 bot: Please wait. An agent will join the chat shortly.
+009 00:45 system: Chat transferred to an agent.
+010 02:19 operator: Hi, I'm Alex. Open Reports and Documents, choose Broker Report, then select the dates for the year you need.
+011 02:53 client: Do I download it after I set the dates?
+012 03:21 operator: Yes. Download the report for that date range.
+013 03:39 client: That worked. Thanks!
+014 04:21 operator: You're welcome. Have a good day!
+
+### p1-en-005
+001 00:00 client: I'm going to a bank branch to fund the brokerage account. Where do I get the transfer details?
+002 00:02 bot: Hello! I'm AIM, the Freedom Broker AI assistant. I can answer questions about products and services, provide information about your accounts, assets and fees, compare information in a table, share your account manager's contact details, and pass your question to our support team.
+003 00:02 bot: By continuing this conversation, you agree to the collection and processing of your personal data and confirm that you have read the company's Privacy Policy.
+004 00:11 bot: You can download the bank transfer details in the app.
+005 00:37 client: Connect me with someone, please. I don't want to take the wrong details to the branch.
+006 00:38 bot: Would you like me to connect you with an agent?
+007 00:55 client: Yes, please
+008 00:56 bot: Please wait. An agent will join the chat shortly.
+009 00:59 system: Chat transferred to an agent.
+010 02:52 operator: Hi, I'm Lina. In the app, open Menu, then Add Funds, then the bank transfer details option.
+011 03:33 client: I'm sending euros. Is it the same page?
+012 04:23 operator: Yes. Select the currency you need before downloading the details. Take those details to the branch.
+013 05:02 client: Got them, thanks.
+014 05:51 operator: You're welcome. Goodbye!
+
+### p1-en-006
+001 00:00 client: I sent money to my brokerage account and it hasn't shown up. It's making me nervous.
+002 00:03 bot: Hello! I'm AIM, the Freedom Broker AI assistant. I can answer questions about products and services, provide information about your accounts, assets and fees, compare information in a table, share your account manager's contact details, and pass your question to our support team.
+003 00:03 bot: By continuing this conversation, you agree to the collection and processing of your personal data and confirm that you have read the company's Privacy Policy.
+004 00:13 bot: Do you need help making a transfer, or have you already sent it?
+005 00:52 client: I've already sent it. Please connect me to an agent who can check the transfer.
+006 00:54 bot: Would you like me to connect you with an agent?
+007 01:14 client: Yes
+008 01:15 bot: Please wait. An agent will join the chat shortly.
+009 01:16 system: Chat transferred to an agent.
+010 01:36 client: The bank app says the transfer was sent.
+011 02:43 operator: Hello, I'm Sam. I understand why you'd want to check. We'll need to verify your identity before we look at the account.
+012 02:55 client: Okay.
+013 03:13 system: Customer identity verified.
+014 03:40 operator: Thanks. What currency did you send?
+015 04:10 client: US dollars.
+016 04:58 operator: I've sent the case for review with the currency you provided. We'll follow up in this chat once there's an update.
+017 05:04 client: Okay, thanks.
+018 05:16 client: Do you need me to send a screenshot of my bank app?
+019 05:40 operator: Hold off on the screenshot for now. Can you tell me roughly when you sent the transfer?
+020 06:04 client: Yesterday evening. It shows as sent on the bank side.
+021 06:49 operator: I've added that timing to the case. The team will check the brokerage side.
+022 07:25 client: Will I need to explain everything again if I come back later?
+023 07:54 operator: You can return to this chat. The details you've given me are already in the case.
+024 08:06 client: Okay, that helps.
+025 09:11 client: One more thing while I'm here. Where can I download my broker report?
+026 09:43 operator: In the app, open Reports and Documents, then Broker Report.
+027 10:00 client: I've got the dates on screen. Can I pick the whole month?
+028 10:34 operator: Yes, select the start and end dates for the period you need, then download the report.
+029 10:53 client: That worked. I'll wait here for the transfer update.
+030 11:29 operator: You're welcome. We'll follow up here about the transfer. Goodbye!
+
+### p1-en-007
+001 00:00 client: It won't let me withdraw. The app says I need to update my profile details.
+002 00:04 bot: Hello! I'm AIM, the Freedom Broker AI assistant. I can answer questions about products and services, provide information about your accounts, assets and fees, compare information in a table, share your account manager's contact details, and pass your question to our support team.
+003 00:05 bot: By continuing this conversation, you agree to the collection and processing of your personal data and confirm that you have read the company's Privacy Policy.
+004 00:16 bot: Submit a request to change your personal details before trying again.
+005 01:08 client: Can you put me through to an agent? Where do I submit that and when can I retry?
+006 01:11 bot: Would you like me to connect you with an agent?
+007 01:14 client: yes please
+008 01:15 bot: Please wait. An agent will join the chat shortly.
+009 01:17 system: Chat transferred to an agent.
+010 01:36 operator: Hi, I'm Chris. Go to Menu, Orders, Personal Details, then Change of Details.
+011 01:55 client: Okay, I found it. Can I submit the withdrawal right after this?
+012 02:15 operator: That's where the profile request is. Thanks for contacting us. Bye.
+
+### p1-en-008
+001 00:00 client: There are several results for the company I'm looking up. How can I find the exact stock?
+002 00:01 bot: Hello! I'm AIM, the Freedom Broker AI assistant. I can answer questions about products and services, provide information about your accounts, assets and fees, compare information in a table, share your account manager's contact details, and pass your question to our support team.
+003 00:01 bot: By continuing this conversation, you agree to the collection and processing of your personal data and confirm that you have read the company's Privacy Policy.
+004 00:13 bot: Try searching by ticker in Quotes.
+005 00:32 client: I have the ticker but I'm still new to this. Can I talk to an agent?
+006 00:36 bot: Would you like me to connect you with an agent?
+007 00:42 client: Yes, please
+008 00:43 bot: Please wait. An agent will join the chat shortly.
+009 00:46 system: Chat transferred to an agent.
+010 01:08 client: I have the app open already.
+011 01:47 operator: Hi, I'm Sofia. Enter the ticker in the search bar under Quotes. Check that the result shows the ticker you intended before opening an order.
+012 02:13 client: Now there's one result. Where do I go from there?
+013 02:55 operator: Open that security, fill in the buy order parameters and review them before submitting the order.
+014 03:25 client: I'm just looking for now. Thank you.
+015 03:39 client: Hang on, I have another question. The order screen has a Use Margin checkbox. How do I turn that off?
+016 04:26 operator: Before you submit, open Order Settings and untick Use Margin.
+017 04:44 client: Found it. Does that change a position I already own?
+018 05:22 operator: That setting is for the order you're entering now. It doesn't answer what's happening with an existing position.
+019 05:44 client: Okay, I'll leave the order unsubmitted for now.
+020 06:13 operator: Of course. Have a good day!
+
+### p1-en-009
+001 00:00 client: There's a Use Margin option on the order screen. How do I switch it off?
+002 00:02 bot: Hello! I'm AIM, the Freedom Broker AI assistant. I can answer questions about products and services, provide information about your accounts, assets and fees, compare information in a table, share your account manager's contact details, and pass your question to our support team.
+003 00:02 bot: By continuing this conversation, you agree to the collection and processing of your personal data and confirm that you have read the company's Privacy Policy.
+004 00:06 bot: Look in the order settings before submitting.
+005 00:38 client: Could you connect me to support? I haven't sent the order yet.
+006 00:43 bot: Would you like me to connect you with an agent?
+007 00:52 client: Yes
+008 00:53 bot: Please wait. An agent will join the chat shortly.
+009 00:54 system: Chat transferred to an agent.
+010 01:51 operator: Hi, I'm Leo. Open Order Settings and untick Use Margin before you submit the order.
+011 02:24 client: Found it. Thank you.
+012 02:42 system: Connection to customer lost.
+
+### p1-en-010
+001 00:00 client: I can see a D account and a trading account. Can I use the D account to buy stock?
+002 00:03 bot: Hello! I'm AIM, the Freedom Broker AI assistant. I can answer questions about products and services, provide information about your accounts, assets and fees, compare information in a table, share your account manager's contact details, and pass your question to our support team.
+003 00:04 bot: By continuing this conversation, you agree to the collection and processing of your personal data and confirm that you have read the company's Privacy Policy.
+004 00:09 bot: The D account is for savings. The trading account is used for securities transactions.
+005 00:54 client: Can I speak with an agent just to check what that means when I place an order?
+006 00:55 bot: Would you like me to connect you with an agent?
+007 01:07 client: yes please
+008 01:08 bot: Please wait. An agent will join the chat shortly.
+009 01:10 system: Chat transferred to an agent.
+010 02:26 operator: Hi, I'm Nina. Money in the D account can't be used directly to buy securities. For the order, look at the trading account.
+011 03:06 client: Understood, thanks.
+012 03:55 operator: You're welcome. Bye!
+
+### p1-en-011
+001 00:00 client: Does the 1042-S form come in English?
+002 00:04 bot: Hello! I'm AIM, the Freedom Broker AI assistant. I can answer questions about products and services, provide information about your accounts, assets and fees, compare information in a table, share your account manager's contact details, and pass your question to our support team.
+003 00:04 bot: By continuing this conversation, you agree to the collection and processing of your personal data and confirm that you have read the company's Privacy Policy.
+004 00:10 bot: The 1042-S form is provided in English.
+005 00:22 client: I'd like an agent to confirm which language the form itself comes in, please.
+006 00:24 bot: Would you like me to connect you with an agent?
+007 00:39 client: Yes, please
+008 00:40 bot: Please wait. An agent will join the chat shortly.
+009 00:43 system: Chat transferred to an agent.
+010 02:18 operator: Hi, I'm Julia. Yes, the 1042-S form is provided in English.
+011 02:29 client: That's all I needed.
+012 03:03 operator: Happy to help. Goodbye!
+
+### p1-en-012
+001 00:00 client: Where do I find the company's financial statements? I keep getting sent to my account reports.
+002 00:01 bot: Hello! I'm AIM, the Freedom Broker AI assistant. I can answer questions about products and services, provide information about your accounts, assets and fees, compare information in a table, share your account manager's contact details, and pass your question to our support team.
+003 00:01 bot: By continuing this conversation, you agree to the collection and processing of your personal data and confirm that you have read the company's Privacy Policy.
+004 00:08 bot: Freedom Holding Corp. publishes its financial statements on its official site.
+005 00:33 client: Can you connect me with a person to point me to the right menu?
+006 00:36 bot: Would you like me to connect you with an agent?
+007 00:54 client: Yes
+008 00:55 bot: Please wait. An agent will join the chat shortly.
+009 00:56 system: Chat transferred to an agent.
+010 02:50 operator: Hello, I'm Daniel. On the Freedom Holding Corp. website, go to Investors, then Financial Information.
+011 03:08 client: That's the page I was after. Thanks.
+012 03:27 operator: You're welcome. Have a good day!
+
+### p1-en-013
+001 00:00 client: I'm trying to figure out how to find bonds in the app.
+002 00:02 bot: Hello! I'm AIM, the Freedom Broker AI assistant. I can answer questions about products and services, provide information about your accounts, assets and fees, compare information in a table, share your account manager's contact details, and pass your question to our support team.
+003 00:03 bot: By continuing this conversation, you agree to the collection and processing of your personal data and confirm that you have read the company's Privacy Policy.
+004 00:11 bot: Use Quotes to search by the name or ticker.
+005 00:49 client: Can I speak to an agent? I haven't used this section before.
+006 00:53 bot: Would you like me to connect you with an agent?
+007 01:14 client: yes please
+008 01:15 bot: Please wait. An agent will join the chat shortly.
+009 01:17 system: Chat transferred to an agent.
+010 03:30 operator: Hi, I'm Adrian. Open Quotes and search by the bond's name or ticker.
+011 03:55 client: Okay, I see the search bar now.
+012 04:36 operator: Send me your personal number and I'll call you after work. I charge for private advice and can tell you which bonds to buy.
+013 05:03 client: No, I'm only asking for help with the app.
+014 05:31 system: Agent closed the chat.
+
+### p1-en-014
+001 00:00 client: Can someone check why withdrawals are blocked on my account?
+002 00:03 bot: Hello! I'm AIM, the Freedom Broker AI assistant. I can answer questions about products and services, provide information about your accounts, assets and fees, compare information in a table, share your account manager's contact details, and pass your question to our support team.
+003 00:03 bot: By continuing this conversation, you agree to the collection and processing of your personal data and confirm that you have read the company's Privacy Policy.
+004 00:12 bot: An agent can help with an account-specific check.
+005 01:03 client: Please connect me to one.
+006 01:08 bot: Would you like me to connect you with an agent?
+007 01:12 client: Yes, please
+008 01:13 bot: Please wait. An agent will join the chat shortly.
+009 01:16 system: Chat transferred to an agent.
+010 01:35 client: I'm on the withdrawal screen now.
+011 02:54 operator: Hi, I'm Tyler. I can see a withdrawal restriction on your account.
+012 03:26 client: How do you know it's my account? I haven't verified anything.
+013 03:52 operator: We can skip that. I'll send it to the team to check the reason.
+014 04:04 client: Will I hear back here?
+015 04:42 operator: Goodbye.
+
+### p1-en-015
+001 00:00 client: Can't get into the account.
+002 00:04 bot: Hello! I'm AIM, the Freedom Broker AI assistant. I can answer questions about products and services, provide information about your accounts, assets and fees, compare information in a table, share your account manager's contact details, and pass your question to our support team.
+003 00:04 bot: By continuing this conversation, you agree to the collection and processing of your personal data and confirm that you have read the company's Privacy Policy.
+004 00:14 bot: Are you using the mobile app or the website?
+005 00:32 client: I'd rather speak with someone. Please connect me.
+006 00:33 bot: Would you like me to connect you with an agent?
+007 00:40 client: Yes
+008 00:41 bot: Please wait. An agent will join the chat shortly.
+009 00:42 system: Chat transferred to an agent.
+010 01:21 operator: Open settings then go back and log in again.
+011 02:00 client: Settings where? I'm on the company website and there's no login.
+012 02:48 operator: Oh, that site is just for information. Go to tradernet.global and sign in there.
+013 03:21 client: That worked.
+014 04:06 operator: Bye.

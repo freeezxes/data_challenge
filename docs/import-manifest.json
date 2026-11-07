@@ -1,0 +1,186 @@
+{
+  "imported_at": "2026-11-07T08:12:14.290103+00:00",
+  "source_viewer": "/Users/carelogs/Desktop/data-challenge-viewer",
+  "source_threads": [
+    "01a1b4c7-7d48-74c0-bec2-b4dd9431875a",
+    "01a1b505-a847-7b80-8b57-6bf86614e4fb"
+  ],
+  "files": [
+    {
+      "path": "public/annotations.css",
+      "bytes": 9168,
+      "sha256": "506ad87fe36be17a00304912b6247d5235f8f983d30bc699974cb3bb19a2697f"
+    },
+    {
+      "path": "public/annotations.html",
+      "bytes": 3769,
+      "sha256": "25745c585a1d4592df6fa62f1028b196244caea9f656f707b17d9f947222c54a"
+    },
+    {
+      "path": "public/annotations.js",
+      "bytes": 10082,
+      "sha256": "7125748407aa35d04093ae302697a39ceb8c6ff8c57020c501297280ef76105b"
+    },
+    {
+      "path": "public/annotations.json",
+      "bytes": 681568,
+      "sha256": "fe8d2423ea827cfedcc2910a74cd7d9f11a8b11eea2b953e02846b751fe70e62"
+    },
+    {
+      "path": "public/app.js",
+      "bytes": 13921,
+      "sha256": "941acb5c45816e89e311a9bef8404ecbfb4b95c58165c2dc0f785318fbe1b872"
+    },
+    {
+      "path": "public/dataset.json",
+      "bytes": 308885,
+      "sha256": "98d70ed5e21b7502bec01fd87daee43b6beb670791dfe63bfb469c3919dc29dd"
+    },
+    {
+      "path": "public/fonts/manrope-bold.ttf",
+      "bytes": 96188,
+      "sha256": "ea1f264039fed13fd36e6d6f49fcae4fe7007def02cf2972b5c7f6d6f1349d06"
+    },
+    {
+      "path": "public/fonts/manrope-regular.ttf",
+      "bytes": 96200,
+      "sha256": "ed335894f8d954263675f7e457bf657374d8b7be629be4dc43aef97c309ad3ae"
+    },
+    {
+      "path": "public/index.html",
+      "bytes": 3337,
+      "sha256": "26198be448a73e8e4264f216eb65b183827b9c0d20d5bb9a46f9a9c6da91a286"
+    },
+    {
+      "path": "public/recordings/p4-ru-001.mp3",
+      "bytes": 1921932,
+      "sha256": "7fb1091a64b9275b0f76414b0937396adadb9d22cec390dc3fe3936a92565fa4"
+    },
+    {
+      "path": "public/recordings/p4-ru-002.mp3",
+      "bytes": 3339792,
+      "sha256": "d33850a459d553c71acabaec1e171860b7e36835349ec06d294c07250002c5eb"
+    },
+    {
+      "path": "public/recordings/p4-ru-003.mp3",
+      "bytes": 2341728,
+      "sha256": "a867ad414348b3c1c84a5cd0345d925512c62d9a564c19d22162f6f5606b7446"
+    },
+    {
+      "path": "public/recordings/p4-ru-004.mp3",
+      "bytes": 2527056,
+      "sha256": "aeaf1e65f6f09af4781b6f3f8a15edc2cfca4f7c267cb80618483fa689bcbff8"
+    },
+    {
+      "path": "public/recordings/p4-ru-005.mp3",
+      "bytes": 2125656,
+      "sha256": "71ec8f09b65a19c79de0d84703910bc06fbcff826bee16c653c72c901335e16a"
+    },
+    {
+      "path": "public/recordings.json",
+      "bytes": 210,
+      "sha256": "a1c02f5329c36111c831eab951460f5ba8d533fbd647bf9f47e0ca0c780d6117"
+    },
+    {
+      "path": "public/style.css",
+      "bytes": 11919,
+      "sha256": "7b5fdda29eb49e4b3cfa90d065dd4043f68c9c14c6fbd95eabbcf23fac76b974"
+    },
+    {
+      "path": "annotations/build.py",
+      "bytes": 14514,
+      "sha256": "7136d212a214a4781665d3f216f2d17532a48c4cf31b6bae744e390a680801c7"
+    },
+    {
+      "path": "annotations/check_annotations.py",
+      "bytes": 3207,
+      "sha256": "877f5a7cff8da42ce468d2fa613c7ab983cc7963838981d4630ec42f8cb7b337"
+    },
+    {
+      "path": "annotations/checklist.pdf",
+      "bytes": 101110,
+      "sha256": "2f6908c3026b6221f169a0a4efe808f37cdc6d1f227ed95bfe1c6431ec597808"
+    },
+    {
+      "path": "annotations/decisions.tsv",
+      "bytes": 12659,
+      "sha256": "05a0013189dbe14e7195f0c6f12fa484e30b15de9225b662b6a01fea5b4eff1f"
+    },
+    {
+      "path": "annotations/details.json",
+      "bytes": 44221,
+      "sha256": "910185a65f23234cf61620996031add7e6339f97e2a23abba544b6783dbe0080"
+    },
+    {
+      "path": "annotations/en.txt",
+      "bytes": 20217,
+      "sha256": "b2b0936041df92a1aedfeb69ad92004013794c07235df9e792b2c4bbfafb0e66"
+    },
+    {
+      "path": "annotations/kz.txt",
+      "bytes": 32484,
+      "sha256": "514a9ad1d67f25d96e1737d0369ab33ceee9a14e9784113b2cc8aaae2de5f01d"
+    },
+    {
+      "path": "annotations/ru-1.txt",
+      "bytes": 34599,
+      "sha256": "8fe308cd6b11a60d676ebe82309336a0c92517e0c63bb064afa647a6b1641d40"
+    },
+    {
+      "path": "annotations/ru-2.txt",
+      "bytes": 31081,
+      "sha256": "6d7112aad361337adc558603220b7106a1b295ed6f005beb196efb22722298eb"
+    },
+    {
+      "path": "annotations/task-guide.pdf",
+      "bytes": 125617,
+      "sha256": "8b2f79a685c6707749c780ee042d06c2bf4bff8741732698b4c8bac033ff1b5e"
+    },
+    {
+      "path": "annotations/voice.txt",
+      "bytes": 56503,
+      "sha256": "201f0c8b2f9fabb2080b4ba67240f16f68098be287b0cbe71f3606894e34bcb7"
+    },
+    {
+      "path": "docs/sources/checklist.pdf",
+      "bytes": 101110,
+      "sha256": "2f6908c3026b6221f169a0a4efe808f37cdc6d1f227ed95bfe1c6431ec597808"
+    },
+    {
+      "path": "docs/sources/checklist.txt",
+      "bytes": 9865,
+      "sha256": "25a6deff4877e3084a6d7d6c6d844cb7eacfc4e7dda23bf9d28b5ebe16552736"
+    },
+    {
+      "path": "docs/sources/freedom-presentation.pdf",
+      "bytes": 12970366,
+      "sha256": "57b51d5e1f8a31ee07387e44e57501d3526fb9303cba80ffc158f5e762af20e9"
+    },
+    {
+      "path": "docs/sources/freedom-presentation.txt",
+      "bytes": 2118,
+      "sha256": "e92a913f162ddc8976f2cc502bce0151d2d6ac810e9cd37d9aade7ca5fbfacb9"
+    },
+    {
+      "path": "docs/sources/student-guide.pdf",
+      "bytes": 125617,
+      "sha256": "8b2f79a685c6707749c780ee042d06c2bf4bff8741732698b4c8bac033ff1b5e"
+    },
+    {
+      "path": "docs/sources/student-guide.txt",
+      "bytes": 10718,
+      "sha256": "d4a9a16d0782a5a7d91add7fa270115914c6e37ba6b16bc640d3ce01e19b51b7"
+    }
+  ],
+  "snapshot_updated_at": "2026-11-07T08:18:04.255279+00:00",
+  "annotation_counts": {
+    "annotated": 65,
+    "dataset": 65,
+    "review_required": 51,
+    "critical": 8
+  },
+  "local_adjustments": [
+    "annotations/build.py: checklist PDF read from docs/sources/checklist.pdf",
+    "server.mjs: optional PORT environment variable"
+  ]
+}

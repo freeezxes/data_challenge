@@ -1,0 +1,1133 @@
+{
+ "dataset": "DEV",
+ "checklist_id": "freedom-chat-quality",
+ "labeler": "team (draft v1)",
+ "c07_policy_default": "lenient",
+ "c07_closing_types": {
+  "summary": "итог/следующий шаг + прощание",
+  "offer": "предложение помощи + прощание",
+  "courtesy": "вежливое «пожалуйста/рад помочь/спасибо за обращение» + прощание",
+  "bare": "только прощание («Хорошего дня.», «Bye.»)",
+  "no_bye": "прощания нет (оператор закрыл чат / ответил без прощания)",
+  "cut_off": "диалог оборвался по инициативе клиента или связи"
+ },
+ "items": [
+  {
+   "conversation_id": "p1-ru-001",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "courtesy",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": "Эталонный диалог: оператор сразу дал путь в веб-кабинете (клиент с ноутбука)."
+  },
+  {
+   "conversation_id": "p1-ru-002",
+   "labels": {
+    "c01": "yes",
+    "c02": "yes",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "offer",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [
+    "c03"
+   ],
+   "note": "Клиент отказался от идентификации, данные счёта не раскрывались → 03 N/A (спорно: возможно «Да»)."
+  },
+  {
+   "conversation_id": "p1-ru-003",
+   "labels": {
+    "c01": "yes",
+    "c02": "yes",
+    "c03": "na",
+    "c04": 10,
+    "c05": "yes",
+    "c06": 7,
+    "c07_closing": "summary",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [
+    "c06"
+   ],
+   "note": "Вопрос о комиссии (основной) проигнорирован дважды: m1/m14 → m15."
+  },
+  {
+   "conversation_id": "p1-ru-004",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "courtesy",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": ""
+  },
+  {
+   "conversation_id": "p1-ru-005",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 4,
+    "c07_closing": "summary",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [
+    "c04"
+   ],
+   "note": "Расплывчатая инструкция m12 → клиент переспросил m13; оператор извинился m14."
+  },
+  {
+   "conversation_id": "p1-ru-006",
+   "labels": {
+    "c01": "yes",
+    "c02": "yes",
+    "c03": "yes",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "summary",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": "Идентификация m12 до проверки счёта; уточнил валюту m13."
+  },
+  {
+   "conversation_id": "p1-ru-007",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 10,
+    "c05": "yes",
+    "c06": 7,
+    "c07_closing": "summary",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": "Вопрос «когда снова подавать вывод» проигнорирован (m5, m12 → m13)."
+  },
+  {
+   "conversation_id": "p1-ru-008",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "courtesy",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": ""
+  },
+  {
+   "conversation_id": "p1-ru-009",
+   "labels": {
+    "c01": "yes",
+    "c02": "yes",
+    "c03": "no",
+    "c04": 10,
+    "c05": "no",
+    "c06": 4,
+    "c07_closing": "summary",
+    "c08": "yes"
+   },
+   "violations": [
+    "disclosure"
+   ],
+   "ambiguous": [
+    "c04",
+    "c08"
+   ],
+   "note": "Раскрыл ограничение по счёту без идентификации (m12), «подтверждение пока не нужно» (m14), ответ невпопад → клиент переспросил m15."
+  },
+  {
+   "conversation_id": "p1-ru-010",
+   "labels": {
+    "c01": "yes",
+    "c02": "yes",
+    "c03": "yes",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "summary",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": "Длинный корректный диалог; идентификация m15 до проверки позиции."
+  },
+  {
+   "conversation_id": "p1-ru-011",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "courtesy",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": ""
+  },
+  {
+   "conversation_id": "p1-ru-012",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "cut_off",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": "Связь прервалась (m12) после ответа → 07 N/A."
+  },
+  {
+   "conversation_id": "p1-ru-013",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "summary",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": ""
+  },
+  {
+   "conversation_id": "p1-ru-014",
+   "labels": {
+    "c01": "no",
+    "c02": "no",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 7,
+    "c07_closing": "bare",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [
+    "c05"
+   ],
+   "note": "«Привет», без имени (m10); переспросил уже известный сайт; сухое «Хорошего дня.»"
+  },
+  {
+   "conversation_id": "p1-ru-015",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "summary",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": ""
+  },
+  {
+   "conversation_id": "p1-ru-016",
+   "labels": {
+    "c01": "yes",
+    "c02": "no",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 4,
+    "c07_closing": "courtesy",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [
+    "c04",
+    "c05"
+   ],
+   "note": "Не уточнил, где вход; «Переустановите приложение» клиенту за компьютером (m10); «Ну, тогда сайт.» (m12)."
+  },
+  {
+   "conversation_id": "p1-ru-017",
+   "labels": {
+    "c01": "yes",
+    "c02": "yes",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "courtesy",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [
+    "c02"
+   ],
+   "note": ""
+  },
+  {
+   "conversation_id": "p1-ru-018",
+   "labels": {
+    "c01": "yes",
+    "c02": "no",
+    "c03": "na",
+    "c04": 0,
+    "c05": "no",
+    "c06": 0,
+    "c07_closing": "no_bye",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": "Утверждение без данных (m10), затем «Тогда не знаю» (m12); закрыл чат без прощания."
+  },
+  {
+   "conversation_id": "p1-ru-019",
+   "labels": {
+    "c01": "yes",
+    "c02": "yes",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "courtesy",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": "Уточнил тикер (m10) — нужное уточнение."
+  },
+  {
+   "conversation_id": "p1-ru-020",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 15,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "courtesy",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [
+    "c04"
+   ],
+   "note": "Вопрос об уже открытой позиции отложен («рассматривать отдельно», m12)."
+  },
+  {
+   "conversation_id": "p1-ru-021",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "courtesy",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": ""
+  },
+  {
+   "conversation_id": "p1-ru-022",
+   "labels": {
+    "c01": "yes",
+    "c02": "no",
+    "c03": "na",
+    "c04": 0,
+    "c05": "no",
+    "c06": 10,
+    "c07_closing": "no_bye",
+    "c08": "yes"
+   },
+   "violations": [
+    "bypass"
+   ],
+   "ambiguous": [
+    "c02",
+    "c06"
+   ],
+   "note": "Предложил перевести деньги ему на карту (m10, m12); закрыл чат."
+  },
+  {
+   "conversation_id": "p1-ru-023",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "bare",
+    "c08": "yes"
+   },
+   "violations": [
+    "bypass"
+   ],
+   "ambiguous": [],
+   "note": "Частная платная консультация по личному номеру (m12); «Хорошо. Всего доброго.» без итога."
+  },
+  {
+   "conversation_id": "p1-ru-024",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "bare",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [
+    "c04"
+   ],
+   "note": "Сухое «Хорошего дня!» без итога/благодарности."
+  },
+  {
+   "conversation_id": "p1-ru-025",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": "na",
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "cut_off",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": "Клиент ушёл до формулировки запроса → 02/04/07 N/A."
+  },
+  {
+   "conversation_id": "p1-ru-026",
+   "labels": {
+    "c01": "yes",
+    "c02": "no",
+    "c03": "na",
+    "c04": 0,
+    "c05": "no",
+    "c06": 4,
+    "c07_closing": "no_bye",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": "«Чем могу помочь?» при уже описанном запросе; «Всё есть в приложении»; закрыл чат."
+  },
+  {
+   "conversation_id": "p1-ru-027",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "courtesy",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": "Много вопросов, все закрыты."
+  },
+  {
+   "conversation_id": "p1-ru-028",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "courtesy",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": "Предупредил об ожидании («Сейчас проверю путь»), поблагодарил за ожидание."
+  },
+  {
+   "conversation_id": "p1-ru-029",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 20,
+    "c05": "no",
+    "c06": 7,
+    "c07_closing": "bare",
+    "c08": "yes"
+   },
+   "violations": [
+    "insult"
+   ],
+   "ambiguous": [
+    "c06"
+   ],
+   "note": "Оскорбление «Вы вообще читать умеете?» (m10); «До свидания.» после жалобы."
+  },
+  {
+   "conversation_id": "p1-ru-030",
+   "labels": {
+    "c01": "yes",
+    "c02": "yes",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "courtesy",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [
+    "c02"
+   ],
+   "note": ""
+  },
+  {
+   "conversation_id": "p1-kz-001",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "courtesy",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": ""
+  },
+  {
+   "conversation_id": "p1-kz-002",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "courtesy",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": ""
+  },
+  {
+   "conversation_id": "p1-kz-003",
+   "labels": {
+    "c01": "yes",
+    "c02": "yes",
+    "c03": "yes",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "summary",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": "Идентификация m13 до проверки платежа."
+  },
+  {
+   "conversation_id": "p1-kz-004",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "bare",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": "Всё корректно, но голое «Сау болыңыз!» без итога/благодарности."
+  },
+  {
+   "conversation_id": "p1-kz-005",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 4,
+    "c07_closing": "no_bye",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [
+    "c05"
+   ],
+   "note": "Неверный путь «Профиль» (m10) → клиент возразил; в конце только «Жақсы.» без прощания."
+  },
+  {
+   "conversation_id": "p1-kz-006",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "courtesy",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": ""
+  },
+  {
+   "conversation_id": "p1-kz-007",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "bare",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": ""
+  },
+  {
+   "conversation_id": "p1-kz-008",
+   "labels": {
+    "c01": "no",
+    "c02": "no",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 7,
+    "c07_closing": "no_bye",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [
+    "c05"
+   ],
+   "note": "«Сәлем», без имени; переспросил сайт; не попрощался."
+  },
+  {
+   "conversation_id": "p1-kz-009",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "courtesy",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": ""
+  },
+  {
+   "conversation_id": "p1-kz-010",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "bare",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": ""
+  },
+  {
+   "conversation_id": "p1-kz-011",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "cut_off",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [
+    "c04"
+   ],
+   "note": "Связь прервалась после ответа."
+  },
+  {
+   "conversation_id": "p1-kz-012",
+   "labels": {
+    "c01": "yes",
+    "c02": "yes",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "offer",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": "Уточнил тикер и текст ошибки; корректный следующий шаг."
+  },
+  {
+   "conversation_id": "p1-kz-013",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "no_bye",
+    "c08": "yes"
+   },
+   "violations": [
+    "bypass"
+   ],
+   "ambiguous": [],
+   "note": "Платная частная консультация (m12); закрыл чат."
+  },
+  {
+   "conversation_id": "p1-kz-014",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "bare",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": ""
+  },
+  {
+   "conversation_id": "p1-kz-015",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "no",
+    "c04": 10,
+    "c05": "no",
+    "c06": 4,
+    "c07_closing": "summary",
+    "c08": "yes"
+   },
+   "violations": [
+    "disclosure"
+   ],
+   "ambiguous": [
+    "c02",
+    "c08"
+   ],
+   "note": "Раскрыл ограничение по счёту без идентификации (m10), «растау қажет емес» (m12)."
+  },
+  {
+   "conversation_id": "p1-en-001",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "courtesy",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": ""
+  },
+  {
+   "conversation_id": "p1-en-002",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "courtesy",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": ""
+  },
+  {
+   "conversation_id": "p1-en-003",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "courtesy",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": ""
+  },
+  {
+   "conversation_id": "p1-en-004",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "courtesy",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": ""
+  },
+  {
+   "conversation_id": "p1-en-005",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "courtesy",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": ""
+  },
+  {
+   "conversation_id": "p1-en-006",
+   "labels": {
+    "c01": "yes",
+    "c02": "yes",
+    "c03": "yes",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "summary",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": "Идентификация m13 до проверки перевода."
+  },
+  {
+   "conversation_id": "p1-en-007",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 10,
+    "c05": "yes",
+    "c06": 7,
+    "c07_closing": "summary",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": "Вопрос «can I submit the withdrawal right after» проигнорирован."
+  },
+  {
+   "conversation_id": "p1-en-008",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 15,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "courtesy",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [
+    "c04",
+    "c06"
+   ],
+   "note": "Вопрос о существующей позиции не закрыт (m18)."
+  },
+  {
+   "conversation_id": "p1-en-009",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "cut_off",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": ""
+  },
+  {
+   "conversation_id": "p1-en-010",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "courtesy",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [
+    "c04"
+   ],
+   "note": ""
+  },
+  {
+   "conversation_id": "p1-en-011",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "courtesy",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": ""
+  },
+  {
+   "conversation_id": "p1-en-012",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "courtesy",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": ""
+  },
+  {
+   "conversation_id": "p1-en-013",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "no_bye",
+    "c08": "yes"
+   },
+   "violations": [
+    "bypass"
+   ],
+   "ambiguous": [],
+   "note": "Платная частная консультация (m12); закрыл чат."
+  },
+  {
+   "conversation_id": "p1-en-014",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "no",
+    "c04": 10,
+    "c05": "no",
+    "c06": 7,
+    "c07_closing": "bare",
+    "c08": "yes"
+   },
+   "violations": [
+    "disclosure"
+   ],
+   "ambiguous": [
+    "c02",
+    "c08"
+   ],
+   "note": "Раскрыл ограничение по счёту без проверки (m11), «We can skip that» (m13); «Goodbye.» на вопрос клиента."
+  },
+  {
+   "conversation_id": "p1-en-015",
+   "labels": {
+    "c01": "no",
+    "c02": "no",
+    "c03": "na",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 4,
+    "c07_closing": "bare",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [],
+   "note": "Нет приветствия и имени; совет «Open settings» без уточнения → клиент переспросил."
+  },
+  {
+   "conversation_id": "p4-ru-001",
+   "labels": {
+    "c01": "yes",
+    "c02": "na",
+    "c03": "na",
+    "c04": 15,
+    "c05": "no",
+    "c06": 10,
+    "c07_closing": "cut_off",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [
+    "c04",
+    "c06",
+    "c07"
+   ],
+   "note": "Звонок: клиент недоволен переводом на техподдержку, ответы сухие; клиент сам завершил звонок."
+  },
+  {
+   "conversation_id": "p4-ru-002",
+   "labels": {
+    "c01": "no",
+    "c02": "yes",
+    "c03": "yes",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07_closing": "courtesy",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [
+    "c01"
+   ],
+   "note": "Звонок: в первой реплике нет приветствия («Да, компания … меня зовут …»); удержание ~7 мин с предупреждением."
+  },
+  {
+   "conversation_id": "p4-ru-003",
+   "labels": {
+    "c01": "yes",
+    "c02": "yes",
+    "c03": "yes",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 7,
+    "c07_closing": "cut_off",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [
+    "c07"
+   ],
+   "note": "Звонок: идентификация (ФИО, ИИН, SMS) до раскрытия статуса; недопонимание m27; клиент положил трубку сразу после «спасибо»."
+  },
+  {
+   "conversation_id": "p4-ru-004",
+   "labels": {
+    "c01": "yes",
+    "c02": "yes",
+    "c03": "yes",
+    "c04": 15,
+    "c05": "yes",
+    "c06": 4,
+    "c07_closing": "cut_off",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [
+    "c04",
+    "c05",
+    "c07"
+   ],
+   "note": "Звонок: клиент несколько раз переспрашивает «постоянно писать?» (m97–m111); клиент завершил звонок."
+  },
+  {
+   "conversation_id": "p4-ru-005",
+   "labels": {
+    "c01": "no",
+    "c02": "yes",
+    "c03": "no",
+    "c04": 15,
+    "c05": "yes",
+    "c06": 7,
+    "c07_closing": "offer",
+    "c08": "no"
+   },
+   "violations": [],
+   "ambiguous": [
+    "c01",
+    "c03",
+    "c04",
+    "c07"
+   ],
+   "note": "Звонок: в приветствии нет имени (возможно, ошибка ASR); удаление счёта без полноценной идентификации."
+  }
+ ]
+}

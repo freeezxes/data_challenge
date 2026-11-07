@@ -1,0 +1,2397 @@
+{
+  "source_commit": "98e87b7984a6ba9ddd34cea241c0d5fb5e7e8810",
+  "ours_path": "docs/comparisons/ours-fe8d2423ea82.json",
+  "incoming_path": "docs/comparisons/incoming-98e87b7984a6-gold.json",
+  "common": 65,
+  "ours_only": [],
+  "incoming_only": [],
+  "policies": {
+    "lenient": {
+      "criterion_disagreements": 59,
+      "criterion_comparisons": 520,
+      "exact_agreement_percent": 88.65,
+      "dialogs_with_changes": 43,
+      "mean_absolute_score_delta": 7.6,
+      "median_absolute_score_delta": 7.69,
+      "score_delta_ge_10": 14,
+      "score_delta_ge_20": 9,
+      "ours_mean_score": 80.93,
+      "incoming_mean_score": 86.19,
+      "critical_disagreements": [],
+      "na_disagreements": 3,
+      "per_criterion": [
+        {
+          "id": "contact",
+          "name": "Установление контакта",
+          "count": 0,
+          "transitions": []
+        },
+        {
+          "id": "needs",
+          "name": "Выявление потребности",
+          "count": 3,
+          "transitions": [
+            {
+              "ours": "N/A",
+              "incoming": "Нет",
+              "count": 1
+            },
+            {
+              "ours": "Да",
+              "incoming": "N/A",
+              "count": 1
+            },
+            {
+              "ours": "Нет",
+              "incoming": "Да",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "id": "identification",
+          "name": "Идентификация",
+          "count": 0,
+          "transitions": []
+        },
+        {
+          "id": "consultation",
+          "name": "Корректная и полная консультация",
+          "count": 10,
+          "transitions": [
+            {
+              "ours": "20",
+              "incoming": "15",
+              "count": 4
+            },
+            {
+              "ours": "15",
+              "incoming": "10",
+              "count": 1
+            },
+            {
+              "ours": "20",
+              "incoming": "10",
+              "count": 1
+            },
+            {
+              "ours": "10",
+              "incoming": "20",
+              "count": 1
+            },
+            {
+              "ours": "5",
+              "incoming": "0",
+              "count": 1
+            },
+            {
+              "ours": "15",
+              "incoming": "20",
+              "count": 1
+            },
+            {
+              "ours": "10",
+              "incoming": "15",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "id": "empathy",
+          "name": "Эмпатия и клиентоориентированность",
+          "count": 9,
+          "transitions": [
+            {
+              "ours": "Нет",
+              "incoming": "Да",
+              "count": 8
+            },
+            {
+              "ours": "Да",
+              "incoming": "Нет",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "id": "management",
+          "name": "Управление диалогом, скорость и грамотность",
+          "count": 10,
+          "transitions": [
+            {
+              "ours": "7",
+              "incoming": "10",
+              "count": 6
+            },
+            {
+              "ours": "7",
+              "incoming": "4",
+              "count": 1
+            },
+            {
+              "ours": "7",
+              "incoming": "0",
+              "count": 1
+            },
+            {
+              "ours": "4",
+              "incoming": "7",
+              "count": 1
+            },
+            {
+              "ours": "10",
+              "incoming": "7",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "id": "closing",
+          "name": "Завершение",
+          "count": 27,
+          "transitions": [
+            {
+              "ours": "Нет",
+              "incoming": "Да",
+              "count": 26
+            },
+            {
+              "ours": "N/A",
+              "incoming": "Да",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "id": "critical",
+          "name": "Грубые ошибки",
+          "count": 0,
+          "transitions": []
+        }
+      ],
+      "records": [
+        {
+          "conversation_id": "p1-en-013",
+          "ours": 62.31,
+          "incoming": 92.31,
+          "delta": 30.0,
+          "changed_criteria": [
+            "empathy",
+            "management"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-kz-013",
+          "ours": 62.31,
+          "incoming": 92.31,
+          "delta": 30.0,
+          "changed_criteria": [
+            "empathy",
+            "management"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-023",
+          "ours": 62.31,
+          "incoming": 92.31,
+          "delta": 30.0,
+          "changed_criteria": [
+            "empathy",
+            "management"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p4-ru-001",
+          "ours": 92.5,
+          "incoming": 66.67,
+          "delta": -25.83,
+          "changed_criteria": [
+            "consultation",
+            "empathy",
+            "management"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-003",
+          "ours": 56.88,
+          "incoming": 81.88,
+          "delta": 25.0,
+          "changed_criteria": [
+            "empathy",
+            "closing"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-016",
+          "ours": 45.0,
+          "incoming": 70.0,
+          "delta": 25.0,
+          "changed_criteria": [
+            "empathy",
+            "closing"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-en-007",
+          "ours": 54.62,
+          "incoming": 77.69,
+          "delta": 23.07,
+          "changed_criteria": [
+            "empathy"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-007",
+          "ours": 54.62,
+          "incoming": 77.69,
+          "delta": 23.07,
+          "changed_criteria": [
+            "empathy"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p4-ru-003",
+          "ours": 74.74,
+          "incoming": 95.26,
+          "delta": 20.52,
+          "changed_criteria": [
+            "needs",
+            "management"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-en-015",
+          "ours": 32.5,
+          "incoming": 51.25,
+          "delta": 18.75,
+          "changed_criteria": [
+            "empathy"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-kz-015",
+          "ours": 53.53,
+          "incoming": 36.47,
+          "delta": -17.06,
+          "changed_criteria": [
+            "consultation",
+            "management"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-005",
+          "ours": 70.77,
+          "incoming": 86.15,
+          "delta": 15.38,
+          "changed_criteria": [
+            "consultation"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p4-ru-002",
+          "ours": 75.5,
+          "incoming": 90.0,
+          "delta": 14.5,
+          "changed_criteria": [
+            "consultation",
+            "management",
+            "closing"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-018",
+          "ours": 25.63,
+          "incoming": 12.5,
+          "delta": -13.13,
+          "changed_criteria": [
+            "management"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p4-ru-005",
+          "ours": 68.42,
+          "incoming": 60.5,
+          "delta": -7.92,
+          "changed_criteria": [
+            "consultation",
+            "management",
+            "closing"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-en-001",
+          "ours": 92.31,
+          "incoming": 100.0,
+          "delta": 7.69,
+          "changed_criteria": [
+            "closing"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-en-003",
+          "ours": 92.31,
+          "incoming": 100.0,
+          "delta": 7.69,
+          "changed_criteria": [
+            "closing"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-en-004",
+          "ours": 92.31,
+          "incoming": 100.0,
+          "delta": 7.69,
+          "changed_criteria": [
+            "closing"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-en-005",
+          "ours": 92.31,
+          "incoming": 100.0,
+          "delta": 7.69,
+          "changed_criteria": [
+            "closing"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-en-010",
+          "ours": 92.31,
+          "incoming": 100.0,
+          "delta": 7.69,
+          "changed_criteria": [
+            "closing"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-en-011",
+          "ours": 92.31,
+          "incoming": 100.0,
+          "delta": 7.69,
+          "changed_criteria": [
+            "closing"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-en-012",
+          "ours": 92.31,
+          "incoming": 100.0,
+          "delta": 7.69,
+          "changed_criteria": [
+            "closing"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-kz-001",
+          "ours": 92.31,
+          "incoming": 100.0,
+          "delta": 7.69,
+          "changed_criteria": [
+            "closing"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-kz-002",
+          "ours": 92.31,
+          "incoming": 100.0,
+          "delta": 7.69,
+          "changed_criteria": [
+            "closing"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-kz-006",
+          "ours": 92.31,
+          "incoming": 100.0,
+          "delta": 7.69,
+          "changed_criteria": [
+            "closing"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-kz-009",
+          "ours": 92.31,
+          "incoming": 100.0,
+          "delta": 7.69,
+          "changed_criteria": [
+            "closing"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-001",
+          "ours": 92.31,
+          "incoming": 100.0,
+          "delta": 7.69,
+          "changed_criteria": [
+            "closing"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-004",
+          "ours": 92.31,
+          "incoming": 100.0,
+          "delta": 7.69,
+          "changed_criteria": [
+            "closing"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-008",
+          "ours": 92.31,
+          "incoming": 100.0,
+          "delta": 7.69,
+          "changed_criteria": [
+            "closing"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-011",
+          "ours": 92.31,
+          "incoming": 100.0,
+          "delta": 7.69,
+          "changed_criteria": [
+            "closing"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-021",
+          "ours": 92.31,
+          "incoming": 100.0,
+          "delta": 7.69,
+          "changed_criteria": [
+            "closing"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-027",
+          "ours": 92.31,
+          "incoming": 100.0,
+          "delta": 7.69,
+          "changed_criteria": [
+            "closing"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-028",
+          "ours": 92.31,
+          "incoming": 100.0,
+          "delta": 7.69,
+          "changed_criteria": [
+            "closing"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-017",
+          "ours": 93.75,
+          "incoming": 100.0,
+          "delta": 6.25,
+          "changed_criteria": [
+            "closing"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-019",
+          "ours": 93.75,
+          "incoming": 100.0,
+          "delta": 6.25,
+          "changed_criteria": [
+            "closing"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-026",
+          "ours": 26.25,
+          "incoming": 20.0,
+          "delta": -6.25,
+          "changed_criteria": [
+            "consultation"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-030",
+          "ours": 93.75,
+          "incoming": 100.0,
+          "delta": 6.25,
+          "changed_criteria": [
+            "closing"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-en-014",
+          "ours": 41.76,
+          "incoming": 35.88,
+          "delta": -5.88,
+          "changed_criteria": [
+            "consultation"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p4-ru-004",
+          "ours": 80.0,
+          "incoming": 85.26,
+          "delta": 5.26,
+          "changed_criteria": [
+            "consultation"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-022",
+          "ours": 31.54,
+          "incoming": 31.25,
+          "delta": -0.29,
+          "changed_criteria": [
+            "needs",
+            "management"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-en-002",
+          "ours": 100.0,
+          "incoming": 100.0,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-en-006",
+          "ours": 100.0,
+          "incoming": 100.0,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-en-008",
+          "ours": 92.31,
+          "incoming": 92.31,
+          "delta": 0.0,
+          "changed_criteria": [
+            "consultation",
+            "closing"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-en-009",
+          "ours": 100.0,
+          "incoming": 100.0,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-kz-003",
+          "ours": 100.0,
+          "incoming": 100.0,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-kz-004",
+          "ours": 92.31,
+          "incoming": 92.31,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-kz-005",
+          "ours": 78.46,
+          "incoming": 78.46,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-kz-007",
+          "ours": 92.31,
+          "incoming": 92.31,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-kz-008",
+          "ours": 56.88,
+          "incoming": 56.88,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-kz-010",
+          "ours": 92.31,
+          "incoming": 92.31,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-kz-011",
+          "ours": 100.0,
+          "incoming": 100.0,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-kz-012",
+          "ours": 100.0,
+          "incoming": 100.0,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-kz-014",
+          "ours": 92.31,
+          "incoming": 92.31,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-002",
+          "ours": 100.0,
+          "incoming": 100.0,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-006",
+          "ours": 100.0,
+          "incoming": 100.0,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-009",
+          "ours": 46.0,
+          "incoming": 46.0,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-010",
+          "ours": 100.0,
+          "incoming": 100.0,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-012",
+          "ours": 100.0,
+          "incoming": 100.0,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-013",
+          "ours": 100.0,
+          "incoming": 100.0,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-014",
+          "ours": 56.88,
+          "incoming": 56.88,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-015",
+          "ours": 100.0,
+          "incoming": 100.0,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-020",
+          "ours": 92.31,
+          "incoming": 92.31,
+          "delta": 0.0,
+          "changed_criteria": [
+            "consultation",
+            "closing"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-024",
+          "ours": 92.31,
+          "incoming": 92.31,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-025",
+          "ours": 100.0,
+          "incoming": 100.0,
+          "delta": 0.0,
+          "changed_criteria": [
+            "needs"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-029",
+          "ours": 62.31,
+          "incoming": 62.31,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        }
+      ],
+      "differences": [
+        {
+          "conversation_id": "p1-en-001",
+          "criterion": "closing",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "В завершении нет полного сочетания итога/дальнейшей помощи и прощания. Одного пожелания хорошего дня по принятой строгой трактовке недостаточно.",
+          "incoming_note": "",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-en-003",
+          "criterion": "closing",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "В завершении нет полного сочетания итога/дальнейшей помощи и прощания. Одного пожелания хорошего дня по принятой строгой трактовке недостаточно.",
+          "incoming_note": "",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-en-004",
+          "criterion": "closing",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "В завершении нет полного сочетания итога/дальнейшей помощи и прощания. Одного пожелания хорошего дня по принятой строгой трактовке недостаточно.",
+          "incoming_note": "",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-en-005",
+          "criterion": "closing",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "В завершении нет полного сочетания итога/дальнейшей помощи и прощания. Одного пожелания хорошего дня по принятой строгой трактовке недостаточно.",
+          "incoming_note": "",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-en-007",
+          "criterion": "empathy",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "Оператор игнорирует прямой уточняющий вопрос и завершает общение формальным ответом.",
+          "incoming_note": "Вопрос «can I submit the withdrawal right after» проигнорирован.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-en-008",
+          "criterion": "consultation",
+          "ours": 20,
+          "incoming": 15,
+          "ours_rationale": "Поиск, параметры покупки и маржа объяснены; настройка нового приказа отделена от вопроса о существующей позиции. Проверка существующей позиции не запрошена.",
+          "incoming_note": "Вопрос о существующей позиции не закрыт (m18).",
+          "incoming_ambiguous": true
+        },
+        {
+          "conversation_id": "p1-en-008",
+          "criterion": "closing",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "В завершении нет полного сочетания итога/дальнейшей помощи и прощания. Одного пожелания хорошего дня по принятой строгой трактовке недостаточно.",
+          "incoming_note": "Вопрос о существующей позиции не закрыт (m18).",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-en-010",
+          "criterion": "closing",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "В завершении нет полного сочетания итога/дальнейшей помощи и прощания. Одного пожелания хорошего дня по принятой строгой трактовке недостаточно.",
+          "incoming_note": "",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-en-011",
+          "criterion": "closing",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "В завершении нет полного сочетания итога/дальнейшей помощи и прощания. Одного пожелания хорошего дня по принятой строгой трактовке недостаточно.",
+          "incoming_note": "",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-en-012",
+          "criterion": "closing",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "В завершении нет полного сочетания итога/дальнейшей помощи и прощания. Одного пожелания хорошего дня по принятой строгой трактовке недостаточно.",
+          "incoming_note": "",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-en-013",
+          "criterion": "empathy",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "После помощи оператор навязывает частную платную консультацию вопреки запросу клиента только о приложении.",
+          "incoming_note": "Платная частная консультация (m12); закрыл чат.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-en-013",
+          "criterion": "management",
+          "ours": 7,
+          "incoming": 10,
+          "ours_rationale": "Один посторонний переход к личной платной услуге; сами реплики понятны.",
+          "incoming_note": "Платная частная консультация (m12); закрыл чат.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-en-014",
+          "criterion": "consultation",
+          "ours": 15,
+          "incoming": 10,
+          "ours_rationale": "Основной следующий шаг — проверка причины командой — указан, но второстепенный вопрос, ответят ли в этом чате, проигнорирован.",
+          "incoming_note": "Раскрыл ограничение по счёту без проверки (m11), «We can skip that» (m13); «Goodbye.» на вопрос клиента.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-en-015",
+          "criterion": "empathy",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "Начальная отрывочная инструкция не учитывает затруднение клиента; специальной реакции на исправление неверного предположения нет.",
+          "incoming_note": "Нет приветствия и имени; совет «Open settings» без уточнения → клиент переспросил.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-kz-001",
+          "criterion": "closing",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "В завершении нет полного сочетания итога/дальнейшей помощи и прощания. Одного пожелания хорошего дня по принятой строгой трактовке недостаточно.",
+          "incoming_note": "",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-kz-002",
+          "criterion": "closing",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "В завершении нет полного сочетания итога/дальнейшей помощи и прощания. Одного пожелания хорошего дня по принятой строгой трактовке недостаточно.",
+          "incoming_note": "",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-kz-006",
+          "criterion": "closing",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "В завершении нет полного сочетания итога/дальнейшей помощи и прощания. Одного пожелания хорошего дня по принятой строгой трактовке недостаточно.",
+          "incoming_note": "",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-kz-009",
+          "criterion": "closing",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "В завершении нет полного сочетания итога/дальнейшей помощи и прощания. Одного пожелания хорошего дня по принятой строгой трактовке недостаточно.",
+          "incoming_note": "",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-kz-013",
+          "criterion": "empathy",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "Оператор использует обращение, чтобы предложить платный личный подбор бумаг.",
+          "incoming_note": "Платная частная консультация (m12); закрыл чат.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-kz-013",
+          "criterion": "management",
+          "ours": 7,
+          "incoming": 10,
+          "ours_rationale": "Один тематический уход в частную услугу; речь остаётся понятной.",
+          "incoming_note": "Платная частная консультация (m12); закрыл чат.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-kz-015",
+          "criterion": "consultation",
+          "ours": 20,
+          "incoming": 10,
+          "ours_rationale": "Для выяснения причины оператор обещает передачу на проверку: это конкретный следующий шаг. Нарушение идентификации учтено в критериях 3 и 8 и не обнуляет консультацию автоматически.",
+          "incoming_note": "Раскрыл ограничение по счёту без идентификации (m10), «растау қажет емес» (m12).",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-kz-015",
+          "criterion": "management",
+          "ours": 7,
+          "incoming": 4,
+          "ours_rationale": "Один заметный сбой — отмахивается от вопроса о проверке личности; последующая передача изложена понятно.",
+          "incoming_note": "Раскрыл ограничение по счёту без идентификации (m10), «растау қажет емес» (m12).",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-ru-001",
+          "criterion": "closing",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "В завершении нет полного сочетания итога/дальнейшей помощи и прощания. Одного пожелания хорошего дня по принятой строгой трактовке недостаточно.",
+          "incoming_note": "Эталонный диалог: оператор сразу дал путь в веб-кабинете (клиент с ноутбука).",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-ru-003",
+          "criterion": "empathy",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "После повторного вопроса о комиссии оператор снова отвечает только про название тарифа и завершает разговор.",
+          "incoming_note": "Вопрос о комиссии (основной) проигнорирован дважды: m1/m14 → m15.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-ru-003",
+          "criterion": "closing",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "В завершении нет полного сочетания итога/дальнейшей помощи и прощания. Одного пожелания хорошего дня по принятой строгой трактовке недостаточно.",
+          "incoming_note": "Вопрос о комиссии (основной) проигнорирован дважды: m1/m14 → m15.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-ru-004",
+          "criterion": "closing",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "В завершении нет полного сочетания итога/дальнейшей помощи и прощания. Одного пожелания хорошего дня по принятой строгой трактовке недостаточно.",
+          "incoming_note": "",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-ru-005",
+          "criterion": "consultation",
+          "ours": 10,
+          "incoming": 20,
+          "ours_rationale": "Даны реквизиты и указание уточнить комиссию банка, но исходный вопрос о комиссии именно брокера не разобран. Существенная часть запроса остаётся открытой.",
+          "incoming_note": "Расплывчатая инструкция m12 → клиент переспросил m13; оператор извинился m14.",
+          "incoming_ambiguous": true
+        },
+        {
+          "conversation_id": "p1-ru-007",
+          "criterion": "empathy",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "Фраза «Путь к обновлению я указал» отмахивается от другого, ещё не решённого вопроса клиента.",
+          "incoming_note": "Вопрос «когда снова подавать вывод» проигнорирован (m5, m12 → m13).",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-ru-008",
+          "criterion": "closing",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "В завершении нет полного сочетания итога/дальнейшей помощи и прощания. Одного пожелания хорошего дня по принятой строгой трактовке недостаточно.",
+          "incoming_note": "",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-ru-011",
+          "criterion": "closing",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "В завершении нет полного сочетания итога/дальнейшей помощи и прощания. Одного пожелания хорошего дня по принятой строгой трактовке недостаточно.",
+          "incoming_note": "",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-ru-016",
+          "criterion": "empathy",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "На уточнение клиента ответ «Ну, тогда сайт» не учитывает его затруднение и не объясняет действия; затем помощь дана.",
+          "incoming_note": "Не уточнил, где вход; «Переустановите приложение» клиенту за компьютером (m10); «Ну, тогда сайт.» (m12).",
+          "incoming_ambiguous": true
+        },
+        {
+          "conversation_id": "p1-ru-016",
+          "criterion": "closing",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "В завершении нет полного сочетания итога/дальнейшей помощи и прощания. Одного пожелания хорошего дня по принятой строгой трактовке недостаточно.",
+          "incoming_note": "Не уточнил, где вход; «Переустановите приложение» клиенту за компьютером (m10); «Ну, тогда сайт.» (m12).",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-ru-017",
+          "criterion": "closing",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "В завершении нет полного сочетания итога/дальнейшей помощи и прощания. Одного пожелания хорошего дня по принятой строгой трактовке недостаточно.",
+          "incoming_note": "",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-ru-018",
+          "criterion": "management",
+          "ours": 7,
+          "incoming": 0,
+          "ours_rationale": "Один очевидный сбой — уверенная причина сменяется признанием незнания; реплики сами по себе понятны.",
+          "incoming_note": "Утверждение без данных (m10), затем «Тогда не знаю» (m12); закрыл чат без прощания.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-ru-019",
+          "criterion": "closing",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "В завершении нет полного сочетания итога/дальнейшей помощи и прощания. Одного пожелания хорошего дня по принятой строгой трактовке недостаточно.",
+          "incoming_note": "Уточнил тикер (m10) — нужное уточнение.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-ru-020",
+          "criterion": "consultation",
+          "ours": 20,
+          "incoming": 15,
+          "ours_rationale": "Все существенные вопросы получили содержательный ответ либо понятный следующий шаг. Оценка по содержанию транскрипта, без независимой корпоративной базы знаний.",
+          "incoming_note": "Вопрос об уже открытой позиции отложен («рассматривать отдельно», m12).",
+          "incoming_ambiguous": true
+        },
+        {
+          "conversation_id": "p1-ru-020",
+          "criterion": "closing",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "В завершении нет полного сочетания итога/дальнейшей помощи и прощания. Одного пожелания хорошего дня по принятой строгой трактовке недостаточно.",
+          "incoming_note": "Вопрос об уже открытой позиции отложен («рассматривать отдельно», m12).",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-ru-021",
+          "criterion": "closing",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "В завершении нет полного сочетания итога/дальнейшей помощи и прощания. Одного пожелания хорошего дня по принятой строгой трактовке недостаточно.",
+          "incoming_note": "",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-ru-022",
+          "criterion": "needs",
+          "ours": "N/A",
+          "incoming": "Нет",
+          "ours_rationale": "Запрос на помощь с выбором сформулирован; отдельный сбор инвестиционного профиля не требуется для отказа от частного предложения и маршрутизации к разрешённой консультации.",
+          "incoming_note": "Предложил перевести деньги ему на карту (m10, m12); закрыл чат.",
+          "incoming_ambiguous": true
+        },
+        {
+          "conversation_id": "p1-ru-022",
+          "criterion": "management",
+          "ours": 7,
+          "incoming": 10,
+          "ours_rationale": "Один уход в постороннюю частную услугу; смысл реплик понятен, поэтому 0 за бессвязность не ставится.",
+          "incoming_note": "Предложил перевести деньги ему на карту (m10, m12); закрыл чат.",
+          "incoming_ambiguous": true
+        },
+        {
+          "conversation_id": "p1-ru-023",
+          "criterion": "empathy",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "После решения запроса оператор навязывает личную платную услугу и просит номер клиента для частной консультации.",
+          "incoming_note": "Частная платная консультация по личному номеру (m12); «Хорошо. Всего доброго.» без итога.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-ru-023",
+          "criterion": "management",
+          "ours": 7,
+          "incoming": 10,
+          "ours_rationale": "Один тематический сбой — уход от поиска бумаг к платной частной услуге.",
+          "incoming_note": "Частная платная консультация по личному номеру (m12); «Хорошо. Всего доброго.» без итога.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-ru-025",
+          "criterion": "needs",
+          "ours": "Да",
+          "incoming": "N/A",
+          "ours_rationale": "Содержательный вопрос ещё неизвестен: оператор корректно приглашает клиента описать его, но клиент уходит.",
+          "incoming_note": "Клиент ушёл до формулировки запроса → 02/04/07 N/A.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-ru-026",
+          "criterion": "consultation",
+          "ours": 5,
+          "incoming": 0,
+          "ours_rationale": "Ответ «Всё есть в приложении» не содержит пути или названия кнопки, о которых прямо просил клиент.",
+          "incoming_note": "«Чем могу помочь?» при уже описанном запросе; «Всё есть в приложении»; закрыл чат.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-ru-027",
+          "criterion": "closing",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "В завершении нет полного сочетания итога/дальнейшей помощи и прощания. Одного пожелания хорошего дня по принятой строгой трактовке недостаточно.",
+          "incoming_note": "Много вопросов, все закрыты.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-ru-028",
+          "criterion": "closing",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "В завершении нет полного сочетания итога/дальнейшей помощи и прощания. Одного пожелания хорошего дня по принятой строгой трактовке недостаточно.",
+          "incoming_note": "Предупредил об ожидании («Сейчас проверю путь»), поблагодарил за ожидание.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-ru-030",
+          "criterion": "closing",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "«Отлично. Спасибо за обращение, до свидания» подтверждает получение результата, но не содержит содержательного итога или дальнейшей помощи; при строгой трактовке — «Нет».",
+          "incoming_note": "",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p4-ru-001",
+          "criterion": "consultation",
+          "ours": 20,
+          "incoming": 15,
+          "ours_rationale": "Оператор отделяет техническую поддержку от инвестиционной консультации и приводит пример помощи с выводом. Невозможность дать персональные рекомендации не является неправильным ответом сама по себе.",
+          "incoming_note": "Звонок: клиент недоволен переводом на техподдержку, ответы сухие; клиент сам завершил звонок.",
+          "incoming_ambiguous": true
+        },
+        {
+          "conversation_id": "p4-ru-001",
+          "criterion": "empathy",
+          "ours": "Да",
+          "incoming": "Нет",
+          "ours_rationale": "В конце оператор явно признаёт чувство клиента и связывает его с неверным информированием о поддержке. Эмпатия запоздалая, но присутствует.",
+          "incoming_note": "Звонок: клиент недоволен переводом на техподдержку, ответы сухие; клиент сам завершил звонок.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p4-ru-001",
+          "criterion": "management",
+          "ours": 7,
+          "incoming": 10,
+          "ours_rationale": "Формулировка «техническая часть» сначала остаётся слишком общей; клиент просит объяснить её на примере. Повреждённую ASR реплику 38 не используем как самостоятельное доказательство противоречия.",
+          "incoming_note": "Звонок: клиент недоволен переводом на техподдержку, ответы сухие; клиент сам завершил звонок.",
+          "incoming_ambiguous": true
+        },
+        {
+          "conversation_id": "p4-ru-002",
+          "criterion": "consultation",
+          "ours": 15,
+          "incoming": 20,
+          "ours_rationale": "Объяснены отказ биржевого приказа и внебиржевой способ покупки/продажи, но клиенту не дан конкретный маршрут оформления этого способа. Комиссия, названная коллегой в 42–43, также не доведена до клиента.",
+          "incoming_note": "Звонок: в первой реплике нет приветствия («Да, компания … меня зовут …»); удержание ~7 мин с предупреждением.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p4-ru-002",
+          "criterion": "management",
+          "ours": 7,
+          "incoming": 10,
+          "ours_rationale": "Изначально предлагается лимитный приказ, который снова отклоняется; затем причина уточнена у коллег. Удержание на линии предупреждено и само по себе не штрафуется.",
+          "incoming_note": "Звонок: в первой реплике нет приветствия («Да, компания … меня зовут …»); удержание ~7 мин с предупреждением.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p4-ru-002",
+          "criterion": "closing",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "В финале благодарность и прощание, но нет отдельного итога или предложения дальнейшей помощи в клиентской части разговора. Прощание в 46 адресовано коллеге.",
+          "incoming_note": "Звонок: в первой реплике нет приветствия («Да, компания … меня зовут …»); удержание ~7 мин с предупреждением.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p4-ru-003",
+          "criterion": "needs",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "Оператор привязывает вопрос к прежнему изменению сведений, хотя клиент говорит о новом торговом поручении. Клиенту приходится исправлять понимание запроса.",
+          "incoming_note": "Звонок: идентификация (ФИО, ИИН, SMS) до раскрытия статуса; недопонимание m27; клиент положил трубку сразу после «спасибо».",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p4-ru-003",
+          "criterion": "management",
+          "ours": 4,
+          "incoming": 7,
+          "ours_rationale": "Сначала клиент исправляет подмену торгового поручения изменением сведений; затем вынужден уточнять, какой именно код от него хотят. Это содержательные недопонимания, а не штраф за ASR-грамматику.",
+          "incoming_note": "Звонок: идентификация (ФИО, ИИН, SMS) до раскрытия статуса; недопонимание m27; клиент положил трубку сразу после «спасибо».",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p4-ru-004",
+          "criterion": "consultation",
+          "ours": 10,
+          "incoming": 15,
+          "ours_rationale": "Объяснены ограничение самостоятельной покупки, закрытие рынка и вариант письма трейдерам. Но существенный повторный вопрос о необходимости отдельного обращения при каждой покупке не получает прямого ясного ответа.",
+          "incoming_note": "Звонок: клиент несколько раз переспрашивает «постоянно писать?» (m97–m111); клиент завершил звонок.",
+          "incoming_ambiguous": true
+        },
+        {
+          "conversation_id": "p4-ru-005",
+          "criterion": "consultation",
+          "ours": 20,
+          "incoming": 15,
+          "ours_rationale": "Даны выход из приложения, порядок ожидания и повторного обращения, время начала работы и последовательность выбора документов. Точное время удаления не обещается как гарантированное. Независимая корректность внутренних правил регистрации не проверена.",
+          "incoming_note": "Звонок: в приветствии нет имени (возможно, ошибка ASR); удаление счёта без полноценной идентификации.",
+          "incoming_ambiguous": true
+        },
+        {
+          "conversation_id": "p4-ru-005",
+          "criterion": "management",
+          "ours": 10,
+          "incoming": 7,
+          "ours_rationale": "После уточнений клиент понимает шаги и время следующего контакта. Фрагменты ASR и переспрос «Что говорите?» не считаем доказательством плохой речи оператора без аудио.",
+          "incoming_note": "Звонок: в приветствии нет имени (возможно, ошибка ASR); удаление счёта без полноценной идентификации.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p4-ru-005",
+          "criterion": "closing",
+          "ours": "N/A",
+          "incoming": "Да",
+          "ours_rationale": "Клиент завершил звонок в 74; фрагмент 75 после завершения не позволяет надёжно установить прощание.",
+          "incoming_note": "Звонок: в приветствии нет имени (возможно, ошибка ASR); удаление счёта без полноценной идентификации.",
+          "incoming_ambiguous": true
+        }
+      ]
+    },
+    "strict": {
+      "criterion_disagreements": 35,
+      "criterion_comparisons": 520,
+      "exact_agreement_percent": 93.27,
+      "dialogs_with_changes": 23,
+      "mean_absolute_score_delta": 5.37,
+      "median_absolute_score_delta": 0.0,
+      "score_delta_ge_10": 13,
+      "score_delta_ge_20": 8,
+      "ours_mean_score": 80.93,
+      "incoming_mean_score": 83.24,
+      "critical_disagreements": [],
+      "na_disagreements": 3,
+      "per_criterion": [
+        {
+          "id": "contact",
+          "name": "Установление контакта",
+          "count": 0,
+          "transitions": []
+        },
+        {
+          "id": "needs",
+          "name": "Выявление потребности",
+          "count": 3,
+          "transitions": [
+            {
+              "ours": "N/A",
+              "incoming": "Нет",
+              "count": 1
+            },
+            {
+              "ours": "Да",
+              "incoming": "N/A",
+              "count": 1
+            },
+            {
+              "ours": "Нет",
+              "incoming": "Да",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "id": "identification",
+          "name": "Идентификация",
+          "count": 0,
+          "transitions": []
+        },
+        {
+          "id": "consultation",
+          "name": "Корректная и полная консультация",
+          "count": 10,
+          "transitions": [
+            {
+              "ours": "20",
+              "incoming": "15",
+              "count": 4
+            },
+            {
+              "ours": "15",
+              "incoming": "10",
+              "count": 1
+            },
+            {
+              "ours": "20",
+              "incoming": "10",
+              "count": 1
+            },
+            {
+              "ours": "10",
+              "incoming": "20",
+              "count": 1
+            },
+            {
+              "ours": "5",
+              "incoming": "0",
+              "count": 1
+            },
+            {
+              "ours": "15",
+              "incoming": "20",
+              "count": 1
+            },
+            {
+              "ours": "10",
+              "incoming": "15",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "id": "empathy",
+          "name": "Эмпатия и клиентоориентированность",
+          "count": 9,
+          "transitions": [
+            {
+              "ours": "Нет",
+              "incoming": "Да",
+              "count": 8
+            },
+            {
+              "ours": "Да",
+              "incoming": "Нет",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "id": "management",
+          "name": "Управление диалогом, скорость и грамотность",
+          "count": 10,
+          "transitions": [
+            {
+              "ours": "7",
+              "incoming": "10",
+              "count": 6
+            },
+            {
+              "ours": "7",
+              "incoming": "4",
+              "count": 1
+            },
+            {
+              "ours": "7",
+              "incoming": "0",
+              "count": 1
+            },
+            {
+              "ours": "4",
+              "incoming": "7",
+              "count": 1
+            },
+            {
+              "ours": "10",
+              "incoming": "7",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "id": "closing",
+          "name": "Завершение",
+          "count": 3,
+          "transitions": [
+            {
+              "ours": "Да",
+              "incoming": "Нет",
+              "count": 1
+            },
+            {
+              "ours": "Нет",
+              "incoming": "Да",
+              "count": 1
+            },
+            {
+              "ours": "N/A",
+              "incoming": "Да",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "id": "critical",
+          "name": "Грубые ошибки",
+          "count": 0,
+          "transitions": []
+        }
+      ],
+      "records": [
+        {
+          "conversation_id": "p1-en-013",
+          "ours": 62.31,
+          "incoming": 92.31,
+          "delta": 30.0,
+          "changed_criteria": [
+            "empathy",
+            "management"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-kz-013",
+          "ours": 62.31,
+          "incoming": 92.31,
+          "delta": 30.0,
+          "changed_criteria": [
+            "empathy",
+            "management"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-023",
+          "ours": 62.31,
+          "incoming": 92.31,
+          "delta": 30.0,
+          "changed_criteria": [
+            "empathy",
+            "management"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p4-ru-001",
+          "ours": 92.5,
+          "incoming": 66.67,
+          "delta": -25.83,
+          "changed_criteria": [
+            "consultation",
+            "empathy",
+            "management"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-003",
+          "ours": 56.88,
+          "incoming": 81.88,
+          "delta": 25.0,
+          "changed_criteria": [
+            "empathy",
+            "closing"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-en-007",
+          "ours": 54.62,
+          "incoming": 77.69,
+          "delta": 23.07,
+          "changed_criteria": [
+            "empathy"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-007",
+          "ours": 54.62,
+          "incoming": 77.69,
+          "delta": 23.07,
+          "changed_criteria": [
+            "empathy"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p4-ru-003",
+          "ours": 74.74,
+          "incoming": 95.26,
+          "delta": 20.52,
+          "changed_criteria": [
+            "needs",
+            "management"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-en-015",
+          "ours": 32.5,
+          "incoming": 51.25,
+          "delta": 18.75,
+          "changed_criteria": [
+            "empathy"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-016",
+          "ours": 45.0,
+          "incoming": 63.75,
+          "delta": 18.75,
+          "changed_criteria": [
+            "empathy"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-kz-015",
+          "ours": 53.53,
+          "incoming": 36.47,
+          "delta": -17.06,
+          "changed_criteria": [
+            "consultation",
+            "management"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-005",
+          "ours": 70.77,
+          "incoming": 86.15,
+          "delta": 15.38,
+          "changed_criteria": [
+            "consultation"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-018",
+          "ours": 25.63,
+          "incoming": 12.5,
+          "delta": -13.13,
+          "changed_criteria": [
+            "management"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p4-ru-002",
+          "ours": 75.5,
+          "incoming": 85.0,
+          "delta": 9.5,
+          "changed_criteria": [
+            "consultation",
+            "management"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p4-ru-005",
+          "ours": 68.42,
+          "incoming": 60.5,
+          "delta": -7.92,
+          "changed_criteria": [
+            "consultation",
+            "management",
+            "closing"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-en-002",
+          "ours": 100.0,
+          "incoming": 92.31,
+          "delta": -7.69,
+          "changed_criteria": [
+            "closing"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-en-008",
+          "ours": 92.31,
+          "incoming": 84.62,
+          "delta": -7.69,
+          "changed_criteria": [
+            "consultation"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-020",
+          "ours": 92.31,
+          "incoming": 84.62,
+          "delta": -7.69,
+          "changed_criteria": [
+            "consultation"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-026",
+          "ours": 26.25,
+          "incoming": 20.0,
+          "delta": -6.25,
+          "changed_criteria": [
+            "consultation"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-en-014",
+          "ours": 41.76,
+          "incoming": 35.88,
+          "delta": -5.88,
+          "changed_criteria": [
+            "consultation"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p4-ru-004",
+          "ours": 80.0,
+          "incoming": 85.26,
+          "delta": 5.26,
+          "changed_criteria": [
+            "consultation"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-022",
+          "ours": 31.54,
+          "incoming": 31.25,
+          "delta": -0.29,
+          "changed_criteria": [
+            "needs",
+            "management"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-en-001",
+          "ours": 92.31,
+          "incoming": 92.31,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-en-003",
+          "ours": 92.31,
+          "incoming": 92.31,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-en-004",
+          "ours": 92.31,
+          "incoming": 92.31,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-en-005",
+          "ours": 92.31,
+          "incoming": 92.31,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-en-006",
+          "ours": 100.0,
+          "incoming": 100.0,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-en-009",
+          "ours": 100.0,
+          "incoming": 100.0,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-en-010",
+          "ours": 92.31,
+          "incoming": 92.31,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-en-011",
+          "ours": 92.31,
+          "incoming": 92.31,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-en-012",
+          "ours": 92.31,
+          "incoming": 92.31,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-kz-001",
+          "ours": 92.31,
+          "incoming": 92.31,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-kz-002",
+          "ours": 92.31,
+          "incoming": 92.31,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-kz-003",
+          "ours": 100.0,
+          "incoming": 100.0,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-kz-004",
+          "ours": 92.31,
+          "incoming": 92.31,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-kz-005",
+          "ours": 78.46,
+          "incoming": 78.46,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-kz-006",
+          "ours": 92.31,
+          "incoming": 92.31,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-kz-007",
+          "ours": 92.31,
+          "incoming": 92.31,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-kz-008",
+          "ours": 56.88,
+          "incoming": 56.88,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-kz-009",
+          "ours": 92.31,
+          "incoming": 92.31,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-kz-010",
+          "ours": 92.31,
+          "incoming": 92.31,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-kz-011",
+          "ours": 100.0,
+          "incoming": 100.0,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-kz-012",
+          "ours": 100.0,
+          "incoming": 100.0,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-kz-014",
+          "ours": 92.31,
+          "incoming": 92.31,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-001",
+          "ours": 92.31,
+          "incoming": 92.31,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-002",
+          "ours": 100.0,
+          "incoming": 100.0,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-004",
+          "ours": 92.31,
+          "incoming": 92.31,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-006",
+          "ours": 100.0,
+          "incoming": 100.0,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-008",
+          "ours": 92.31,
+          "incoming": 92.31,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-009",
+          "ours": 46.0,
+          "incoming": 46.0,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-010",
+          "ours": 100.0,
+          "incoming": 100.0,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-011",
+          "ours": 92.31,
+          "incoming": 92.31,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-012",
+          "ours": 100.0,
+          "incoming": 100.0,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-013",
+          "ours": 100.0,
+          "incoming": 100.0,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-014",
+          "ours": 56.88,
+          "incoming": 56.88,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-015",
+          "ours": 100.0,
+          "incoming": 100.0,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-017",
+          "ours": 93.75,
+          "incoming": 93.75,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-019",
+          "ours": 93.75,
+          "incoming": 93.75,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-021",
+          "ours": 92.31,
+          "incoming": 92.31,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-024",
+          "ours": 92.31,
+          "incoming": 92.31,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-025",
+          "ours": 100.0,
+          "incoming": 100.0,
+          "delta": 0.0,
+          "changed_criteria": [
+            "needs"
+          ],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-027",
+          "ours": 92.31,
+          "incoming": 92.31,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-028",
+          "ours": 92.31,
+          "incoming": 92.31,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-029",
+          "ours": 62.31,
+          "incoming": 62.31,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        },
+        {
+          "conversation_id": "p1-ru-030",
+          "ours": 93.75,
+          "incoming": 93.75,
+          "delta": 0.0,
+          "changed_criteria": [],
+          "critical_changed": false
+        }
+      ],
+      "differences": [
+        {
+          "conversation_id": "p1-en-002",
+          "criterion": "closing",
+          "ours": "Да",
+          "incoming": "Нет",
+          "ours_rationale": "«Glad you got in» подводит содержательный итог — клиент вошёл, затем следует пожелание хорошего дня.",
+          "incoming_note": "",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-en-007",
+          "criterion": "empathy",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "Оператор игнорирует прямой уточняющий вопрос и завершает общение формальным ответом.",
+          "incoming_note": "Вопрос «can I submit the withdrawal right after» проигнорирован.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-en-008",
+          "criterion": "consultation",
+          "ours": 20,
+          "incoming": 15,
+          "ours_rationale": "Поиск, параметры покупки и маржа объяснены; настройка нового приказа отделена от вопроса о существующей позиции. Проверка существующей позиции не запрошена.",
+          "incoming_note": "Вопрос о существующей позиции не закрыт (m18).",
+          "incoming_ambiguous": true
+        },
+        {
+          "conversation_id": "p1-en-013",
+          "criterion": "empathy",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "После помощи оператор навязывает частную платную консультацию вопреки запросу клиента только о приложении.",
+          "incoming_note": "Платная частная консультация (m12); закрыл чат.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-en-013",
+          "criterion": "management",
+          "ours": 7,
+          "incoming": 10,
+          "ours_rationale": "Один посторонний переход к личной платной услуге; сами реплики понятны.",
+          "incoming_note": "Платная частная консультация (m12); закрыл чат.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-en-014",
+          "criterion": "consultation",
+          "ours": 15,
+          "incoming": 10,
+          "ours_rationale": "Основной следующий шаг — проверка причины командой — указан, но второстепенный вопрос, ответят ли в этом чате, проигнорирован.",
+          "incoming_note": "Раскрыл ограничение по счёту без проверки (m11), «We can skip that» (m13); «Goodbye.» на вопрос клиента.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-en-015",
+          "criterion": "empathy",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "Начальная отрывочная инструкция не учитывает затруднение клиента; специальной реакции на исправление неверного предположения нет.",
+          "incoming_note": "Нет приветствия и имени; совет «Open settings» без уточнения → клиент переспросил.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-kz-013",
+          "criterion": "empathy",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "Оператор использует обращение, чтобы предложить платный личный подбор бумаг.",
+          "incoming_note": "Платная частная консультация (m12); закрыл чат.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-kz-013",
+          "criterion": "management",
+          "ours": 7,
+          "incoming": 10,
+          "ours_rationale": "Один тематический уход в частную услугу; речь остаётся понятной.",
+          "incoming_note": "Платная частная консультация (m12); закрыл чат.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-kz-015",
+          "criterion": "consultation",
+          "ours": 20,
+          "incoming": 10,
+          "ours_rationale": "Для выяснения причины оператор обещает передачу на проверку: это конкретный следующий шаг. Нарушение идентификации учтено в критериях 3 и 8 и не обнуляет консультацию автоматически.",
+          "incoming_note": "Раскрыл ограничение по счёту без идентификации (m10), «растау қажет емес» (m12).",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-kz-015",
+          "criterion": "management",
+          "ours": 7,
+          "incoming": 4,
+          "ours_rationale": "Один заметный сбой — отмахивается от вопроса о проверке личности; последующая передача изложена понятно.",
+          "incoming_note": "Раскрыл ограничение по счёту без идентификации (m10), «растау қажет емес» (m12).",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-ru-003",
+          "criterion": "empathy",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "После повторного вопроса о комиссии оператор снова отвечает только про название тарифа и завершает разговор.",
+          "incoming_note": "Вопрос о комиссии (основной) проигнорирован дважды: m1/m14 → m15.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-ru-003",
+          "criterion": "closing",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "В завершении нет полного сочетания итога/дальнейшей помощи и прощания. Одного пожелания хорошего дня по принятой строгой трактовке недостаточно.",
+          "incoming_note": "Вопрос о комиссии (основной) проигнорирован дважды: m1/m14 → m15.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-ru-005",
+          "criterion": "consultation",
+          "ours": 10,
+          "incoming": 20,
+          "ours_rationale": "Даны реквизиты и указание уточнить комиссию банка, но исходный вопрос о комиссии именно брокера не разобран. Существенная часть запроса остаётся открытой.",
+          "incoming_note": "Расплывчатая инструкция m12 → клиент переспросил m13; оператор извинился m14.",
+          "incoming_ambiguous": true
+        },
+        {
+          "conversation_id": "p1-ru-007",
+          "criterion": "empathy",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "Фраза «Путь к обновлению я указал» отмахивается от другого, ещё не решённого вопроса клиента.",
+          "incoming_note": "Вопрос «когда снова подавать вывод» проигнорирован (m5, m12 → m13).",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-ru-016",
+          "criterion": "empathy",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "На уточнение клиента ответ «Ну, тогда сайт» не учитывает его затруднение и не объясняет действия; затем помощь дана.",
+          "incoming_note": "Не уточнил, где вход; «Переустановите приложение» клиенту за компьютером (m10); «Ну, тогда сайт.» (m12).",
+          "incoming_ambiguous": true
+        },
+        {
+          "conversation_id": "p1-ru-018",
+          "criterion": "management",
+          "ours": 7,
+          "incoming": 0,
+          "ours_rationale": "Один очевидный сбой — уверенная причина сменяется признанием незнания; реплики сами по себе понятны.",
+          "incoming_note": "Утверждение без данных (m10), затем «Тогда не знаю» (m12); закрыл чат без прощания.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-ru-020",
+          "criterion": "consultation",
+          "ours": 20,
+          "incoming": 15,
+          "ours_rationale": "Все существенные вопросы получили содержательный ответ либо понятный следующий шаг. Оценка по содержанию транскрипта, без независимой корпоративной базы знаний.",
+          "incoming_note": "Вопрос об уже открытой позиции отложен («рассматривать отдельно», m12).",
+          "incoming_ambiguous": true
+        },
+        {
+          "conversation_id": "p1-ru-022",
+          "criterion": "needs",
+          "ours": "N/A",
+          "incoming": "Нет",
+          "ours_rationale": "Запрос на помощь с выбором сформулирован; отдельный сбор инвестиционного профиля не требуется для отказа от частного предложения и маршрутизации к разрешённой консультации.",
+          "incoming_note": "Предложил перевести деньги ему на карту (m10, m12); закрыл чат.",
+          "incoming_ambiguous": true
+        },
+        {
+          "conversation_id": "p1-ru-022",
+          "criterion": "management",
+          "ours": 7,
+          "incoming": 10,
+          "ours_rationale": "Один уход в постороннюю частную услугу; смысл реплик понятен, поэтому 0 за бессвязность не ставится.",
+          "incoming_note": "Предложил перевести деньги ему на карту (m10, m12); закрыл чат.",
+          "incoming_ambiguous": true
+        },
+        {
+          "conversation_id": "p1-ru-023",
+          "criterion": "empathy",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "После решения запроса оператор навязывает личную платную услугу и просит номер клиента для частной консультации.",
+          "incoming_note": "Частная платная консультация по личному номеру (m12); «Хорошо. Всего доброго.» без итога.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-ru-023",
+          "criterion": "management",
+          "ours": 7,
+          "incoming": 10,
+          "ours_rationale": "Один тематический сбой — уход от поиска бумаг к платной частной услуге.",
+          "incoming_note": "Частная платная консультация по личному номеру (m12); «Хорошо. Всего доброго.» без итога.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-ru-025",
+          "criterion": "needs",
+          "ours": "Да",
+          "incoming": "N/A",
+          "ours_rationale": "Содержательный вопрос ещё неизвестен: оператор корректно приглашает клиента описать его, но клиент уходит.",
+          "incoming_note": "Клиент ушёл до формулировки запроса → 02/04/07 N/A.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p1-ru-026",
+          "criterion": "consultation",
+          "ours": 5,
+          "incoming": 0,
+          "ours_rationale": "Ответ «Всё есть в приложении» не содержит пути или названия кнопки, о которых прямо просил клиент.",
+          "incoming_note": "«Чем могу помочь?» при уже описанном запросе; «Всё есть в приложении»; закрыл чат.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p4-ru-001",
+          "criterion": "consultation",
+          "ours": 20,
+          "incoming": 15,
+          "ours_rationale": "Оператор отделяет техническую поддержку от инвестиционной консультации и приводит пример помощи с выводом. Невозможность дать персональные рекомендации не является неправильным ответом сама по себе.",
+          "incoming_note": "Звонок: клиент недоволен переводом на техподдержку, ответы сухие; клиент сам завершил звонок.",
+          "incoming_ambiguous": true
+        },
+        {
+          "conversation_id": "p4-ru-001",
+          "criterion": "empathy",
+          "ours": "Да",
+          "incoming": "Нет",
+          "ours_rationale": "В конце оператор явно признаёт чувство клиента и связывает его с неверным информированием о поддержке. Эмпатия запоздалая, но присутствует.",
+          "incoming_note": "Звонок: клиент недоволен переводом на техподдержку, ответы сухие; клиент сам завершил звонок.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p4-ru-001",
+          "criterion": "management",
+          "ours": 7,
+          "incoming": 10,
+          "ours_rationale": "Формулировка «техническая часть» сначала остаётся слишком общей; клиент просит объяснить её на примере. Повреждённую ASR реплику 38 не используем как самостоятельное доказательство противоречия.",
+          "incoming_note": "Звонок: клиент недоволен переводом на техподдержку, ответы сухие; клиент сам завершил звонок.",
+          "incoming_ambiguous": true
+        },
+        {
+          "conversation_id": "p4-ru-002",
+          "criterion": "consultation",
+          "ours": 15,
+          "incoming": 20,
+          "ours_rationale": "Объяснены отказ биржевого приказа и внебиржевой способ покупки/продажи, но клиенту не дан конкретный маршрут оформления этого способа. Комиссия, названная коллегой в 42–43, также не доведена до клиента.",
+          "incoming_note": "Звонок: в первой реплике нет приветствия («Да, компания … меня зовут …»); удержание ~7 мин с предупреждением.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p4-ru-002",
+          "criterion": "management",
+          "ours": 7,
+          "incoming": 10,
+          "ours_rationale": "Изначально предлагается лимитный приказ, который снова отклоняется; затем причина уточнена у коллег. Удержание на линии предупреждено и само по себе не штрафуется.",
+          "incoming_note": "Звонок: в первой реплике нет приветствия («Да, компания … меня зовут …»); удержание ~7 мин с предупреждением.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p4-ru-003",
+          "criterion": "needs",
+          "ours": "Нет",
+          "incoming": "Да",
+          "ours_rationale": "Оператор привязывает вопрос к прежнему изменению сведений, хотя клиент говорит о новом торговом поручении. Клиенту приходится исправлять понимание запроса.",
+          "incoming_note": "Звонок: идентификация (ФИО, ИИН, SMS) до раскрытия статуса; недопонимание m27; клиент положил трубку сразу после «спасибо».",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p4-ru-003",
+          "criterion": "management",
+          "ours": 4,
+          "incoming": 7,
+          "ours_rationale": "Сначала клиент исправляет подмену торгового поручения изменением сведений; затем вынужден уточнять, какой именно код от него хотят. Это содержательные недопонимания, а не штраф за ASR-грамматику.",
+          "incoming_note": "Звонок: идентификация (ФИО, ИИН, SMS) до раскрытия статуса; недопонимание m27; клиент положил трубку сразу после «спасибо».",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p4-ru-004",
+          "criterion": "consultation",
+          "ours": 10,
+          "incoming": 15,
+          "ours_rationale": "Объяснены ограничение самостоятельной покупки, закрытие рынка и вариант письма трейдерам. Но существенный повторный вопрос о необходимости отдельного обращения при каждой покупке не получает прямого ясного ответа.",
+          "incoming_note": "Звонок: клиент несколько раз переспрашивает «постоянно писать?» (m97–m111); клиент завершил звонок.",
+          "incoming_ambiguous": true
+        },
+        {
+          "conversation_id": "p4-ru-005",
+          "criterion": "consultation",
+          "ours": 20,
+          "incoming": 15,
+          "ours_rationale": "Даны выход из приложения, порядок ожидания и повторного обращения, время начала работы и последовательность выбора документов. Точное время удаления не обещается как гарантированное. Независимая корректность внутренних правил регистрации не проверена.",
+          "incoming_note": "Звонок: в приветствии нет имени (возможно, ошибка ASR); удаление счёта без полноценной идентификации.",
+          "incoming_ambiguous": true
+        },
+        {
+          "conversation_id": "p4-ru-005",
+          "criterion": "management",
+          "ours": 10,
+          "incoming": 7,
+          "ours_rationale": "После уточнений клиент понимает шаги и время следующего контакта. Фрагменты ASR и переспрос «Что говорите?» не считаем доказательством плохой речи оператора без аудио.",
+          "incoming_note": "Звонок: в приветствии нет имени (возможно, ошибка ASR); удаление счёта без полноценной идентификации.",
+          "incoming_ambiguous": false
+        },
+        {
+          "conversation_id": "p4-ru-005",
+          "criterion": "closing",
+          "ours": "N/A",
+          "incoming": "Да",
+          "ours_rationale": "Клиент завершил звонок в 74; фрагмент 75 после завершения не позволяет надёжно установить прощание.",
+          "incoming_note": "Звонок: в приветствии нет имени (возможно, ошибка ASR); удаление счёта без полноценной идентификации.",
+          "incoming_ambiguous": true
+        }
+      ]
+    }
+  }
+}
