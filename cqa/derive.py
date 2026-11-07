@@ -37,11 +37,12 @@ def extra_schema(kind: str) -> tuple[dict, list[str]]:
         }
     elif kind == "consult":
         props = {"client_questions": arr(["essential_closed", "essential_partial", "essential_ignored", "essential_wrong", "minor_closed", "minor_open"],
-            "По одной метке на каждый вопрос или просьбу клиента за диалог (включая заданные боту). essential — суть обращения, minor — второстепенная деталь. closed — ответ или корректный следующий шаг, в том числе понятный косвенный ответ, который клиент принял; partial — общая подсказка, клиенту неясно, как действовать; ignored — без ответа; wrong — ошибочный ответ.")}
+            "По одной метке на каждый вопрос или просьбу клиента за диалог (включая заданные боту). essential — суть обращения, minor — второстепенная деталь, о которой клиент сам спросил (то, о чём клиент не спрашивал, не отмечай вовсе). closed — ответ или корректный следующий шаг, в том числе понятный косвенный ответ, который клиент принял; partial — общая подсказка, клиенту неясно, как действовать; ignored — без ответа; wrong — ошибочный ответ.")}
     elif kind == "flow":
         props = {
-            "glitches": arr(["missed_question", "repeat_known", "off_topic", "unclear_wording", "confusing_order", "unwarned_wait", "contradiction"],
+            "glitches": arr(["missed_question", "off_topic", "unclear_wording", "confusing_order", "unwarned_wait", "contradiction"],
                 "По одной метке на каждый сбой в ясности и последовательности оператора. Ошибки распознавания речи — не сбой. "
+                "Вопрос о том, что клиент уже сообщил, — не сбой ведения: это оценивает выявление потребности. "
                 "contradiction — реплики оператора противоречат друг другу так, что клиенту непонятно, что верно; если оператор "
                 "сам прямо признал свою ошибку и дал верные сведения, это не contradiction, а один сбой."),
             "client_confused": {"type": "boolean", "description": "Клиенту пришлось переспросить, потому что он не понял сам ответ (а не потому, что вопрос пропущен)."},
@@ -53,7 +54,7 @@ def extra_schema(kind: str) -> tuple[dict, list[str]]:
 
 LABELS = {"operator_questions": ["needed", "known_repeat"],
           "client_questions": ["essential_closed", "essential_partial", "essential_ignored", "essential_wrong", "minor_closed", "minor_open"],
-          "glitches": ["missed_question", "repeat_known", "off_topic", "unclear_wording", "confusing_order", "unwarned_wait", "contradiction"]}
+          "glitches": ["missed_question", "off_topic", "unclear_wording", "confusing_order", "unwarned_wait", "contradiction"]}
 
 
 def labels(item: dict, key: str):

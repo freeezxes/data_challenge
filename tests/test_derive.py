@@ -30,7 +30,7 @@ def test_flow_rules(checklist):
     assert derive("flow", {"glitches": []}, c) == 10
     assert derive("flow", {"glitches": ["missed_question"]}, c) == 7
     assert derive("flow", {"glitches": ["unclear_wording"], "client_confused": True}, c) == 4
-    assert derive("flow", {"glitches": ["off_topic", "repeat_known"]}, c) == 4
+    assert derive("flow", {"glitches": ["off_topic", "missed_question"]}, c) == 4
     assert derive("flow", {"glitches": ["contradiction"]}, c) == 0
 
 
