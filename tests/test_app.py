@@ -208,3 +208,39 @@ def test_static_js_served_as_javascript(app):
             assert r.headers["Content-Type"].startswith("text/javascript")
     finally:
         srv.shutdown()
+
+
+def test_coach_variant_and_second_opinion(app, checklist):
+    _wait(app, app.start_job("DEV", ["p1-ru-001"], votes=1)["id"])
+    ev = app.store.latest("DEV")["p1-ru-001"]
+    from app.assist import coach, make_variant, second_opinion
+    from app.server import _variant
+
+    app.fake.payloads = [{"target_id": "m10", "mode": "replace", "text": "Здравствуйте! Меня зовут Алина, сейчас помогу.", "why": "Приветствие и имя."}]
+    tip = coach(app, ev["id"], "c01")
+    assert tip["mode"] == "replace" and tip["original_text"] and tip["cost_usd"] > 0
+    with pytest.raises(StoreError):
+        coach(app, ev["id"], "c08")  # для грубой ошибки подсказки нет
+
+    v = make_variant(app, ev["id"], "m10", "replace", tip["text"])
+    rec = app.store.record("SANDBOX", v["conversation_id"])
+    assert v["conversation_id"] == "p1-ru-001~1" and rec["transcript"][9]["text"] == tip["text"]
+    assert rec["variant_of"]["evaluation_id"] == ev["id"] and rec["variant_of"]["edited_id"] == "m10"
+    assert app.store.record("DEV", "p1-ru-001")["transcript"][9]["text"] != tip["text"]  # исходник не тронут
+    with pytest.raises(StoreError):
+        make_variant(app, ev["id"], "m1", "replace", "клиент так не говорил")  # чужие реплики не переписываем
+    ins = make_variant(app, ev["id"], "m1", "insert_after", "Уточните, пожалуйста, номер договора.")
+    assert ins["conversation_id"] == "p1-ru-001~2" and len(app.store.record("SANDBOX", ins["conversation_id"])["transcript"]) == 13
+
+    app.fake.payloads = [model_payload(checklist, all_answers(checklist))]
+    out = _variant(app, {"id": str(ev["id"])}, {}, {"target_id": "m10", "mode": "replace", "text": "Добрый день, я Алина."})
+    _wait(app, out["job"]["id"])
+    assert app.store.latest("SANDBOX")[out["conversation_id"]]["status"] != "error"
+
+    ap = app.store.create_appeal(ev["id"], "c04", "Ответ был полный")
+    app.fake.payloads = [{"evidence_ids": ["m10", "m99"], "quote": "Алина", "reasoning": "Ответ закрыл вопрос.",
+                          "verdict": "appeal_invalid", "suggested_answer": "20"}]
+    op = second_opinion(app, ap)
+    assert op["verdict"] == "appeal_invalid" and op["evidence_ids"] == ["m10"]
+    n = len(app.fake.calls)
+    assert second_opinion(app, ap)["reasoning"] == op["reasoning"] and len(app.fake.calls) == n  # из кэша, без вызова

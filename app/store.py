@@ -80,6 +80,10 @@ class Store:
         self.db.row_factory = sqlite3.Row
         self.db.execute("pragma journal_mode=wal")
         self.db.executescript(SCHEMA)
+        cols = {r[1] for r in self.db.execute("pragma table_info(appeals)")}
+        if "assist" not in cols:  # второе мнение модели по апелляции (добавлено позже)
+            self.db.execute("alter table appeals add column assist text")
+            self.db.commit()
 
     def q(self, sql, args=()):
         with self.lock:

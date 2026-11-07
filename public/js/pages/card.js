@@ -23,6 +23,14 @@ export default async function card(root, params) {
   let data = await api(`/conversations/${encodeURIComponent(ds)}/${encodeURIComponent(cid)}`);
   const versions = await api("/checklists");
   let pick = versions.find((v) => v.active)?.key;
+  const variant = data.variant_of;
+  let baseEv = null;
+  if (variant) {
+    try {
+      const base = await api(`/conversations/${encodeURIComponent(variant.dataset_id)}/${encodeURIComponent(variant.conversation_id)}`);
+      baseEv = base.evaluations.find((e) => e.id === variant.evaluation_id) || null;
+    } catch { /* исходник удалён — покажем копию без сравнения */ }
+  }
   let evIndex = 0;
 
   function paint() {
@@ -49,6 +57,10 @@ export default async function card(root, params) {
         actions: html`${data.evaluations.length > 1 ? html`<select class="input" id="hist" aria-label="История оценок" style="width:auto">${data.evaluations.map((e, i) => html`<option value="${i}" ${raw(i === evIndex ? "selected" : "")}>#${e.id} · ${e.checklist_key} · ${new Date(e.created_at).toLocaleString("ru-RU", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}${e.status === "error" ? " · ошибка" : ""}</option>`)}</select>` : ""}
           ${checklistPicker(versions, pick)}
           <button class="btn ${ok ? "" : "primary"}" id="eval">${ok ? "Оценить заново" : "Оценить"}</button>` })}
+      ${variant ? html`<div class="variant-bar"><b>Изменённая копия диалога ${variant.conversation_id}</b>
+        <span>${variant.mode === "replace" ? `реплика ${variant.edited_id} заменена` : `реплика ${variant.edited_id} добавлена`}${variant.note ? ` · ${variant.note}` : ""}</span>
+        <span class="delta">Итог: ${fmtTotal(variant.total)} → <b class="${scoreClass(total)}">${ok ? fmtTotal(total) : "оценивается…"}</b>${ok && total != null && variant.total != null ? html` <span class="${total >= variant.total ? "ok-c" : "bad-c"}">(${total >= variant.total ? "+" : ""}${fmtTotal(Math.round((total - variant.total) * 100) / 100)})</span>` : ""}</span>
+        <a class="link" href="#/c/${encodeURIComponent(variant.dataset_id)}/${encodeURIComponent(variant.conversation_id)}">к исходному диалогу</a></div>` : ""}
       <div id="run"></div>
       <div class="card">
         <section class="panel transcript" aria-label="Транскрипт">
@@ -57,9 +69,9 @@ export default async function card(root, params) {
           ${conv.messages.map((m) => {
             const n = notes[m.id] || [];
             const worst = n.some((x) => x.tone === "bad") ? "bad" : n.some((x) => x.tone === "mid") ? "mid" : n.length && m.role === "operator" ? "ok" : "";
-            return html`<article class="msg ${m.role} ${worst ? "mark-" + worst : ""}" id="${m.id}" data-t="${m.t}">
+            return html`<article class="msg ${m.role} ${worst ? "mark-" + worst : ""} ${variant?.edited_id === m.id ? "edited" : ""}" id="${m.id}" data-t="${m.t}">
               <div class="ts" title="${isCall ? `Исходная метка: ${m.timestamp}` : ""}">${isCall && data.audio ? html`<button type="button" data-seek="${m.t}" title="Слушать с этого места">${tsOf(conv, m)}</button>` : tsOf(conv, m)}</div>
-              <div class="who">${ROLE[m.role] || m.role}${m.role === "operator" && opName ? " · " + opName : ""} <span class="muted" style="font-weight:400">${m.id}</span></div>
+              <div class="who">${ROLE[m.role] || m.role}${m.role === "operator" && opName ? " · " + opName : ""} <span class="muted" style="font-weight:400">${m.id}</span>${variant?.edited_id === m.id ? html` <span class="tag warn">изменено</span>` : ""}${m.role === "operator" && ok ? html`<button class="link edit-msg" data-edit="${m.id}" title="Изменить реплику в копии диалога и переоценить">Изменить</button>` : ""}</div>
               <div class="text">${m.text}</div>
               ${n.length ? html`<div class="notes">${n.map((x) => html`<span class="note ${x.tone === "bad" ? "bad" : x.tone === "mid" ? "mid" : ""}">${short(x.c.title)}: ${answerLabel(x.c, x.a)}</span>`)}</div>` : ""}
             </article>`;
@@ -116,7 +128,7 @@ export default async function card(root, params) {
     else pts = html`<span class="${tone}-c">${fmtTotal(row.points)}</span><small> / ${fmtTotal(row.effective_weight)}</small>`;
     const label = c.type === "scale" && a !== "na" ? `Ступень ${a} из ${Math.max(...c.scale.map((s) => s.value))}` : c.type === "binary" && a !== "na" ? answerLabel(c, a) : "";
     return html`<div class="crit ${c.type === "critical" && a === "yes" ? "critical-hit" : ""}" id="crit-${c.id}">
-      <div class="row"><h3>${c.title}</h3>${(d.votes || []).length > 1 ? html`<span class="tag ${d.confidence === 1 ? "" : "warn"}" title="Ответы прогонов: ${d.votes.map((v) => answerLabel(c, v)).join(" · ")}">${d.confidence === 1 ? `${d.votes.length}/${d.votes.length}` : c.type === "scale" && d.votes.every((v) => v !== "na") ? `разброс ${Math.min(...d.votes)}–${Math.max(...d.votes)}` : `${d.votes.filter((v) => String(v) === String(orig)).length} из ${d.votes.length}`}</span>` : ""}<span class="pts num">${pts}</span></div>
+      <div class="row"><h3>${c.title}</h3>${baseEv?.final && String(baseEv.final.answers[c.id]) !== String(a) ? html`<span class="tag ${answerTone(c, a) === "ok" ? "ok" : "warn"}" title="Оценка исходного диалога">было: ${answerLabel(c, baseEv.final.answers[c.id])}</span>` : ""}${(d.votes || []).length > 1 ? html`<span class="tag ${d.confidence === 1 ? "" : "warn"}" title="Ответы прогонов: ${d.votes.map((v) => answerLabel(c, v)).join(" · ")}">${d.confidence === 1 ? `${d.votes.length}/${d.votes.length}` : c.type === "scale" && d.votes.every((v) => v !== "na") ? `разброс ${Math.min(...d.votes)}–${Math.max(...d.votes)}` : `${d.votes.filter((v) => String(v) === String(orig)).length} из ${d.votes.length}`}</span>` : ""}<span class="pts num">${pts}</span></div>
       <p class="why">${label ? html`<b class="${tone}-c">${label}.</b> ` : ""}${d.reasoning}</p>
       ${d.quote ? html`<span class="quote">«${d.quote}»</span>` : ""}
       ${d.facts ? html`<p class="facts" title="Модель назвала факты, ступень по правилам чек-листа вывел код">Факты: ${factsText(d.facts) || "сбоев и вопросов нет"}</p>` : ""}
@@ -124,6 +136,7 @@ export default async function card(root, params) {
         ${evid.length ? html`<button class="link" data-jump="${evid[0]}" data-hl="${evid.join(",")}">Перейти к ${tsOf(conv, byId[evid[0]])}</button>` : ""}
         ${evid.length > 1 ? html`<span class="muted" style="font-size:12px">ещё ${raw(evid.slice(1).map((id) => `<button class="link" data-jump="${esc(id)}">${esc(id)}</button>`).join(", "))}</span>` : ""}
         ${(negative || a === "na") && d.checked_range ? html`<button class="link" style="color:var(--na)" data-range="${d.checked_range}">Проверенный участок ${d.checked_range}</button>` : ""}
+        ${negative && a !== "na" && c.type !== "critical" ? html`<button class="link coach" data-coach="${c.id}">Как надо было ответить</button>` : ""}
         ${!open && role.get() === "operator" ? html`<button class="btn small appeal-btn" data-appeal="${c.id}">Оспорить</button>` : ""}
         ${open && role.get() === "reviewer" ? html`<a class="btn small primary appeal-btn" href="#/appeals?id=${open.id}">Решить</a>` : ""}
       </div>
@@ -164,6 +177,12 @@ export default async function card(root, params) {
     root.querySelectorAll("[data-seek]").forEach((b) => (b.onclick = () => { const a = document.getElementById("audio"); a.currentTime = Number(b.dataset.seek); a.play().catch(() => {}); }));
     root.querySelectorAll("[data-appeal]").forEach((b) => (b.onclick = () => appealDialog(ev, checklist, b.dataset.appeal)));
     root.querySelector("#trace")?.addEventListener("click", () => traceDialog(ev, checklist));
+    root.querySelectorAll("[data-coach]").forEach((b) => (b.onclick = () => coachDialog(ev, checklist, b.dataset.coach)));
+    root.querySelectorAll("[data-edit]").forEach((b) => (b.onclick = () => {
+      const m = conv.messages.find((x) => x.id === b.dataset.edit);
+      editDialog(ev, { target_id: m.id, mode: "replace", text: m.text, original_text: m.text, title: `Изменить реплику ${m.id}`,
+        hint: "Правка попадёт в копию диалога в наборе «Песочница», исходный диалог не меняется. Копия сразу оценивается, и видно, какие баллы сдвинулись." });
+    }));
   }
 
   async function traceDialog(ev, checklist) {
@@ -193,6 +212,46 @@ export default async function card(root, params) {
       d.querySelectorAll("[data-tab]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
       d.querySelectorAll("[data-pane]").forEach((p) => (p.hidden = p.dataset.pane !== b.dataset.tab));
     }));
+  }
+
+  async function coachDialog(ev, checklist, critId) {
+    const c = checklist.criteria.find((x) => x.id === critId);
+    const d = dialog(html`<header><h2>Как надо было ответить</h2></header><div class="content">
+      <p class="muted" style="margin:0">${c.title}: модель пишет реплику оператора, которая закрыла бы проблему по этому критерию.</p>
+      <div class="run" role="status"><span class="dot live"></span><div><b>Пишем реплику…</b><small>5–15 секунд</small></div></div></div>
+      <footer><button class="btn ghost" value="c">Закрыть</button></footer>`);
+    d.querySelector('[value="c"]').onclick = () => d.close();
+    try {
+      const tip = await api(`/evaluations/${ev.id}/coach`, { criterion_id: critId });
+      d.close();
+      editDialog(ev, { ...tip, title: "Как надо было ответить", hint: tip.why, coachCost: tip.cost_usd });
+    } catch (x) {
+      d.querySelector(".content").innerHTML = String(html`<div class="alert"><b>Не получилось</b>${x.message}</div>`);
+    }
+  }
+
+  function editDialog(ev, s) {
+    const d = dialog(html`<header><h2>${s.title}</h2></header><div class="content">
+      <p class="muted" style="margin:0">${s.hint}</p>
+      ${s.mode === "replace" && s.original_text ? html`<div class="was-text"><span class="muted">Было (${s.target_id})</span><br>${s.original_text}</div>`
+        : html`<p class="muted" style="margin:0">Новая реплика оператора — после ${s.target_id}.</p>`}
+      <label class="field">${s.mode === "replace" ? "Стало" : "Реплика оператора"}<textarea class="input" name="t" style="min-height:96px">${s.text}</textarea></label>
+      <p class="muted" style="margin:0;font-size:12.5px">«Проверить» оценит копию диалога с этой репликой той же версией чек-листа${s.coachCost ? ` · подсказка стоила ${money(s.coachCost)}` : ""}.</p>
+      <div class="err-text"></div></div>
+      <footer><button class="btn ghost" value="c">Закрыть</button><button class="btn primary" value="ok">Проверить: переоценить копию</button></footer>`);
+    d.classList.add("wide");
+    const err = d.querySelector(".err-text");
+    d.querySelector('[value="c"]').onclick = () => d.close();
+    d.querySelector('[value="ok"]').onclick = async (e) => {
+      e.target.disabled = true; err.textContent = "";
+      try {
+        const r = await api(`/evaluations/${ev.id}/variant`, { target_id: s.target_id, mode: s.mode, text: d.querySelector("[name=t]").value,
+          note: s.criterion_id ? `подсказка по критерию «${(data.checklists[ev.checklist_key].criteria.find((x) => x.id === s.criterion_id) || {}).title}»` : "ручная правка",
+          votes: Number(localStorage.getItem("cqa-votes")) || undefined });
+        d.close(); toast("Копия создана, идёт оценка"); watchJobs();
+        location.hash = `#/c/${encodeURIComponent(r.dataset_id)}/${encodeURIComponent(r.conversation_id)}`;
+      } catch (x) { err.textContent = x.message; e.target.disabled = false; }
+    };
   }
 
   function appealDialog(ev, checklist, critId) {

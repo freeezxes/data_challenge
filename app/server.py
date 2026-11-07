@@ -33,6 +33,7 @@ from cqa.prompt import build_system_prompt, build_user_message  # noqa: E402
 from cqa.gold import load_gold  # noqa: E402
 from cqa.metrics import compare  # noqa: E402
 
+from .assist import coach, make_variant, second_opinion  # noqa: E402
 from .store import Store, StoreError  # noqa: E402
 
 PUBLIC = ROOT / "public"
@@ -183,7 +184,8 @@ class App:
         audio = RECORDINGS.get(conv_id) or record.get("audio_url")
         evs = self.store.evaluations(ds_id, conv_id)
         checklists = {e["checklist_key"]: self.store.checklist(e["checklist_key"]) for e in evs}
-        return {"conversation": conv, "audio": audio, "evaluations": evs, "checklists": checklists}
+        return {"conversation": conv, "audio": audio, "evaluations": evs, "checklists": checklists,
+                "variant_of": record.get("variant_of")}
 
     def analytics(self, ds_id, checklist_key=None):
         checklist_key = checklist_key or self.store.get_setting("active_checklist")
@@ -413,6 +415,25 @@ def _decide(app, m, q, body):
 @route("POST", r"/api/evaluations/(?P<id>\d+)/preview")
 def _preview(app, m, q, body):
     return app.store.preview(int(m["id"]), body["criterion_id"], body["new_answer"])
+
+
+@route("POST", r"/api/evaluations/(?P<id>\d+)/coach")
+def _coach(app, m, q, body):
+    return coach(app, int(m["id"]), body["criterion_id"])
+
+
+@route("POST", r"/api/evaluations/(?P<id>\d+)/variant")
+def _variant(app, m, q, body):
+    """Копия диалога с правкой и сразу её оценка — увидеть, как правка меняет баллы."""
+    v = make_variant(app, int(m["id"]), body["target_id"], body.get("mode", "replace"), body.get("text", ""), body.get("note", ""))
+    ev = app.store.evaluation(int(m["id"]))
+    job = app.start_job(v["dataset_id"], [v["conversation_id"]], ev["checklist_key"], votes=body.get("votes"))
+    return {**v, "job": job}
+
+
+@route("POST", r"/api/appeals/(?P<id>\d+)/assist")
+def _assist(app, m, q, body):
+    return second_opinion(app, int(m["id"]), bool(body.get("refresh")))
 
 
 @route("GET", r"/api/analytics/(?P<ds>[^/]+)")

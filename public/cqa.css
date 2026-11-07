@@ -305,3 +305,20 @@ details summary{cursor:pointer;padding:6px 0;color:var(--ink2);font-size:13px}
 .evalbar label{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:13px}
 .evalbar .btn{margin-left:auto}
 .evalbar .input{min-height:36px;padding:6px 10px}
+
+/* копия диалога и подсказки */
+.variant-bar{display:flex;align-items:center;flex-wrap:wrap;gap:8px 18px;margin:-6px 0 20px;padding:14px 18px;border:1px solid rgba(245,181,68,.35);border-radius:var(--r-l);background:var(--amber-soft)}
+.variant-bar b{color:var(--ink)} .variant-bar span{color:var(--ink2)}
+.variant-bar .link{margin-left:auto}
+.msg.edited{background:rgba(245,181,68,.06)}
+.msg.edited::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--amber)}
+.msg .edit-msg{margin-left:10px;opacity:0;transition:opacity .15s;font-weight:500}
+.msg:hover .edit-msg,.msg .edit-msg:focus-visible{opacity:1}
+.crit .coach{color:var(--amber)}
+.was-text{padding:10px 12px;border-radius:10px;background:var(--raise);color:var(--ink2);font-family:var(--serif);text-decoration:line-through;text-decoration-color:rgba(255,107,107,.6)}
+.was-text .muted{font-family:var(--sans);text-decoration:none;display:inline-block}
+@media (hover:none){.msg .edit-msg{opacity:1}}
+.opinion{display:grid;gap:4px;margin-bottom:16px;padding:12px 14px;border:1px solid var(--line2);border-radius:12px;background:var(--panel)}
+.opinion .op-head{display:flex;align-items:center;gap:10px}
+.opinion.empty-op{grid-template-columns:1fr auto;align-items:center;gap:12px}
+.opinion.empty-op span{display:block;font-size:12.5px}

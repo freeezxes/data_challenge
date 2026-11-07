@@ -60,6 +60,7 @@ export default async function appeals(root, params) {
           <p style="margin:0 0 10px;color:var(--ink2)">${a.reason}</p>
           <div class="delta">Итог диалога: ${fmtTotal(a.original_total)} → <b class="${scoreClass(a.final_total)}">${fmtTotal(a.final_total)}</b></div>`
         : html`
+          ${reviewer ? opinion(a, c) : ""}
           <div class="muted" style="font-size:12.5px;margin-bottom:8px">Решение проверяющего</div>
           <div class="answers" role="group" aria-label="Оценка">${allowedAnswers(c).map((v) => html`<button type="button" data-v="${v}" class="${String(v) === String(current) ? "current" : ""}" aria-pressed="${String(String(v) === String(current))}" ${raw(reviewer ? "" : "disabled")}>${answerLabel(c, v)}</button>`)}</div>
           <p class="delta" data-delta style="margin:10px 0">Итог останется ${fmtTotal(ev.final.score.total)}</p>
@@ -69,15 +70,37 @@ export default async function appeals(root, params) {
       </div></article>`;
   }
 
+  function opinion(a, c) {
+    const op = a.assist ? JSON.parse(a.assist) : null;
+    if (!op) return html`<div class="opinion empty-op"><div><b>Второе мнение модели</b><span class="muted">Модель перечитает диалог и правила критерия с учётом комментария оператора. Решение остаётся за вами.</span></div>
+      <button class="btn small" data-ask="${a.id}">Спросить · ≈ $0,03</button></div>`;
+    const sugg = op.suggested_answer === "na" ? "na" : isNaN(+op.suggested_answer) ? op.suggested_answer : +op.suggested_answer;
+    const same = String(op.suggested_answer) === String(a.original_answer);
+    // ярлык по сути предложения: довод оператора может не подтвердиться, а ступень всё равно смениться
+    const [tone, label] = op.verdict === "unclear" ? ["warn", "Спорный случай"]
+      : same ? ["bad", "Оценка верна, апелляция не обоснована"]
+      : op.verdict === "appeal_valid" ? ["ok", "Апелляция обоснована"] : ["warn", "Довод не подтвердился, но оценку стоит поправить"];
+    return html`<div class="opinion"><div class="op-head"><b>Второе мнение модели</b><span class="tag ${tone}">${label}</span></div>
+      <p style="margin:6px 0">${op.reasoning}</p>
+      ${op.quote ? html`<span class="quote">«${op.quote}»</span>` : ""}
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="muted" style="font-size:12.5px">Предлагает: <b style="color:var(--ink)">${answerLabel(c, sugg)}</b>${op.evidence_ids?.length ? ` · ${op.evidence_ids.join(", ")}` : ""}</span>
+        <button class="link" data-take="${a.id}" data-sugg="${op.suggested_answer}">Взять предложение</button></div></div>`;
+  }
+
   function wire({ a, ev, c }) {
     const el = document.getElementById("ap-" + a.id);
     if (!el || a.status !== "open") return;
     let pick = ev.final.answers[c.id];
+    el.querySelector("[data-ask]")?.addEventListener("click", async (e) => {
+      e.target.disabled = true; e.target.textContent = "Модель читает диалог…";
+      try { await api(`/appeals/${a.id}/assist`, {}); paint(); }
+      catch (x) { toast(x.message, true); e.target.disabled = false; e.target.textContent = "Спросить ещё раз"; }
+    });
     const delta = el.querySelector("[data-delta]"), err = el.querySelector("[data-err]");
     const changeBtn = el.querySelector('[data-act="change"]');
-    el.querySelectorAll("[data-v]").forEach((b) => (b.onclick = async () => {
+    el.querySelectorAll(".answers [data-v]").forEach((b) => (b.onclick = async () => {
       pick = b.dataset.v;
-      el.querySelectorAll("[data-v]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+      el.querySelectorAll(".answers [data-v]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
       const same = String(pick) === String(ev.final.answers[c.id]);
       if (changeBtn) changeBtn.disabled = same;
       if (same) { delta.innerHTML = `Итог останется ${fmtTotal(ev.final.score.total)}`; return; }
@@ -86,6 +109,13 @@ export default async function appeals(root, params) {
         delta.innerHTML = String(html`Итог диалога: ${fmtTotal(ev.final.score.total)} → <b class="${scoreClass(s.total)}">${fmtTotal(s.total)}</b>`);
       } catch (x) { err.textContent = x.message; }
     }));
+    el.querySelector("[data-take]")?.addEventListener("click", (e) => {
+      const op = JSON.parse(a.assist);
+      el.querySelector(`.answers [data-v="${CSS.escape(e.target.dataset.sugg)}"]`)?.click();
+      const r = el.querySelector("[data-reason]");
+      if (!r.value.trim()) r.value = op.reasoning;
+      r.focus();
+    });
     el.querySelectorAll("[data-act]").forEach((b) => (b.onclick = async () => {
       err.textContent = "";
       b.disabled = true;
