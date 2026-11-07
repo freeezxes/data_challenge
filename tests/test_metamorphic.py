@@ -33,3 +33,21 @@ def test_judge_uses_model_baseline_not_gold():
     assert r["status"] == "pass" and r["unstable"] == ["c04"]
     assert judge(case, base, {"c01": "yes"})["status"] == "fail"
     assert judge(case, {"c01": "no"}, {"c01": "no"})["status"] == "skipped"
+
+
+def test_paraphrase_and_brush_off_mutations():
+    from cqa.facts import extract_facts
+    from cqa.dataset import normalize
+    recs = _records()
+    cases = build_cases([recs["p1-ru-006"], recs["p1-en-009"]], {"sys-paraphrase", "brush-off"})
+    byname = {(c["base_id"], c["mutation"]): c for c in cases}
+    para = byname[("p1-ru-006", "sys-paraphrase")]["record"]
+    assert para["transcript"] != recs["p1-ru-006"]["transcript"]
+    # факты по перефразированным сообщениям совпадают с исходными
+    f0, f1 = extract_facts(normalize(recs["p1-ru-006"])), extract_facts(normalize(para))
+    assert f0["identity_confirmed_ids"] == f1["identity_confirmed_ids"] and f0["escalation_id"] == f1["escalation_id"]
+    f0, f1 = extract_facts(normalize(recs["p1-en-009"])), extract_facts(normalize(byname[("p1-en-009", "sys-paraphrase")]["record"]))
+    assert f0["end_events"] == f1["end_events"]
+    bo = byname[("p1-ru-006", "brush-off")]
+    assert bo["expect"] == {"c05": "no"} and len(bo["record"]["transcript"]) == len(recs["p1-ru-006"]["transcript"]) + 2
+    assert judge({"mutation": "sys-paraphrase", "expect": {}}, {"c01": "yes", "c03": "yes"}, {"c01": "yes", "c03": "no"})["unstable"] == ["c03"]

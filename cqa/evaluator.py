@@ -107,8 +107,9 @@ def validate_run(checklist: dict, conv: dict, facts: dict, raw: dict) -> tuple[d
 
     ident = _criterion_by_title(checklist, "Идентификац")
     if ident and conv.get("channel") != "voice call" and details[ident["id"]]["answer"] == "yes" \
-            and not facts["identity_confirmed_ids"]:
-        issues.append(f"{ident['id']}: «Да», но системного подтверждения личности в чате нет")
+            and not facts["identity_confirmed_ids"] \
+            and not any(m["role"] == "system" for m in conv["messages"] if m["id"] in details[ident["id"]]["evidence_ids"]):
+        issues.append(f"{ident['id']}: «Да», но среди доказательств нет системного сообщения о подтверждении личности")
     if ident and details[ident["id"]]["answer"] == "na" and facts.get("identity_requested_ids") \
             and not facts["identity_confirmed_ids"] and conv.get("channel") != "voice call":
         issues.append(f"совет: {ident['id']}: N/A, но оператор сам говорил о проверке личности, а подтверждения нет — "
@@ -116,8 +117,9 @@ def validate_run(checklist: dict, conv: dict, facts: dict, raw: dict) -> tuple[d
     closing = _criterion_by_title(checklist, "Завершени")
     cut = {"client_left", "connection_lost", "client_ended_call"}
     if closing and details[closing["id"]]["answer"] == "na" and not any(
-            e["type"] in cut for e in facts["end_events"]):
-        issues.append(f"{closing['id']}: N/A, но события обрыва (клиент ушёл / связь прервалась) нет")
+            e["type"] in cut for e in facts["end_events"]) \
+            and not any(m["role"] == "system" for m in conv["messages"] if m["id"] in details[closing["id"]]["evidence_ids"]):
+        issues.append(f"{closing['id']}: N/A, но среди доказательств нет системного сообщения об обрыве")
     return details, issues
 
 

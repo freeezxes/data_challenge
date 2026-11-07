@@ -74,7 +74,7 @@ def test_failure_must_cite_operator(setup):
 def test_identity_yes_needs_confirmation_event(setup):
     conv, facts, cmap = setup
     bad = {"evidence": ["m4"], "quote": "Подтвердим личность", "text": "Личность подтверждена до раскрытия."}
-    assert any("подтверждения личности" in p for p in check_rationale(conv, facts, cmap["c03"], "yes", bad))
+    assert any("подтверждении личности" in p for p in check_rationale(conv, facts, cmap["c03"], "yes", bad))
     good = {"evidence": ["m5", "m6"], "quote": "Личность клиента подтверждена.", "text": "Подтверждение раньше работы со счётом."}
     assert check_rationale(conv, facts, cmap["c03"], "yes", good) == []
 
@@ -82,6 +82,6 @@ def test_identity_yes_needs_confirmation_event(setup):
 def test_closing_na_needs_cut_event(setup):
     conv, facts, cmap = setup
     bad = {"evidence": ["m6"], "quote": "Передала вопрос", "text": "Диалог оборвался, завершить было нельзя."}
-    assert any("события обрыва" in p for p in check_rationale(conv, facts, cmap["c07"], "na", bad))
+    assert any("об обрыве" in p for p in check_rationale(conv, facts, cmap["c07"], "na", bad))
     good = {"evidence": ["m8"], "quote": "Клиент покинул чат.", "text": "Клиент ушёл раньше прощания."}
     assert check_rationale(conv, facts, cmap["c07"], "na", good) == []

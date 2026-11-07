@@ -27,6 +27,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--dataset', type=Path, default=ROOT / 'public/dataset.json')
     ap.add_argument('--checklist', type=Path, default=ROOT / 'config/checklist.default.json')
+    ap.add_argument('--only', help='Только эти мутации, через запятую')
     ap.add_argument('--bases', required=True, help='ID исходных диалогов через запятую')
     ap.add_argument('--model', default='claude-opus-5-5')
     ap.add_argument('--effort', default='high')
@@ -38,7 +39,7 @@ def main():
     checklist = load_checklist(a.checklist)
     recs = {r['conversation_id']: r for r in load_records(a.dataset)}
     bases = [recs[i] for i in a.bases.split(',')]
-    cases = build_cases(bases)
+    cases = build_cases(bases, set(a.only.split(',')) if a.only else None)
     print(f'{len(bases)} исходных диалогов, {len(cases)} мутаций, всего вызовов: {len(bases) + len(cases)} × {a.votes}')
     if a.dry_run:
         return

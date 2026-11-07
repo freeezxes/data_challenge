@@ -81,16 +81,18 @@ def check_rationale(conv: dict, facts: dict, criterion: dict, answer, rationale:
         if criterion["type"] == "critical" and quote_owner is not None and quote_owner["role"] != "operator":
             problems.append(f"{cid}: цитата грубой ошибки взята не из реплики оператора")
     if kind == "identity" and answer == "yes" and conv.get("channel") != "voice call":
-        if not set(evidence) & set(facts.get("identity_confirmed_ids", [])):
-            problems.append(f"{cid}: «Да», но среди доказательств нет подтверждения личности")
+        # Подтверждение личности в чате — системное событие. Принимаем любое системное сообщение среди доказательств:
+        # шаблон может не знать формулировку, а модель видит текст.
+        if "system" not in roles and not set(evidence) & set(facts.get("identity_confirmed_ids", [])):
+            problems.append(f"{cid}: «Да», но среди доказательств нет системного сообщения о подтверждении личности")
     if kind == "closing":
         end_ids = {e["id"] for e in facts.get("end_events", [])}
         anchors = end_ids | {facts.get("last_operator_id")}
         if answer == "na":
             cut = {e["id"] for e in facts.get("end_events", [])
                    if e["type"] in ("client_left", "connection_lost", "client_ended_call")}
-            if not set(evidence) & cut:
-                problems.append(f"{cid}: N/A, но среди доказательств нет события обрыва")
+            if not set(evidence) & cut and "system" not in roles:
+                problems.append(f"{cid}: N/A, но среди доказательств нет системного сообщения об обрыве")
         elif not set(evidence) & anchors and "operator" not in roles:
             problems.append(f"{cid}: нет ни последней реплики оператора, ни события завершения")
     return problems

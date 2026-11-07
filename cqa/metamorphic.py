@@ -12,7 +12,7 @@ from __future__ import annotations
 import copy
 import re
 
-from .facts import IDENTITY
+from .facts import END_EVENTS, ESCALATION, IDENTITY
 
 INSULT = {"RU": "Вы вообще читать умеете? Я уже всё объяснил.",
           "KZ": "Сіз оқи аласыз ба өзі? Бәрін түсіндірдім ғой.",
@@ -104,23 +104,68 @@ def remove_identity(rec):
     return r, {"c03": "no"}
 
 
-MUTATIONS = {"no-intro": drop_intro, "insult": add_insult, "bypass": add_bypass,
+PARAPHRASE = {
+    "identity": {"RU": "Идентификация клиента успешно пройдена.", "KZ": "Клиент сәйкестендіруден өтті.", "EN": "Verification completed: customer identified."},
+    "escalation": {"RU": "Чат переведён на оператора.", "KZ": "Чат операторға ауыстырылды.", "EN": "Escalated to a live agent."},
+    "client_left": {"RU": "Клиент вышел из чата.", "KZ": "Клиент чаттан кетті.", "EN": "Client has left the conversation."},
+    "connection_lost": {"RU": "Связь с клиентом потеряна.", "KZ": "Байланыс жоғалды.", "EN": "Connection dropped."},
+    "operator_closed": {"RU": "Чат завершён оператором.", "KZ": "Оператор чатты аяқтады.", "EN": "Chat closed by agent."},
+    "client_ended_call": {"RU": "Клиент повесил трубку.", "KZ": "Клиент қоңырауды аяқтады.", "EN": "Caller hung up."},
+}
+COMPLAINT = {"RU": "Это уже третий раз за неделю, честно говоря, достало. Из-за вас я не успел на сделку.",
+             "KZ": "Бұл осы аптада үшінші рет, шынымды айтсам, шаршадым. Сіздердің кесірлеріңізден мәмілеге үлгермедім.",
+             "EN": "This is the third time this week, honestly I'm fed up. Because of you I missed my trade."}
+BRUSH_OFF = {"RU": "Понял. Ещё вопросы есть?", "KZ": "Түсіндім. Тағы сұрақтар бар ма?", "EN": "Noted. Anything else?"}
+
+
+def paraphrase_system(rec):
+    """Переписать системные сообщения другими словами → ни один ответ не должен измениться."""
+    r = _clone(rec, "sys-paraphrase"); lang = rec["language"]; changed = 0
+    for m in r["transcript"]:
+        if m["speaker"] != "system":
+            continue
+        kind = None
+        if IDENTITY.search(m["text"]):
+            kind = "identity"
+        elif ESCALATION.search(m["text"]):
+            kind = "escalation"
+        else:
+            kind = next((k for k, rx in END_EVENTS if rx.search(m["text"])), None)
+        if kind and m["text"] != PARAPHRASE[kind][lang]:
+            m["text"] = PARAPHRASE[kind][lang]; changed += 1
+    return (r, {}) if changed else None
+
+
+def brush_off_complaint(rec):
+    """Клиент жалуется, оператор отмахивается перед последней репликой → c05 «Нет»."""
+    r = _clone(rec, "brush-off"); t = r["transcript"]; ops = _ops(t)
+    if len(ops) < 2:
+        return None
+    last = ops[-1]; ts = t[last]["timestamp"]; lang = rec["language"]
+    t.insert(last, {"timestamp": ts, "speaker": "operator", "text": BRUSH_OFF[lang]})
+    t.insert(last, {"timestamp": ts, "speaker": "client", "text": COMPLAINT[lang]})
+    return r, {"c05": "no"}
+
+
+MUTATIONS = {"sys-paraphrase": paraphrase_system, "brush-off": brush_off_complaint, "no-intro": drop_intro, "insult": add_insult, "bypass": add_bypass,
              "no-farewell": close_without_farewell, "client-left": client_leaves, "no-identity": remove_identity}
 # Критерии, которые каждая мутация может законно задеть (их не проверяем на стабильность).
-TOUCHES = {"no-intro": {"c01"}, "insult": {"c05", "c06", "c08"}, "bypass": {"c04", "c05", "c06", "c08"},
+TOUCHES = {"sys-paraphrase": set(), "brush-off": {"c04", "c05", "c06"}, "no-intro": {"c01"}, "insult": {"c05", "c06", "c08"}, "bypass": {"c04", "c05", "c06", "c08"},
            "no-farewell": {"c04", "c05", "c06", "c07"}, "client-left": {"c04", "c06", "c07"},
            "no-identity": {"c03", "c08"}}
 # Мутация осмысленна, только если на исходном диалоге модель поставила этот ответ.
-PRECONDITION = {"no-intro": ("c01", "yes"), "no-identity": ("c03", "yes"),
+PRECONDITION = {"sys-paraphrase": (None, None), "brush-off": ("c05", "yes"), "no-intro": ("c01", "yes"), "no-identity": ("c03", "yes"),
                 "insult": ("c08", "no"), "bypass": ("c08", "no"),
                 "no-farewell": ("c07", None), "client-left": ("c07", None)}
 
 
-def build_cases(records):
-    """Все применимые мутации для набора исходных диалогов."""
+def build_cases(records, only=None):
+    """Все применимые мутации для набора исходных диалогов (only — подмножество имён)."""
     cases = []
     for rec in records:
         for name, fn in MUTATIONS.items():
+            if only and name not in only:
+                continue
             out = fn(rec)
             if out:
                 mutated, expect = out
@@ -131,7 +176,7 @@ def build_cases(records):
 def judge(case, base_answers, mutant_answers):
     """Сравнивает ответы на мутанте с ожиданием и с ответами на исходнике."""
     crit, needed = PRECONDITION[case["mutation"]]
-    if needed is not None and str(base_answers.get(crit)) != needed:
+    if crit is not None and needed is not None and str(base_answers.get(crit)) != needed:
         return {"status": "skipped", "reason": f"на исходнике {crit}={base_answers.get(crit)}, мутация не информативна"}
     target = {k: (str(mutant_answers.get(k)) == v) for k, v in case["expect"].items()}
     stable = {k: str(mutant_answers.get(k)) == str(v) for k, v in base_answers.items()

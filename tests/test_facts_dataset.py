@@ -49,3 +49,21 @@ def test_informal_greeting_detected(chat_record):
 def test_render_transcript(chat_record):
     text = render_transcript(normalize(chat_record))
     assert text.splitlines()[3].startswith("m4 [01:10] OPERATOR: Здравствуйте")
+
+
+def test_event_patterns_survive_paraphrase():
+    """Факты не должны зависеть от точной формулировки системного сообщения."""
+    from cqa.facts import END_EVENTS, ESCALATION, IDENTITY
+    for t in ("Личность клиента подтверждена.", "Идентификация клиента успешно пройдена", "Клиент верифицирован",
+              "Клиенттің жеке басы расталды.", "Customer identity verified.", "Identity confirmed", "Verification completed"):
+        assert IDENTITY.search(t), t
+    for t in ("Эскалация на оператора.", "Чат переведён на оператора", "Оператор подключился к чату", "Чат операторға жіберілді.",
+              "Chat transferred to an agent.", "Escalated to operator", "Agent joined the chat"):
+        assert ESCALATION.search(t), t
+    kinds = {t: k for k, rx in END_EVENTS for t in (
+        "Клиент покинул чат.", "Клиент вышел из чата", "Customer left the chat.", "Client has left the conversation",
+        "Соединение с клиентом прервано.", "Связь потеряна", "Connection lost", "Оператор закрыл чат.", "Чат завершён оператором",
+        "Agent closed the chat.", "Клиент завершил разговор.", "Customer hung up the call") if rx.search(t)}
+    assert kinds["Клиент вышел из чата"] == "client_left" and kinds["Client has left the conversation"] == "client_left"
+    assert kinds["Связь потеряна"] == "connection_lost" and kinds["Чат завершён оператором"] == "operator_closed"
+    assert kinds["Customer hung up the call"] == "client_ended_call" and len(kinds) == 12

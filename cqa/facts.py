@@ -14,19 +14,27 @@ LONG_GAP_S = 180  # справочно: порог первой реакции �
 _I = re.IGNORECASE
 
 ESCALATION = re.compile(
-    r"эскалация на оператора|операторға жіберілді|transferred to an agent|"
-    r"агент присоединился к разговору|agent joined", _I)
+    r"эскалаци|перевед\w* (на|к) оператор|подключ\w* оператор|оператор подключ|переключ\w* на оператор|"
+    r"операторға (жіберілді|қосылды|ауыстырылды)|оператор қосылды|"
+    r"transferred to an? (agent|operator)|escalated|agent (joined|connected)|operator (joined|connected)|"
+    r"агент присоединился|агент подключился", _I)
 IDENTITY = re.compile(
-    r"личность клиента подтверждена|жеке басы расталды|identity verified|"
-    r"идентификаци\w* (успешно )?пройдена|идентификацию успешно", _I)
+    r"личность\w* (клиента )?(подтвержд|установлен|верифицирован)|подтвержд\w* личност|клиент (идентифицирован|верифицирован)|"
+    r"идентификаци\w* (клиента )?(успешно )?(пройден|подтвержден|завершен|выполнен)|идентификацию успешно|верификаци\w* (пройден|подтвержден)|"
+    r"жеке бас\w* (расталды|анықталды)|сәйкестендір\w* (өтті|расталды)|клиент расталды|"
+    r"identity (verified|confirmed|validated)|customer (verified|identified|authenticated)|verification (passed|completed|successful)", _I)
 IDENTITY_REQUEST = re.compile(
     r"подтверд\w* личност|идентификац|проверк\w* личност|жеке бас\w* растау|растау қажет|"
     r"verify your identity|identity verification|confirm your identity", _I)
 END_EVENTS = [
-    ("client_left", re.compile(r"клиент покинул чат|клиент чаттан шықты|customer left|client left", _I)),
-    ("connection_lost", re.compile(r"соединение с клиентом прервано|байланыс үзілді|connection to customer lost", _I)),
-    ("operator_closed", re.compile(r"оператор закрыл чат|оператор чатты жапты|agent closed the chat", _I)),
-    ("client_ended_call", re.compile(r"клиент завершил разговор|customer ended the call", _I)),
+    ("client_left", re.compile(r"клиент (покинул|вышел из|отключился от|закрыл) чат|клиент (чаттан шықты|чатты жапты|чаттан кетті)|"
+                                r"(customer|client|user) (left|has left|closed|exited|disconnected from) the (chat|conversation)", _I)),
+    ("connection_lost", re.compile(r"соединение (с клиентом )?(прервано|потеряно|разорвано)|связь (прервана|потеряна)|клиент отключился|"
+                                    r"байланыс үзілді|байланыс жоғалды|connection (to (the )?customer )?(lost|dropped|interrupted)|disconnected", _I)),
+    ("operator_closed", re.compile(r"оператор (закрыл|завершил) (чат|диалог|разговор)|чат (закрыт|завершён|завершен) оператором|"
+                                    r"оператор чатты (жапты|аяқтады)|(agent|operator) (closed|ended) the (chat|conversation)|chat closed by (agent|operator)", _I)),
+    ("client_ended_call", re.compile(r"клиент (завершил|закончил|прервал) (разговор|звонок)|клиент повесил трубку|клиент қоңырауды аяқтады|"
+                                      r"(customer|client|caller) (ended|hung up|terminated) the call|call ended by (customer|client)", _I)),
 ]
 WAIT_WARNING = re.compile(
     r"сейчас провер|минут|секунд|ожида|подожд|уточню|тексеремін|күте тұр|бір минут|"
@@ -136,7 +144,7 @@ def render_facts(facts: dict) -> str:
     """Человекочитаемый блок ФАКТЫ для промпта."""
     yes = lambda v: {True: "да", False: "нет", None: "—"}[v]  # noqa: E731
     lines = []
-    lines.append(f"- Эскалация/подключение оператора: {_fmt_t(facts, facts['escalation_id']) if facts['escalation_id'] else 'событие не найдено'}")
+    lines.append(f"- Эскалация/подключение оператора: {_fmt_t(facts, facts['escalation_id']) if facts['escalation_id'] else 'системное сообщение не распознано'}")
     if facts["first_operator_id"]:
         resp = facts["first_response_s"]
         resp_txt = f", через {format_offset(resp)} после эскалации" if resp is not None else ""
@@ -149,14 +157,14 @@ def render_facts(facts: dict) -> str:
     if facts["identity_confirmed_ids"]:
         lines.append("- Подтверждение личности: " + ", ".join(_fmt_t(facts, i) for i in facts["identity_confirmed_ids"]))
     else:
-        lines.append("- Подтверждение личности: не найдено")
+        lines.append("- Подтверждение личности: системное сообщение об этом не распознано; если его нет, проверка личности в чате не подтверждена")
     if facts.get("identity_requested_ids"):
         lines.append("- Оператор сам говорит о проверке личности: " + ", ".join(_fmt_t(facts, i) for i in facts["identity_requested_ids"]))
     if facts["end_events"]:
         ev = ", ".join(f"{e['type']} {_fmt_t(facts, e['id'])}" for e in facts["end_events"])
         lines.append(f"- События завершения: {ev}")
     else:
-        lines.append("- События завершения: нет")
+        lines.append("- События завершения: системных сообщений о закрытии или обрыве не распознано")
     after = facts["messages_after_last_operator"]
     lines.append(f"- После последней реплики оператора: {', '.join(after) if after else 'ничего'}")
     if facts["client_question_before_last_operator"]:
