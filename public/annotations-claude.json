@@ -8,10 +8,10 @@
     "human_reviewed": false,
     "source_commit": "working-tree (gold v2)",
     "source_path": "data/gold/dev_gold.json",
-    "source_sha256": "ab97bf07c518fcfcfc9e07962617372e99bec16a4a2bb73188cb0707952670c4",
+    "source_sha256": "e8a7b87ff3c8d5e1dac2a5a68f44f27c62062f130ea544c595afd6b666b990ec",
     "source_dataset_sha256": "f2a8b89594425cd01d74fb93d4e799667594bf26276e2d67fac01f02c70a6c1c",
     "dataset_alignment": "conversation_id",
-    "closing_policy": "lenient"
+    "closing_policy": "strict"
   },
   "policy_notes": [
     "Разметка Claude из GitHub. Это рабочая версия команды, а не эталон организаторов.",
@@ -105,7 +105,7 @@
   "counts": {
     "annotated": 65,
     "dataset": 65,
-    "review_required": 27,
+    "review_required": 26,
     "critical": 8
   },
   "annotations": [
@@ -238,8 +238,8 @@
         },
         {
           "criterion_id": "closing",
-          "value": "Да",
-          "raw_points": 5.0,
+          "value": "Нет",
+          "raw_points": 0.0,
           "rationale": "Прощание с вежливой формулой завершения.",
           "evidence": [
             {
@@ -278,8 +278,8 @@
         }
       ],
       "applicable_weight": 65,
-      "earned_weighted_points": 65.0,
-      "total_score": 100.0,
+      "earned_weighted_points": 60.0,
+      "total_score": 92.31,
       "critical_flag": false,
       "review_required": false,
       "channel_scope": "chat_transcript",
@@ -829,8 +829,8 @@
         },
         {
           "criterion_id": "closing",
-          "value": "Да",
-          "raw_points": 5.0,
+          "value": "Нет",
+          "raw_points": 0.0,
           "rationale": "Прощание с вежливой формулой завершения.",
           "evidence": [
             {
@@ -875,8 +875,8 @@
         }
       ],
       "applicable_weight": 65,
-      "earned_weighted_points": 65.0,
-      "total_score": 100.0,
+      "earned_weighted_points": 60.0,
+      "total_score": 92.31,
       "critical_flag": false,
       "review_required": false,
       "channel_scope": "chat_transcript",
@@ -1591,8 +1591,8 @@
         },
         {
           "criterion_id": "closing",
-          "value": "Да",
-          "raw_points": 5.0,
+          "value": "Нет",
+          "raw_points": 0.0,
           "rationale": "Прощание с вежливой формулой завершения.",
           "evidence": [
             {
@@ -1637,8 +1637,8 @@
         }
       ],
       "applicable_weight": 65,
-      "earned_weighted_points": 65.0,
-      "total_score": 100.0,
+      "earned_weighted_points": 60.0,
+      "total_score": 92.31,
       "critical_flag": false,
       "review_required": false,
       "channel_scope": "chat_transcript",
@@ -2204,8 +2204,8 @@
         },
         {
           "criterion_id": "closing",
-          "value": "Да",
-          "raw_points": 5.0,
+          "value": "Нет",
+          "raw_points": 0.0,
           "rationale": "Прощание с вежливой формулой завершения.",
           "evidence": [
             {
@@ -2250,8 +2250,8 @@
         }
       ],
       "applicable_weight": 65,
-      "earned_weighted_points": 65.0,
-      "total_score": 100.0,
+      "earned_weighted_points": 60.0,
+      "total_score": 92.31,
       "critical_flag": false,
       "review_required": false,
       "channel_scope": "chat_transcript",
@@ -3135,8 +3135,8 @@
         },
         {
           "criterion_id": "closing",
-          "value": "Да",
-          "raw_points": 5.0,
+          "value": "Нет",
+          "raw_points": 0.0,
           "rationale": "Прощание с вежливой формулой завершения.",
           "evidence": [
             {
@@ -3187,8 +3187,8 @@
         }
       ],
       "applicable_weight": 80,
-      "earned_weighted_points": 41.0,
-      "total_score": 51.25,
+      "earned_weighted_points": 36.0,
+      "total_score": 45.0,
       "critical_flag": false,
       "review_required": true,
       "channel_scope": "chat_transcript",
@@ -3326,8 +3326,8 @@
         },
         {
           "criterion_id": "closing",
-          "value": "Да",
-          "raw_points": 5.0,
+          "value": "Нет",
+          "raw_points": 0.0,
           "rationale": "Прощание с вежливой формулой завершения.",
           "evidence": [
             {
@@ -3372,8 +3372,8 @@
         }
       ],
       "applicable_weight": 80,
-      "earned_weighted_points": 80.0,
-      "total_score": 100.0,
+      "earned_weighted_points": 75.0,
+      "total_score": 93.75,
       "critical_flag": false,
       "review_required": true,
       "channel_scope": "chat_transcript",
@@ -3700,8 +3700,8 @@
         },
         {
           "criterion_id": "closing",
-          "value": "Да",
-          "raw_points": 5.0,
+          "value": "Нет",
+          "raw_points": 0.0,
           "rationale": "Прощание с вежливой формулой завершения.",
           "evidence": [
             {
@@ -3746,8 +3746,8 @@
         }
       ],
       "applicable_weight": 80,
-      "earned_weighted_points": 80.0,
-      "total_score": 100.0,
+      "earned_weighted_points": 75.0,
+      "total_score": 93.75,
       "critical_flag": false,
       "review_required": false,
       "channel_scope": "chat_transcript",
@@ -3885,8 +3885,8 @@
         },
         {
           "criterion_id": "closing",
-          "value": "Да",
-          "raw_points": 5.0,
+          "value": "Нет",
+          "raw_points": 0.0,
           "rationale": "Прощание с вежливой формулой завершения.",
           "evidence": [
             {
@@ -3931,8 +3931,8 @@
         }
       ],
       "applicable_weight": 65,
-      "earned_weighted_points": 65.0,
-      "total_score": 100.0,
+      "earned_weighted_points": 60.0,
+      "total_score": 92.31,
       "critical_flag": false,
       "review_required": false,
       "channel_scope": "chat_transcript",
@@ -4070,8 +4070,8 @@
         },
         {
           "criterion_id": "closing",
-          "value": "Да",
-          "raw_points": 5.0,
+          "value": "Нет",
+          "raw_points": 0.0,
           "rationale": "Прощание с вежливой формулой завершения.",
           "evidence": [
             {
@@ -4110,8 +4110,8 @@
         }
       ],
       "applicable_weight": 65,
-      "earned_weighted_points": 65.0,
-      "total_score": 100.0,
+      "earned_weighted_points": 60.0,
+      "total_score": 92.31,
       "critical_flag": false,
       "review_required": false,
       "channel_scope": "chat_transcript",
@@ -5172,8 +5172,8 @@
         },
         {
           "criterion_id": "closing",
-          "value": "Да",
-          "raw_points": 5.0,
+          "value": "Нет",
+          "raw_points": 0.0,
           "rationale": "Прощание с вежливой формулой завершения.",
           "evidence": [
             {
@@ -5242,8 +5242,8 @@
         }
       ],
       "applicable_weight": 65,
-      "earned_weighted_points": 65.0,
-      "total_score": 100.0,
+      "earned_weighted_points": 60.0,
+      "total_score": 92.31,
       "critical_flag": false,
       "review_required": false,
       "channel_scope": "chat_transcript",
@@ -5393,8 +5393,8 @@
         },
         {
           "criterion_id": "closing",
-          "value": "Да",
-          "raw_points": 5.0,
+          "value": "Нет",
+          "raw_points": 0.0,
           "rationale": "Прощание с вежливой формулой завершения.",
           "evidence": [
             {
@@ -5445,8 +5445,8 @@
         }
       ],
       "applicable_weight": 65,
-      "earned_weighted_points": 65.0,
-      "total_score": 100.0,
+      "earned_weighted_points": 60.0,
+      "total_score": 92.31,
       "critical_flag": false,
       "review_required": false,
       "channel_scope": "chat_transcript",
@@ -5763,8 +5763,8 @@
         },
         {
           "criterion_id": "closing",
-          "value": "Да",
-          "raw_points": 5.0,
+          "value": "Нет",
+          "raw_points": 0.0,
           "rationale": "Прощание с вежливой формулой завершения.",
           "evidence": [
             {
@@ -5809,8 +5809,8 @@
         }
       ],
       "applicable_weight": 80,
-      "earned_weighted_points": 80.0,
-      "total_score": 100.0,
+      "earned_weighted_points": 75.0,
+      "total_score": 93.75,
       "critical_flag": false,
       "review_required": true,
       "channel_scope": "chat_transcript",
@@ -5946,8 +5946,8 @@
         },
         {
           "criterion_id": "closing",
-          "value": "Да",
-          "raw_points": 5.0,
+          "value": "Нет",
+          "raw_points": 0.0,
           "rationale": "Прощание с вежливой формулой завершения.",
           "evidence": [
             {
@@ -5986,8 +5986,8 @@
         }
       ],
       "applicable_weight": 65,
-      "earned_weighted_points": 65.0,
-      "total_score": 100.0,
+      "earned_weighted_points": 60.0,
+      "total_score": 92.31,
       "critical_flag": false,
       "review_required": false,
       "channel_scope": "chat_transcript",
@@ -6129,8 +6129,8 @@
         },
         {
           "criterion_id": "closing",
-          "value": "Да",
-          "raw_points": 5.0,
+          "value": "Нет",
+          "raw_points": 0.0,
           "rationale": "Прощание с вежливой формулой завершения.",
           "evidence": [
             {
@@ -6175,8 +6175,8 @@
         }
       ],
       "applicable_weight": 65,
-      "earned_weighted_points": 65.0,
-      "total_score": 100.0,
+      "earned_weighted_points": 60.0,
+      "total_score": 92.31,
       "critical_flag": false,
       "review_required": false,
       "channel_scope": "chat_transcript",
@@ -6921,8 +6921,8 @@
         },
         {
           "criterion_id": "closing",
-          "value": "Да",
-          "raw_points": 5.0,
+          "value": "Нет",
+          "raw_points": 0.0,
           "rationale": "Прощание с вежливой формулой завершения.",
           "evidence": [
             {
@@ -6961,8 +6961,8 @@
         }
       ],
       "applicable_weight": 65,
-      "earned_weighted_points": 65.0,
-      "total_score": 100.0,
+      "earned_weighted_points": 60.0,
+      "total_score": 92.31,
       "critical_flag": false,
       "review_required": false,
       "channel_scope": "chat_transcript",
@@ -7478,8 +7478,8 @@
         },
         {
           "criterion_id": "closing",
-          "value": "Да",
-          "raw_points": 5.0,
+          "value": "Нет",
+          "raw_points": 0.0,
           "rationale": "Прощание с вежливой формулой завершения.",
           "evidence": [
             {
@@ -7536,8 +7536,8 @@
         }
       ],
       "applicable_weight": 65,
-      "earned_weighted_points": 65.0,
-      "total_score": 100.0,
+      "earned_weighted_points": 60.0,
+      "total_score": 92.31,
       "critical_flag": false,
       "review_required": false,
       "channel_scope": "chat_transcript",
@@ -8565,9 +8565,9 @@
         },
         {
           "criterion_id": "management",
-          "value": 4,
-          "raw_points": 6.0,
-          "rationale": "Уход от ответа — клиент переспросил о причине (m13).",
+          "value": 7,
+          "raw_points": 10.5,
+          "rationale": "Реплики понятные, но вопрос о причине остался без ответа — один заметный сбой.",
           "evidence": [
             {
               "message_index": 12,
@@ -8583,8 +8583,8 @@
             }
           ],
           "inspected_range": null,
-          "review_required": true,
-          "review_note": "Claude пометил этот критерий как спорный."
+          "review_required": false,
+          "review_note": null
         },
         {
           "criterion_id": "closing",
@@ -8622,8 +8622,8 @@
         }
       ],
       "applicable_weight": 85,
-      "earned_weighted_points": 31.0,
-      "total_score": 36.47,
+      "earned_weighted_points": 35.5,
+      "total_score": 41.76,
       "critical_flag": true,
       "review_required": true,
       "channel_scope": "chat_transcript",
@@ -8761,8 +8761,8 @@
         },
         {
           "criterion_id": "closing",
-          "value": "Да",
-          "raw_points": 5.0,
+          "value": "Нет",
+          "raw_points": 0.0,
           "rationale": "Прощание с вежливой формулой завершения.",
           "evidence": [
             {
@@ -8801,8 +8801,8 @@
         }
       ],
       "applicable_weight": 65,
-      "earned_weighted_points": 65.0,
-      "total_score": 100.0,
+      "earned_weighted_points": 60.0,
+      "total_score": 92.31,
       "critical_flag": false,
       "review_required": false,
       "channel_scope": "chat_transcript",
@@ -8938,8 +8938,8 @@
         },
         {
           "criterion_id": "closing",
-          "value": "Да",
-          "raw_points": 5.0,
+          "value": "Нет",
+          "raw_points": 0.0,
           "rationale": "Прощание с вежливой формулой завершения.",
           "evidence": [
             {
@@ -8978,8 +8978,8 @@
         }
       ],
       "applicable_weight": 65,
-      "earned_weighted_points": 65.0,
-      "total_score": 100.0,
+      "earned_weighted_points": 60.0,
+      "total_score": 92.31,
       "critical_flag": false,
       "review_required": false,
       "channel_scope": "chat_transcript",
@@ -9115,8 +9115,8 @@
         },
         {
           "criterion_id": "closing",
-          "value": "Да",
-          "raw_points": 5.0,
+          "value": "Нет",
+          "raw_points": 0.0,
           "rationale": "Прощание с вежливой формулой завершения.",
           "evidence": [
             {
@@ -9155,8 +9155,8 @@
         }
       ],
       "applicable_weight": 65,
-      "earned_weighted_points": 65.0,
-      "total_score": 100.0,
+      "earned_weighted_points": 60.0,
+      "total_score": 92.31,
       "critical_flag": false,
       "review_required": false,
       "channel_scope": "chat_transcript",
@@ -9298,8 +9298,8 @@
         },
         {
           "criterion_id": "closing",
-          "value": "Да",
-          "raw_points": 5.0,
+          "value": "Нет",
+          "raw_points": 0.0,
           "rationale": "Прощание с вежливой формулой завершения.",
           "evidence": [
             {
@@ -9344,8 +9344,8 @@
         }
       ],
       "applicable_weight": 65,
-      "earned_weighted_points": 65.0,
-      "total_score": 100.0,
+      "earned_weighted_points": 60.0,
+      "total_score": 92.31,
       "critical_flag": false,
       "review_required": false,
       "channel_scope": "chat_transcript",
@@ -9487,8 +9487,8 @@
         },
         {
           "criterion_id": "closing",
-          "value": "Да",
-          "raw_points": 5.0,
+          "value": "Нет",
+          "raw_points": 0.0,
           "rationale": "Прощание с вежливой формулой завершения.",
           "evidence": [
             {
@@ -9533,8 +9533,8 @@
         }
       ],
       "applicable_weight": 65,
-      "earned_weighted_points": 65.0,
-      "total_score": 100.0,
+      "earned_weighted_points": 60.0,
+      "total_score": 92.31,
       "critical_flag": false,
       "review_required": false,
       "channel_scope": "chat_transcript",
@@ -10088,8 +10088,8 @@
         },
         {
           "criterion_id": "closing",
-          "value": "Да",
-          "raw_points": 5.0,
+          "value": "Нет",
+          "raw_points": 0.0,
           "rationale": "Прощание с вежливой формулой завершения.",
           "evidence": [
             {
@@ -10146,8 +10146,8 @@
         }
       ],
       "applicable_weight": 65,
-      "earned_weighted_points": 65.0,
-      "total_score": 100.0,
+      "earned_weighted_points": 60.0,
+      "total_score": 92.31,
       "critical_flag": false,
       "review_required": true,
       "channel_scope": "chat_transcript",
@@ -10462,8 +10462,8 @@
         },
         {
           "criterion_id": "closing",
-          "value": "Да",
-          "raw_points": 5.0,
+          "value": "Нет",
+          "raw_points": 0.0,
           "rationale": "Прощание с вежливой формулой завершения.",
           "evidence": [
             {
@@ -10502,8 +10502,8 @@
         }
       ],
       "applicable_weight": 65,
-      "earned_weighted_points": 65.0,
-      "total_score": 100.0,
+      "earned_weighted_points": 60.0,
+      "total_score": 92.31,
       "critical_flag": false,
       "review_required": true,
       "channel_scope": "chat_transcript",
@@ -10639,8 +10639,8 @@
         },
         {
           "criterion_id": "closing",
-          "value": "Да",
-          "raw_points": 5.0,
+          "value": "Нет",
+          "raw_points": 0.0,
           "rationale": "Прощание с вежливой формулой завершения.",
           "evidence": [
             {
@@ -10679,8 +10679,8 @@
         }
       ],
       "applicable_weight": 65,
-      "earned_weighted_points": 65.0,
-      "total_score": 100.0,
+      "earned_weighted_points": 60.0,
+      "total_score": 92.31,
       "critical_flag": false,
       "review_required": false,
       "channel_scope": "chat_transcript",
@@ -10816,8 +10816,8 @@
         },
         {
           "criterion_id": "closing",
-          "value": "Да",
-          "raw_points": 5.0,
+          "value": "Нет",
+          "raw_points": 0.0,
           "rationale": "Прощание с вежливой формулой завершения.",
           "evidence": [
             {
@@ -10856,8 +10856,8 @@
         }
       ],
       "applicable_weight": 65,
-      "earned_weighted_points": 65.0,
-      "total_score": 100.0,
+      "earned_weighted_points": 60.0,
+      "total_score": 92.31,
       "critical_flag": false,
       "review_required": false,
       "channel_scope": "chat_transcript",
@@ -11335,20 +11335,32 @@
         },
         {
           "criterion_id": "empathy",
-          "value": "Да",
-          "raw_points": 15.0,
-          "rationale": "Оператор вежлив; недовольства клиент не выражал.",
+          "value": "Нет",
+          "raw_points": 0.0,
+          "rationale": "Ни приветствия, ни реакции на трудность клиента: отрывистые команды и голое «Bye.» в конце.",
           "evidence": [
             {
               "message_index": 10,
               "timestamp": "01:21",
               "speaker": "operator",
               "quote": "Open settings then go back and log in again."
+            },
+            {
+              "message_index": 12,
+              "timestamp": "02:48",
+              "speaker": "operator",
+              "quote": "Oh, that site is just for information. Go to tradernet.global and sign in there."
+            },
+            {
+              "message_index": 14,
+              "timestamp": "04:06",
+              "speaker": "operator",
+              "quote": "Bye."
             }
           ],
           "inspected_range": null,
-          "review_required": true,
-          "review_note": "Claude пометил этот критерий как спорный."
+          "review_required": false,
+          "review_note": null
         },
         {
           "criterion_id": "management",
@@ -11421,10 +11433,10 @@
         }
       ],
       "applicable_weight": 80,
-      "earned_weighted_points": 41.0,
-      "total_score": 51.25,
+      "earned_weighted_points": 26.0,
+      "total_score": 32.5,
       "critical_flag": false,
-      "review_required": true,
+      "review_required": false,
       "channel_scope": "chat_transcript",
       "notes": [
         "Нет приветствия и имени; совет «Open settings» без уточнения → клиент переспросил."
@@ -11895,8 +11907,8 @@
         },
         {
           "criterion_id": "closing",
-          "value": "Да",
-          "raw_points": 5.0,
+          "value": "Нет",
+          "raw_points": 0.0,
           "rationale": "Прощание с вежливой формулой завершения.",
           "evidence": [
             {
@@ -12229,8 +12241,8 @@
         }
       ],
       "applicable_weight": 100,
-      "earned_weighted_points": 85.0,
-      "total_score": 85.0,
+      "earned_weighted_points": 80.0,
+      "total_score": 80.0,
       "critical_flag": false,
       "review_required": true,
       "channel_scope": "transcript_only",

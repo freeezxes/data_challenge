@@ -44,7 +44,7 @@ def test_compare_perfect_and_miss(checklist):
     preds = {k: dict(v["answers"]) for k, v in gold["items"].items()}
     report = compare(checklist, gold, preds)
     assert report["macro_accuracy"] == 1.0 and report["total_mae"] == 0
-    preds["p1-ru-001"]["c07"] = "no"
+    preds["p1-ru-001"]["c07"] = "yes"
     report = compare(checklist, gold, preds)
     assert report["criteria"]["c07"]["misses"][0]["conversation_id"] == "p1-ru-001"
     assert report["total_mae"] > 0

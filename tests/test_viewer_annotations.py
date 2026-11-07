@@ -56,11 +56,11 @@ def test_real_disagreement_survives_conversion():
     ]
     gpt, claude = by_source
     assert gpt['p1-ru-001']['total_score'] == 92.31
-    assert claude['p1-ru-001']['total_score'] == 100
+    assert claude['p1-ru-001']['total_score'] == 92.31
     assert gpt['p1-ru-005']['total_score'] == 70.77
     assert claude['p1-ru-005']['total_score'] == 70.77
     changed = sum(any(a['value'] != b['value'] for a, b in zip(gpt[cid]['criteria'], claude[cid]['criteria'])) for cid in gpt)
-    assert changed == 34
+    assert changed == 10
 
 
 def test_published_dataset_keeps_transcripts_and_local_audio():
