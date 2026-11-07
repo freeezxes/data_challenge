@@ -1,118 +1,676 @@
-{"isSuccess": true, "error": "", "data": {"dataset_group_id": "CHECKLIST-PAIRS", "total_records": 16, "records": [
-{"conversation_id": "pair-c03-general-ru", "channel": "agent chat", "language": "RU", "audio_url": null, "transcript": [
- {"timestamp": "00:00", "speaker": "client", "text": "Подскажите, какая комиссия на тарифе «Инвестор» за покупку акций на американском рынке?"},
- {"timestamp": "00:05", "speaker": "system", "text": "Эскалация на оператора."},
- {"timestamp": "00:40", "speaker": "operator", "text": "Здравствуйте! Меня зовут Вера. На тарифе «Инвестор» комиссия за сделки с акциями США указана в разделе «Тарифы» на сайте: откройте «Тарифы» → «Инвестор» → «Иностранные рынки». Там же пример расчёта."},
- {"timestamp": "01:10", "speaker": "client", "text": "Нашёл, спасибо."},
- {"timestamp": "01:20", "speaker": "operator", "text": "Отлично, комиссию вы нашли в тарифах. Если появятся вопросы по сделкам, пишите. Всего доброго!"},
- {"timestamp": "01:25", "speaker": "system", "text": "Оператор закрыл чат."}]},
-{"conversation_id": "pair-c03-account-ru", "channel": "agent chat", "language": "RU", "audio_url": null, "transcript": [
- {"timestamp": "00:00", "speaker": "client", "text": "Подскажите, какая комиссия списалась у меня вчера за покупку акций? В истории вижу списание, но не понимаю за что."},
- {"timestamp": "00:05", "speaker": "system", "text": "Эскалация на оператора."},
- {"timestamp": "00:40", "speaker": "operator", "text": "Здравствуйте! Меня зовут Вера. Посмотрела: вчера по вашему счёту списана комиссия 1 250 тенге за сделку с акциями США по тарифу «Инвестор»."},
- {"timestamp": "01:10", "speaker": "client", "text": "Понятно, спасибо."},
- {"timestamp": "01:20", "speaker": "operator", "text": "Итак, это комиссия за вчерашнюю сделку по тарифу. Если появятся вопросы, пишите. Всего доброго!"},
- {"timestamp": "01:25", "speaker": "system", "text": "Оператор закрыл чат."}]},
-{"conversation_id": "pair-c03-verified-kz", "channel": "agent chat", "language": "KZ", "audio_url": null, "transcript": [
- {"timestamp": "00:00", "speaker": "client", "text": "Кеше шотқа ақша аудардым, әлі түспеді. Тексеріп беріңізші."},
- {"timestamp": "00:05", "speaker": "system", "text": "Чат операторға жіберілді."},
- {"timestamp": "00:40", "speaker": "operator", "text": "Сәлеметсіз бе, мен Айгерім. Шотыңызды тексеру үшін алдымен жеке басыңызды растауымыз керек, қосымшадағы растауды өтіңізші."},
- {"timestamp": "01:30", "speaker": "system", "text": "Клиенттің жеке басы расталды."},
- {"timestamp": "01:50", "speaker": "operator", "text": "Рақмет. Аударымыңыз өңдеуде, әдетте 1 жұмыс күніне дейін түседі. Ертең түспесе, осы чатқа жазыңыз."},
- {"timestamp": "02:10", "speaker": "client", "text": "Жақсы, рақмет."},
- {"timestamp": "02:20", "speaker": "operator", "text": "Қорыта айтқанда, аударым өңдеуде, ертеңге дейін күтеміз. Сұрақтар болса, хабарласыңыз. Сау болыңыз!"},
- {"timestamp": "02:25", "speaker": "system", "text": "Оператор чатты жапты."}]},
-{"conversation_id": "pair-c03-skipped-kz", "channel": "agent chat", "language": "KZ", "audio_url": null, "transcript": [
- {"timestamp": "00:00", "speaker": "client", "text": "Кеше шотқа ақша аудардым, әлі түспеді. Тексеріп беріңізші."},
- {"timestamp": "00:05", "speaker": "system", "text": "Чат операторға жіберілді."},
- {"timestamp": "00:40", "speaker": "operator", "text": "Сәлеметсіз бе, мен Айгерім. Растаудың қажеті жоқ, қазір қараймын."},
- {"timestamp": "01:50", "speaker": "operator", "text": "Аударымыңыз өңдеуде, әдетте 1 жұмыс күніне дейін түседі. Ертең түспесе, осы чатқа жазыңыз."},
- {"timestamp": "02:10", "speaker": "client", "text": "Жақсы, рақмет."},
- {"timestamp": "02:20", "speaker": "operator", "text": "Қорыта айтқанда, аударым өңдеуде, ертеңге дейін күтеміз. Сұрақтар болса, хабарласыңыз. Сау болыңыз!"},
- {"timestamp": "02:25", "speaker": "system", "text": "Оператор чатты жапты."}]},
-{"conversation_id": "pair-c05-addressed-en", "channel": "agent chat", "language": "EN", "audio_url": null, "transcript": [
- {"timestamp": "00:00", "speaker": "client", "text": "The app logged me out three times today while I was placing an order. This is really frustrating, I almost missed the price."},
- {"timestamp": "00:05", "speaker": "system", "text": "Chat transferred to an agent."},
- {"timestamp": "00:35", "speaker": "operator", "text": "Hello, I'm Maya. I'm sorry you got logged out mid-order, that is stressful when the price is moving. Please update the app to the latest version and re-enable biometrics in Settings → Security; that fixes the repeated logouts. If it happens again today, write here and I'll escalate it."},
- {"timestamp": "01:10", "speaker": "client", "text": "Updated, looks stable now. Thanks."},
- {"timestamp": "01:20", "speaker": "operator", "text": "Great, so the update resolved the logouts. If anything else comes up, we're here. Have a good day!"},
- {"timestamp": "01:25", "speaker": "system", "text": "Agent closed the chat."}]},
-{"conversation_id": "pair-c05-dismissed-en", "channel": "agent chat", "language": "EN", "audio_url": null, "transcript": [
- {"timestamp": "00:00", "speaker": "client", "text": "The app logged me out three times today while I was placing an order. This is really frustrating, I almost missed the price."},
- {"timestamp": "00:05", "speaker": "system", "text": "Chat transferred to an agent."},
- {"timestamp": "00:35", "speaker": "operator", "text": "Hello, I'm Maya. Please update the app to the latest version and re-enable biometrics in Settings → Security."},
- {"timestamp": "01:10", "speaker": "client", "text": "Updated, looks stable now. Thanks."},
- {"timestamp": "01:20", "speaker": "operator", "text": "Great, so the update resolved the logouts. If anything else comes up, we're here. Have a good day!"},
- {"timestamp": "01:25", "speaker": "system", "text": "Agent closed the chat."}]},
-{"conversation_id": "pair-c07-summary-ru", "channel": "agent chat", "language": "RU", "audio_url": null, "transcript": [
- {"timestamp": "00:00", "speaker": "client", "text": "Где в приложении скачать брокерский отчёт за октябрь?"},
- {"timestamp": "00:05", "speaker": "system", "text": "Эскалация на оператора."},
- {"timestamp": "00:30", "speaker": "operator", "text": "Здравствуйте! Меня зовут Олег. Откройте «Меню» → «Отчёты и документы» → «Брокерский отчёт», выберите октябрь и нажмите «Скачать PDF»."},
- {"timestamp": "01:00", "speaker": "client", "text": "Скачал, спасибо!"},
- {"timestamp": "01:10", "speaker": "operator", "text": "Отчёт за октябрь у вас. Если понадобится другой период, он там же. Хорошего дня!"},
- {"timestamp": "01:15", "speaker": "system", "text": "Оператор закрыл чат."}]},
-{"conversation_id": "pair-c07-bare-ru", "channel": "agent chat", "language": "RU", "audio_url": null, "transcript": [
- {"timestamp": "00:00", "speaker": "client", "text": "Где в приложении скачать брокерский отчёт за октябрь?"},
- {"timestamp": "00:05", "speaker": "system", "text": "Эскалация на оператора."},
- {"timestamp": "00:30", "speaker": "operator", "text": "Здравствуйте! Меня зовут Олег. Откройте «Меню» → «Отчёты и документы» → «Брокерский отчёт», выберите октябрь и нажмите «Скачать PDF»."},
- {"timestamp": "01:00", "speaker": "client", "text": "Скачал, спасибо!"},
- {"timestamp": "01:10", "speaker": "operator", "text": "Пожалуйста. Хорошего дня!"},
- {"timestamp": "01:15", "speaker": "system", "text": "Оператор закрыл чат."}]},
-{"conversation_id": "pair-c07-nofarewell-en", "channel": "agent chat", "language": "EN", "audio_url": null, "transcript": [
- {"timestamp": "00:00", "speaker": "client", "text": "Where do I find the 1042-S form for last year?"},
- {"timestamp": "00:05", "speaker": "system", "text": "Chat transferred to an agent."},
- {"timestamp": "00:30", "speaker": "operator", "text": "Hi, I'm Noah. Go to Menu → Reports and documents → Tax forms, choose last year and download the 1042-S."},
- {"timestamp": "01:00", "speaker": "client", "text": "Found it, thanks."},
- {"timestamp": "01:05", "speaker": "system", "text": "Agent closed the chat."}]},
-{"conversation_id": "pair-c07-cutoff-en", "channel": "agent chat", "language": "EN", "audio_url": null, "transcript": [
- {"timestamp": "00:00", "speaker": "client", "text": "Where do I find the 1042-S form for last year?"},
- {"timestamp": "00:05", "speaker": "system", "text": "Chat transferred to an agent."},
- {"timestamp": "00:30", "speaker": "operator", "text": "Hi, I'm Noah. Go to Menu → Reports and documents → Tax forms, choose last year and download the 1042-S."},
- {"timestamp": "00:50", "speaker": "system", "text": "Customer left the chat."}]},
-{"conversation_id": "pair-c08-clean-ru", "channel": "agent chat", "language": "RU", "audio_url": null, "transcript": [
- {"timestamp": "00:00", "speaker": "client", "text": "Хочу собрать портфель из облигаций, но не знаю с чего начать. Можете помочь выбрать?"},
- {"timestamp": "00:05", "speaker": "system", "text": "Эскалация на оператора."},
- {"timestamp": "00:35", "speaker": "operator", "text": "Здравствуйте! Меня зовут Дамир. Индивидуальные рекомендации по бумагам даёт ваш персональный менеджер: заявку на консультацию можно оставить в приложении, раздел «Менеджер». В разделе «Идеи» есть готовые подборки облигаций с описанием."},
- {"timestamp": "01:10", "speaker": "client", "text": "Понял, оставлю заявку. Спасибо."},
- {"timestamp": "01:20", "speaker": "operator", "text": "Итого: заявка менеджеру в разделе «Менеджер», подборки — в «Идеях». Обращайтесь, если что. До свидания!"},
- {"timestamp": "01:25", "speaker": "system", "text": "Оператор закрыл чат."}]},
-{"conversation_id": "pair-c08-bypass-ru", "channel": "agent chat", "language": "RU", "audio_url": null, "transcript": [
- {"timestamp": "00:00", "speaker": "client", "text": "Хочу собрать портфель из облигаций, но не знаю с чего начать. Можете помочь выбрать?"},
- {"timestamp": "00:05", "speaker": "system", "text": "Эскалация на оператора."},
- {"timestamp": "00:35", "speaker": "operator", "text": "Здравствуйте! Меня зовут Дамир. В разделе «Идеи» есть готовые подборки облигаций. А если хотите подробнее, оставьте свой номер, я сам вечером позвоню и за небольшую плату подберу вам портфель лично, без заявок через компанию."},
- {"timestamp": "01:10", "speaker": "client", "text": "Нет, спасибо, посмотрю подборки."},
- {"timestamp": "01:20", "speaker": "operator", "text": "Итого: подборки — в «Идеях». Обращайтесь, если что. До свидания!"},
- {"timestamp": "01:25", "speaker": "system", "text": "Оператор закрыл чат."}]},
-{"conversation_id": "pair-c02-fresh-kz", "channel": "agent chat", "language": "KZ", "audio_url": null, "transcript": [
- {"timestamp": "00:00", "speaker": "client", "text": "Қосымшада есеп жүктелмейді."},
- {"timestamp": "00:05", "speaker": "system", "text": "Чат операторға жіберілді."},
- {"timestamp": "00:35", "speaker": "operator", "text": "Сәлеметсіз бе, мен Ернар. Қай есепті жүктеп жатырсыз және қандай хабарлама шығады?"},
- {"timestamp": "01:00", "speaker": "client", "text": "Қазан айындағы брокерлік есеп, «Файл дайын емес» деп жазады."},
- {"timestamp": "01:20", "speaker": "operator", "text": "Түсінікті. Қазан айы есебі 5-күнге дейін қалыптасады, бүгін 3-і. 5-інен бастап қайта жүктеп көріңіз, болмаса осы чатқа жазыңыз."},
- {"timestamp": "01:40", "speaker": "client", "text": "Жақсы, рақмет."},
- {"timestamp": "01:50", "speaker": "operator", "text": "Қорытынды: есеп 5-інен кейін дайын болады. Сұрақ болса, хабарласыңыз. Сау болыңыз!"},
- {"timestamp": "01:55", "speaker": "system", "text": "Оператор чатты жапты."}]},
-{"conversation_id": "pair-c02-known-kz", "channel": "agent chat", "language": "KZ", "audio_url": null, "transcript": [
- {"timestamp": "00:00", "speaker": "client", "text": "Қосымшада қазан айындағы брокерлік есеп жүктелмейді, «Файл дайын емес» деп жазады."},
- {"timestamp": "00:05", "speaker": "system", "text": "Чат операторға жіберілді."},
- {"timestamp": "00:35", "speaker": "operator", "text": "Сәлеметсіз бе, мен Ернар. Қай есепті жүктеп жатырсыз және қандай хабарлама шығады?"},
- {"timestamp": "01:00", "speaker": "client", "text": "Жаңа ғана жаздым ғой: қазан айы, «Файл дайын емес»."},
- {"timestamp": "01:20", "speaker": "operator", "text": "Кешіріңіз. Қазан айы есебі 5-күнге дейін қалыптасады, бүгін 3-і. 5-інен бастап қайта жүктеп көріңіз, болмаса осы чатқа жазыңыз."},
- {"timestamp": "01:40", "speaker": "client", "text": "Жақсы, рақмет."},
- {"timestamp": "01:50", "speaker": "operator", "text": "Қорытынды: есеп 5-інен кейін дайын болады. Сұрақ болса, хабарласыңыз. Сау болыңыз!"},
- {"timestamp": "01:55", "speaker": "system", "text": "Оператор чатты жапты."}]},
-{"conversation_id": "pair-c01-late-en", "channel": "agent chat", "language": "EN", "audio_url": null, "transcript": [
- {"timestamp": "00:00", "speaker": "client", "text": "How do I change the app language to English?"},
- {"timestamp": "00:05", "speaker": "system", "text": "Chat transferred to an agent."},
- {"timestamp": "00:30", "speaker": "operator", "text": "Go to Settings → Language and choose English, then restart the app."},
- {"timestamp": "00:55", "speaker": "client", "text": "Done, thanks."},
- {"timestamp": "01:05", "speaker": "operator", "text": "By the way, I'm Sam. Glad the language is set. If you need anything else, write here. Have a nice day!"},
- {"timestamp": "01:10", "speaker": "system", "text": "Agent closed the chat."}]},
-{"conversation_id": "pair-c01-wronglang-en", "channel": "agent chat", "language": "EN", "audio_url": null, "transcript": [
- {"timestamp": "00:00", "speaker": "client", "text": "How do I change the app language to English?"},
- {"timestamp": "00:05", "speaker": "system", "text": "Chat transferred to an agent."},
- {"timestamp": "00:30", "speaker": "operator", "text": "Здравствуйте, меня зовут Сэм. Go to Settings → Language and choose English, then restart the app."},
- {"timestamp": "00:55", "speaker": "client", "text": "Done, thanks."},
- {"timestamp": "01:05", "speaker": "operator", "text": "Glad the language is set. If you need anything else, write here. Have a nice day!"},
- {"timestamp": "01:10", "speaker": "system", "text": "Agent closed the chat."}]}
-]}}
+{
+"isSuccess": true,
+"error": "",
+"data": {
+"dataset_group_id": "CHECKLIST-PAIRS",
+"total_records": 17,
+"records": [
+{
+"conversation_id": "pair-c03-general-ru",
+"channel": "agent chat",
+"language": "RU",
+"audio_url": null,
+"transcript": [
+{
+"timestamp": "00:00",
+"speaker": "client",
+"text": "Подскажите, какая комиссия на тарифе «Инвестор» за покупку акций на американском рынке?"
+},
+{
+"timestamp": "00:05",
+"speaker": "system",
+"text": "Эскалация на оператора."
+},
+{
+"timestamp": "00:40",
+"speaker": "operator",
+"text": "Здравствуйте! Меня зовут Вера. На тарифе «Инвестор» комиссия за сделки с акциями США указана в разделе «Тарифы» на сайте: откройте «Тарифы» → «Инвестор» → «Иностранные рынки». Там же пример расчёта."
+},
+{
+"timestamp": "01:10",
+"speaker": "client",
+"text": "Нашёл, спасибо."
+},
+{
+"timestamp": "01:20",
+"speaker": "operator",
+"text": "Отлично, комиссию вы нашли в тарифах. Если появятся вопросы по сделкам, пишите. Всего доброго!"
+},
+{
+"timestamp": "01:25",
+"speaker": "system",
+"text": "Оператор закрыл чат."
+}
+]
+},
+{
+"conversation_id": "pair-c03-account-ru",
+"channel": "agent chat",
+"language": "RU",
+"audio_url": null,
+"transcript": [
+{
+"timestamp": "00:00",
+"speaker": "client",
+"text": "Подскажите, какая комиссия списалась у меня вчера за покупку акций? В истории вижу списание, но не понимаю за что."
+},
+{
+"timestamp": "00:05",
+"speaker": "system",
+"text": "Эскалация на оператора."
+},
+{
+"timestamp": "00:40",
+"speaker": "operator",
+"text": "Здравствуйте! Меня зовут Вера. Посмотрела: вчера по вашему счёту списана комиссия 1 250 тенге за сделку с акциями США по тарифу «Инвестор»."
+},
+{
+"timestamp": "01:10",
+"speaker": "client",
+"text": "Понятно, спасибо."
+},
+{
+"timestamp": "01:20",
+"speaker": "operator",
+"text": "Итак, это комиссия за вчерашнюю сделку по тарифу. Если появятся вопросы, пишите. Всего доброго!"
+},
+{
+"timestamp": "01:25",
+"speaker": "system",
+"text": "Оператор закрыл чат."
+}
+]
+},
+{
+"conversation_id": "pair-c03-verified-kz",
+"channel": "agent chat",
+"language": "KZ",
+"audio_url": null,
+"transcript": [
+{
+"timestamp": "00:00",
+"speaker": "client",
+"text": "Кеше шотқа ақша аудардым, әлі түспеді. Тексеріп беріңізші."
+},
+{
+"timestamp": "00:05",
+"speaker": "system",
+"text": "Чат операторға жіберілді."
+},
+{
+"timestamp": "00:40",
+"speaker": "operator",
+"text": "Сәлеметсіз бе, мен Айгерім. Шотыңызды тексеру үшін алдымен жеке басыңызды растауымыз керек, қосымшадағы растауды өтіңізші."
+},
+{
+"timestamp": "01:30",
+"speaker": "system",
+"text": "Клиенттің жеке басы расталды."
+},
+{
+"timestamp": "01:50",
+"speaker": "operator",
+"text": "Рақмет. Аударымыңыз өңдеуде, әдетте 1 жұмыс күніне дейін түседі. Ертең түспесе, осы чатқа жазыңыз."
+},
+{
+"timestamp": "02:10",
+"speaker": "client",
+"text": "Жақсы, рақмет."
+},
+{
+"timestamp": "02:20",
+"speaker": "operator",
+"text": "Қорыта айтқанда, аударым өңдеуде, ертеңге дейін күтеміз. Сұрақтар болса, хабарласыңыз. Сау болыңыз!"
+},
+{
+"timestamp": "02:25",
+"speaker": "system",
+"text": "Оператор чатты жапты."
+}
+]
+},
+{
+"conversation_id": "pair-c03-skipped-kz",
+"channel": "agent chat",
+"language": "KZ",
+"audio_url": null,
+"transcript": [
+{
+"timestamp": "00:00",
+"speaker": "client",
+"text": "Кеше шотқа ақша аудардым, әлі түспеді. Тексеріп беріңізші."
+},
+{
+"timestamp": "00:05",
+"speaker": "system",
+"text": "Чат операторға жіберілді."
+},
+{
+"timestamp": "00:40",
+"speaker": "operator",
+"text": "Сәлеметсіз бе, мен Айгерім. Растаудың қажеті жоқ, қазір қараймын."
+},
+{
+"timestamp": "01:50",
+"speaker": "operator",
+"text": "Аударымыңыз өңдеуде, әдетте 1 жұмыс күніне дейін түседі. Ертең түспесе, осы чатқа жазыңыз."
+},
+{
+"timestamp": "02:10",
+"speaker": "client",
+"text": "Жақсы, рақмет."
+},
+{
+"timestamp": "02:20",
+"speaker": "operator",
+"text": "Қорыта айтқанда, аударым өңдеуде, ертеңге дейін күтеміз. Сұрақтар болса, хабарласыңыз. Сау болыңыз!"
+},
+{
+"timestamp": "02:25",
+"speaker": "system",
+"text": "Оператор чатты жапты."
+}
+]
+},
+{
+"conversation_id": "pair-c05-addressed-en",
+"channel": "agent chat",
+"language": "EN",
+"audio_url": null,
+"transcript": [
+{
+"timestamp": "00:00",
+"speaker": "client",
+"text": "The app logged me out three times today while I was placing an order. This is really frustrating, I almost missed the price."
+},
+{
+"timestamp": "00:05",
+"speaker": "system",
+"text": "Chat transferred to an agent."
+},
+{
+"timestamp": "00:35",
+"speaker": "operator",
+"text": "Hello, I'm Maya. I'm sorry you got logged out mid-order, that is stressful when the price is moving. Please update the app to the latest version and re-enable biometrics in Settings → Security; that fixes the repeated logouts. If it happens again today, write here and I'll escalate it."
+},
+{
+"timestamp": "01:10",
+"speaker": "client",
+"text": "Updated, looks stable now. Thanks."
+},
+{
+"timestamp": "01:20",
+"speaker": "operator",
+"text": "Great, so the update resolved the logouts. If anything else comes up, we're here. Have a good day!"
+},
+{
+"timestamp": "01:25",
+"speaker": "system",
+"text": "Agent closed the chat."
+}
+]
+},
+{
+"conversation_id": "pair-c05-dismissed-en",
+"channel": "agent chat",
+"language": "EN",
+"audio_url": null,
+"transcript": [
+{
+"timestamp": "00:00",
+"speaker": "client",
+"text": "The app logged me out three times today while I was placing an order. This is really frustrating, I almost missed the price."
+},
+{
+"timestamp": "00:05",
+"speaker": "system",
+"text": "Chat transferred to an agent."
+},
+{
+"timestamp": "00:35",
+"speaker": "operator",
+"text": "Hello, I'm Maya. Please update the app to the latest version and re-enable biometrics in Settings → Security."
+},
+{
+"timestamp": "01:10",
+"speaker": "client",
+"text": "Updated, looks stable now. Thanks."
+},
+{
+"timestamp": "01:20",
+"speaker": "operator",
+"text": "Great, so the update resolved the logouts. If anything else comes up, we're here. Have a good day!"
+},
+{
+"timestamp": "01:25",
+"speaker": "system",
+"text": "Agent closed the chat."
+}
+]
+},
+{
+"conversation_id": "pair-c07-summary-ru",
+"channel": "agent chat",
+"language": "RU",
+"audio_url": null,
+"transcript": [
+{
+"timestamp": "00:00",
+"speaker": "client",
+"text": "Где в приложении скачать брокерский отчёт за октябрь?"
+},
+{
+"timestamp": "00:05",
+"speaker": "system",
+"text": "Эскалация на оператора."
+},
+{
+"timestamp": "00:30",
+"speaker": "operator",
+"text": "Здравствуйте! Меня зовут Олег. Откройте «Меню» → «Отчёты и документы» → «Брокерский отчёт», выберите октябрь и нажмите «Скачать PDF»."
+},
+{
+"timestamp": "01:00",
+"speaker": "client",
+"text": "Скачал, спасибо!"
+},
+{
+"timestamp": "01:10",
+"speaker": "operator",
+"text": "Отчёт за октябрь у вас. Если понадобится другой период, он там же. Хорошего дня!"
+},
+{
+"timestamp": "01:15",
+"speaker": "system",
+"text": "Оператор закрыл чат."
+}
+]
+},
+{
+"conversation_id": "pair-c07-bare-ru",
+"channel": "agent chat",
+"language": "RU",
+"audio_url": null,
+"transcript": [
+{
+"timestamp": "00:00",
+"speaker": "client",
+"text": "Где в приложении скачать брокерский отчёт за октябрь?"
+},
+{
+"timestamp": "00:05",
+"speaker": "system",
+"text": "Эскалация на оператора."
+},
+{
+"timestamp": "00:30",
+"speaker": "operator",
+"text": "Здравствуйте! Меня зовут Олег. Откройте «Меню» → «Отчёты и документы» → «Брокерский отчёт», выберите октябрь и нажмите «Скачать PDF»."
+},
+{
+"timestamp": "01:00",
+"speaker": "client",
+"text": "Скачал, спасибо!"
+},
+{
+"timestamp": "01:10",
+"speaker": "operator",
+"text": "Пожалуйста. Хорошего дня!"
+},
+{
+"timestamp": "01:15",
+"speaker": "system",
+"text": "Оператор закрыл чат."
+}
+]
+},
+{
+"conversation_id": "pair-c07-nofarewell-en",
+"channel": "agent chat",
+"language": "EN",
+"audio_url": null,
+"transcript": [
+{
+"timestamp": "00:00",
+"speaker": "client",
+"text": "Where do I find the 1042-S form for last year?"
+},
+{
+"timestamp": "00:05",
+"speaker": "system",
+"text": "Chat transferred to an agent."
+},
+{
+"timestamp": "00:30",
+"speaker": "operator",
+"text": "Hi, I'm Noah. Go to Menu → Reports and documents → Tax forms, choose last year and download the 1042-S."
+},
+{
+"timestamp": "01:00",
+"speaker": "client",
+"text": "Found it, thanks."
+},
+{
+"timestamp": "01:05",
+"speaker": "system",
+"text": "Agent closed the chat."
+}
+]
+},
+{
+"conversation_id": "pair-c07-cutoff-en",
+"channel": "agent chat",
+"language": "EN",
+"audio_url": null,
+"transcript": [
+{
+"timestamp": "00:00",
+"speaker": "client",
+"text": "Where do I find the 1042-S form for last year?"
+},
+{
+"timestamp": "00:05",
+"speaker": "system",
+"text": "Chat transferred to an agent."
+},
+{
+"timestamp": "00:30",
+"speaker": "operator",
+"text": "Hi, I'm Noah. Go to Menu → Reports and documents → Tax forms, choose last year and download the 1042-S."
+},
+{
+"timestamp": "00:50",
+"speaker": "system",
+"text": "Customer left the chat."
+}
+]
+},
+{
+"conversation_id": "pair-c08-clean-ru",
+"channel": "agent chat",
+"language": "RU",
+"audio_url": null,
+"transcript": [
+{
+"timestamp": "00:00",
+"speaker": "client",
+"text": "Хочу собрать портфель из облигаций, но не знаю с чего начать. Можете помочь выбрать?"
+},
+{
+"timestamp": "00:05",
+"speaker": "system",
+"text": "Эскалация на оператора."
+},
+{
+"timestamp": "00:35",
+"speaker": "operator",
+"text": "Здравствуйте! Меня зовут Дамир. Индивидуальные рекомендации по бумагам даёт ваш персональный менеджер: заявку на консультацию можно оставить в приложении, раздел «Менеджер». В разделе «Идеи» есть готовые подборки облигаций с описанием."
+},
+{
+"timestamp": "01:10",
+"speaker": "client",
+"text": "Понял, оставлю заявку. Спасибо."
+},
+{
+"timestamp": "01:20",
+"speaker": "operator",
+"text": "Итого: заявка менеджеру в разделе «Менеджер», подборки — в «Идеях». Обращайтесь, если что. До свидания!"
+},
+{
+"timestamp": "01:25",
+"speaker": "system",
+"text": "Оператор закрыл чат."
+}
+]
+},
+{
+"conversation_id": "pair-c08-bypass-ru",
+"channel": "agent chat",
+"language": "RU",
+"audio_url": null,
+"transcript": [
+{
+"timestamp": "00:00",
+"speaker": "client",
+"text": "Хочу собрать портфель из облигаций, но не знаю с чего начать. Можете помочь выбрать?"
+},
+{
+"timestamp": "00:05",
+"speaker": "system",
+"text": "Эскалация на оператора."
+},
+{
+"timestamp": "00:35",
+"speaker": "operator",
+"text": "Здравствуйте! Меня зовут Дамир. В разделе «Идеи» есть готовые подборки облигаций. А если хотите подробнее, оставьте свой номер, я сам вечером позвоню и за небольшую плату подберу вам портфель лично, без заявок через компанию."
+},
+{
+"timestamp": "01:10",
+"speaker": "client",
+"text": "Нет, спасибо, посмотрю подборки."
+},
+{
+"timestamp": "01:20",
+"speaker": "operator",
+"text": "Итого: подборки — в «Идеях». Обращайтесь, если что. До свидания!"
+},
+{
+"timestamp": "01:25",
+"speaker": "system",
+"text": "Оператор закрыл чат."
+}
+]
+},
+{
+"conversation_id": "pair-c02-fresh-kz",
+"channel": "agent chat",
+"language": "KZ",
+"audio_url": null,
+"transcript": [
+{
+"timestamp": "00:00",
+"speaker": "client",
+"text": "Қосымшада есеп жүктелмейді."
+},
+{
+"timestamp": "00:05",
+"speaker": "system",
+"text": "Чат операторға жіберілді."
+},
+{
+"timestamp": "00:35",
+"speaker": "operator",
+"text": "Сәлеметсіз бе, мен Ернар. Қай есепті жүктеп жатырсыз және қандай хабарлама шығады?"
+},
+{
+"timestamp": "01:00",
+"speaker": "client",
+"text": "Қазан айындағы брокерлік есеп, «Файл дайын емес» деп жазады."
+},
+{
+"timestamp": "01:20",
+"speaker": "operator",
+"text": "Түсінікті. Қазан айы есебі 5-күнге дейін қалыптасады, бүгін 3-і. 5-інен бастап қайта жүктеп көріңіз, болмаса осы чатқа жазыңыз."
+},
+{
+"timestamp": "01:40",
+"speaker": "client",
+"text": "Жақсы, рақмет."
+},
+{
+"timestamp": "01:50",
+"speaker": "operator",
+"text": "Қорытынды: есеп 5-інен кейін дайын болады. Сұрақ болса, хабарласыңыз. Сау болыңыз!"
+},
+{
+"timestamp": "01:55",
+"speaker": "system",
+"text": "Оператор чатты жапты."
+}
+]
+},
+{
+"conversation_id": "pair-c02-known-kz",
+"channel": "agent chat",
+"language": "KZ",
+"audio_url": null,
+"transcript": [
+{
+"timestamp": "00:00",
+"speaker": "client",
+"text": "Қосымшада қазан айындағы брокерлік есеп жүктелмейді, «Файл дайын емес» деп жазады."
+},
+{
+"timestamp": "00:05",
+"speaker": "system",
+"text": "Чат операторға жіберілді."
+},
+{
+"timestamp": "00:35",
+"speaker": "operator",
+"text": "Сәлеметсіз бе, мен Ернар. Қай есепті жүктеп жатырсыз және қандай хабарлама шығады?"
+},
+{
+"timestamp": "01:00",
+"speaker": "client",
+"text": "Жаңа ғана жаздым ғой: қазан айы, «Файл дайын емес»."
+},
+{
+"timestamp": "01:20",
+"speaker": "operator",
+"text": "Кешіріңіз. Қазан айы есебі 5-күнге дейін қалыптасады, бүгін 3-і. 5-інен бастап қайта жүктеп көріңіз, болмаса осы чатқа жазыңыз."
+},
+{
+"timestamp": "01:40",
+"speaker": "client",
+"text": "Жақсы, рақмет."
+},
+{
+"timestamp": "01:50",
+"speaker": "operator",
+"text": "Қорытынды: есеп 5-інен кейін дайын болады. Сұрақ болса, хабарласыңыз. Сау болыңыз!"
+},
+{
+"timestamp": "01:55",
+"speaker": "system",
+"text": "Оператор чатты жапты."
+}
+]
+},
+{
+"conversation_id": "pair-c01-late-en",
+"channel": "agent chat",
+"language": "EN",
+"audio_url": null,
+"transcript": [
+{
+"timestamp": "00:00",
+"speaker": "client",
+"text": "How do I change the app language to English?"
+},
+{
+"timestamp": "00:05",
+"speaker": "system",
+"text": "Chat transferred to an agent."
+},
+{
+"timestamp": "00:30",
+"speaker": "operator",
+"text": "Go to Settings → Language and choose English, then restart the app."
+},
+{
+"timestamp": "00:55",
+"speaker": "client",
+"text": "Done, thanks."
+},
+{
+"timestamp": "01:05",
+"speaker": "operator",
+"text": "By the way, I'm Sam. Glad the language is set. If you need anything else, write here. Have a nice day!"
+},
+{
+"timestamp": "01:10",
+"speaker": "system",
+"text": "Agent closed the chat."
+}
+]
+},
+{
+"conversation_id": "pair-c01-wronglang-en",
+"channel": "agent chat",
+"language": "EN",
+"audio_url": null,
+"transcript": [
+{
+"timestamp": "00:00",
+"speaker": "client",
+"text": "How do I change the app language to English?"
+},
+{
+"timestamp": "00:05",
+"speaker": "system",
+"text": "Chat transferred to an agent."
+},
+{
+"timestamp": "00:30",
+"speaker": "operator",
+"text": "Здравствуйте, меня зовут Сэм. Go to Settings → Language and choose English, then restart the app."
+},
+{
+"timestamp": "00:55",
+"speaker": "client",
+"text": "Done, thanks."
+},
+{
+"timestamp": "01:05",
+"speaker": "operator",
+"text": "Glad the language is set. If you need anything else, write here. Have a nice day!"
+},
+{
+"timestamp": "01:10",
+"speaker": "system",
+"text": "Agent closed the chat."
+}
+]
+},
+{
+"conversation_id": "pair-c01-proper-en",
+"channel": "agent chat",
+"language": "EN",
+"audio_url": null,
+"transcript": [
+{
+"timestamp": "00:00",
+"speaker": "client",
+"text": "How do I change the app language to English?"
+},
+{
+"timestamp": "00:05",
+"speaker": "system",
+"text": "Chat transferred to an agent."
+},
+{
+"timestamp": "00:30",
+"speaker": "operator",
+"text": "Hello, I'm Sam. Go to Settings → Language and choose English, then restart the app."
+},
+{
+"timestamp": "00:55",
+"speaker": "client",
+"text": "Done, thanks."
+},
+{
+"timestamp": "01:05",
+"speaker": "operator",
+"text": "Glad the language is set. If you need anything else, write here. Have a nice day!"
+},
+{
+"timestamp": "01:10",
+"speaker": "system",
+"text": "Agent closed the chat."
+}
+]
+}
+]
+}
+}

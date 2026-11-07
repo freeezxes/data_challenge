@@ -30,7 +30,11 @@
       "pair-c02-known-kz"
     ],
     [
-      "pair-c01-late-en",
+      "pair-c01-proper-en",
+      "pair-c01-late-en"
+    ],
+    [
+      "pair-c01-proper-en",
       "pair-c01-wronglang-en"
     ]
   ],
@@ -101,6 +105,10 @@
     "pair-c01-wronglang-en": {
       "c01": "no",
       "rule": "приветствие не на языке клиента — Нет"
+    },
+    "pair-c01-proper-en": {
+      "c01": "yes",
+      "rule": "приветствие на языке клиента и имя в первой реплике"
     }
   }
 }

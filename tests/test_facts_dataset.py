@@ -1,3 +1,4 @@
+from conftest import ROOT
 from datetime import datetime
 
 from cqa.dataset import dataset_url, normalize, parse_timestamp, render_transcript
@@ -75,7 +76,7 @@ def test_checklist_pairs_set_is_consistent():
     d = json.loads((ROOT / "data/calibration/checklist-pairs.json").read_text(encoding="utf-8"))["data"]["records"]
     e = json.loads((ROOT / "data/calibration/checklist-pairs.expected.json").read_text(encoding="utf-8"))
     ids = {r["conversation_id"] for r in d}
-    assert ids == set(e["expected"]) and len(d) == 16
+    assert ids == set(e["expected"]) and len(d) == 17
     for a, b in e["pairs"]:
         assert a in ids and b in ids
         ea, eb = {k: v for k, v in e["expected"][a].items() if k.startswith("c")}, {k: v for k, v in e["expected"][b].items() if k.startswith("c")}
