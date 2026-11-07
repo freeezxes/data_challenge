@@ -1,10 +1,9 @@
-# Data Challenge DEV viewer
-A local reading tool for understanding the actual conversation types in the organizer dataset. The main question is: what do client, bot and operator conversations look like?
+# Дизайн интерфейса
 
-Two reading panes: a searchable list and the transcript; a compact facts rail provides provenance and speaker counts. The green-grey frame belongs to Freedom's material; white reading surfaces and a pale green operator bubble let the transcript dominate. Manrope is served locally. No decorative motion.
+Тёмная тема «Пульт» по макету в Figma, в зелёной гамме Freedom. Интерфейс — рабочее место проверяющего: данные важнее декора.
 
-Tokens: frame #edf3ef, paper #ffffff, transcript #f7f9f8, ink #172c24, secondary #586b62, green #117047, operator #e4f2e9, rule #dce5df. All counts derive from dataset.json. Mobile uses list/detail navigation with a back button.
-
-The three sections are Dialogues, ChatGPT labels and Claude labels. Both label views share one layout and preserve the conversation when switching. The current source controls the main score and explanations; a secondary row shows the other source. Amber marks disagreements and review notes. N/A is rendered as “Не применяется” with an explanation of excluded weight. Claude's general notes stay separate from per-criterion evidence, which is absent in the original file.
-
-The header wraps into two rows on phones. The remaining viewport belongs to the reader, with separate scroll areas for the list, criteria and transcript. New controls use existing colors, typography and focus rings.
+- **Цвета.** Фон `#020403`, панели `#080d0b` / `#0c1310`, линии `rgba(255,255,255,.075)`, текст `#eef3f0` / `#b9c5bf` / `#7f8f87`. Акцент — зелёный `#2fe08a` (кнопки `#1cc466`), предупреждение — янтарный `#f5b544`, нарушение — красный `#ff6b6b`, «Не применяется» — серо-синий `#8b9cb0`.
+- **Шрифты.** Manrope — интерфейс; Literata — реплики диалога, чтобы текст разговора читался как документ. Оба с кириллицей и казахскими буквами, лежат локально в `public/fonts` (OFL).
+- **Шапки страниц** — сгенерированные объёмные объекты со смыслом раздела: стеклянные карточки (очередь), реплики под лупой (чат), волна в линзе (звонок), весы (апелляции), блоки с галочками (чек-лист), столбцы (аналитика).
+- **Цвет — это смысл:** зелёный — выполнено, янтарный — частично или «модель сомневается», красный — нарушение, серо-синий — N/A. Одна и та же раскраска в баллах, транскрипте, волне звонка и карте навыков.
+- **Движение** — только там, где оно что-то сообщает: появление критериев в прямом эфире, подсветка реплики при переходе, индикатор «клиент печатает».
