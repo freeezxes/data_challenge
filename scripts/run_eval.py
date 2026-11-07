@@ -45,6 +45,7 @@ def main():
     ap.add_argument('--model', default='claude-opus-5-5')
     ap.add_argument('--effort', default='high', choices=['low', 'medium', 'high', 'xhigh', 'max'])
     ap.add_argument('--votes', type=int, default=1)
+    ap.add_argument('--extra-votes', type=int, default=0, help='Добор прогонов при расхождении основных (только при votes ≥ 2)')
     ap.add_argument('--workers', type=int, default=3)
     ap.add_argument('--max-tokens', type=int, default=16000)
     ap.add_argument('--fallback', action='store_true', help='Разрешить серверную замену модели')
@@ -94,7 +95,7 @@ def main():
         selected = selected[:args.limit]
     if not selected:
         ap.error('Фильтры не оставили диалогов')
-    config = EvalConfig(model=args.model, effort=args.effort, votes=args.votes,
+    config = EvalConfig(model=args.model, effort=args.effort, votes=args.votes, extra_votes=args.extra_votes,
                         max_tokens=args.max_tokens, repair=not args.no_repair,
                         use_fallback=args.fallback and not args.no_fallback)
     # Подготовка промпта и схемы не требует клиента или ключа.
