@@ -9,6 +9,8 @@
 """
 from __future__ import annotations
 
+import re
+
 KINDS = {"needs": "выявление потребност", "consult": "консультац", "flow": "управление диалог"}
 
 
@@ -21,8 +23,12 @@ def kind_of(criterion: dict) -> str | None:
 
 
 def extra_schema(kind: str) -> tuple[dict, list[str]]:
-    """Дополнительные поля-факты для схемы ответа (плоские списки меток — компактная грамматика)."""
-    arr = lambda enum, desc: {"type": "array", "items": {"type": "string", "enum": enum}, "description": desc}  # noqa: E731
+    """Дополнительные поля-факты для схемы ответа.
+
+    Списки меток — строкой через запятую: массивы enum во всех трёх критериях вместе
+    превышают предел грамматики structured outputs. Метки разбирает и проверяет код.
+    """
+    arr = lambda enum, desc: {"type": "string", "description": f"{desc} Метки через запятую из списка: {', '.join(enum)}; пустая строка — нет ни одного."}  # noqa: E731
     if kind == "needs":
         props = {
             "operator_questions": arr(["needed", "known_repeat"], "По одной метке на каждый вопрос оператора о ситуации клиента: needed — нужное уточнение; known_repeat — клиент это уже сообщил (в том числе боту)."),
@@ -43,10 +49,34 @@ def extra_schema(kind: str) -> tuple[dict, list[str]]:
     return props, list(props)
 
 
+LABELS = {"operator_questions": ["needed", "known_repeat"],
+          "client_questions": ["essential_closed", "essential_partial", "essential_ignored", "essential_wrong", "minor_closed", "minor_open"],
+          "glitches": ["missed_question", "repeat_known", "off_topic", "unclear_wording", "confusing_order", "unwarned_wait", "contradiction"]}
+
+
+def labels(item: dict, key: str):
+    """Список меток из строки «a, b» (или из списка). None — поля нет."""
+    raw = item.get(key)
+    if raw is None:
+        return None
+    parts = raw if isinstance(raw, list) else re.split(r"[,;\s]+", raw)
+    return [p.strip().lower() for p in parts if p and p.strip()]
+
+
+def unknown_labels(item: dict) -> list[str]:
+    """Метки вне допустимого списка — повод для повторного запроса."""
+    bad = []
+    for key, allowed in LABELS.items():
+        for lab in labels(item, key) or []:
+            if lab not in allowed:
+                bad.append(f"{key}: {lab}")
+    return bad
+
+
 def derive(kind: str, item: dict, criterion: dict):
     """Ответ из фактов. None — фактов нет, оставляем ответ модели."""
     if kind == "needs":
-        qs = item.get("operator_questions")
+        qs = labels(item, "operator_questions")
         if qs is None:
             return None
         if item.get("ignored_request") or item.get("answered_by_guess") or "known_repeat" in qs:
@@ -55,7 +85,7 @@ def derive(kind: str, item: dict, criterion: dict):
             return "yes"
         return "na" if criterion.get("na_allowed") else "yes"
     if kind == "consult":
-        qs = item.get("client_questions")
+        qs = labels(item, "client_questions")
         if qs is None:
             return None
         if not qs:
@@ -74,7 +104,7 @@ def derive(kind: str, item: dict, criterion: dict):
             return 5
         return 0
     if kind == "flow":
-        gl = item.get("glitches")
+        gl = labels(item, "glitches")
         if gl is None:
             return None
         if "contradiction" in gl:

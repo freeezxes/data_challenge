@@ -16,7 +16,7 @@ from .prompt import build_system_prompt, build_user_message
 from .schema import output_schema
 from .scoring import score
 from .verify import check_rationale
-from .derive import derive, kind_of, extra_schema
+from .derive import LABELS, derive, extra_schema, kind_of, labels, unknown_labels
 
 
 def extra_fields(kind):
@@ -92,7 +92,8 @@ def validate_run(checklist: dict, conv: dict, facts: dict, raw: dict) -> tuple[d
         d = {"answer": answer, "evidence_ids": evidence, "checked_range": item.get("checked_range", ""),
              "quote": item.get("quote", ""), "reasoning": item.get("reasoning", "")}
         if kind:
-            d["facts"] = {k: item.get(k) for k in extra_fields(kind)}
+            d["facts"] = {k: (labels(item, k) if k in LABELS else item.get(k)) for k in extra_fields(kind)}
+            issues += [f"{cid}: неизвестная метка факта {b}" for b in unknown_labels(item)]
             d["model_answer"] = model_answer
         issues += [i for i in check_rationale(conv, facts, c, answer, d) if "несуществующие" not in i]
         if c["type"] == "critical":

@@ -32,3 +32,12 @@ def test_flow_rules(checklist):
     assert derive("flow", {"glitches": ["unclear_wording"], "client_confused": True}, c) == 4
     assert derive("flow", {"glitches": ["off_topic", "repeat_known"]}, c) == 4
     assert derive("flow", {"glitches": ["contradiction"]}, c) == 0
+
+
+def test_labels_from_comma_string_and_unknown_flagged():
+    from cqa.derive import labels, unknown_labels
+    item = {"client_questions": "essential_closed, minor_open", "glitches": ""}
+    assert labels(item, "client_questions") == ["essential_closed", "minor_open"]
+    assert labels(item, "glitches") == [] and labels(item, "operator_questions") is None
+    assert derive("consult", item, {"na_allowed": True}) == 15
+    assert unknown_labels({"glitches": "missed_question, typo"}) == ["glitches: typo"]
