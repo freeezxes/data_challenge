@@ -8,7 +8,7 @@
     "human_reviewed": false,
     "source_commit": "working-tree (gold v2)",
     "source_path": "data/gold/dev_gold.json",
-    "source_sha256": "7ac31655d32e3a1c833b7fff8d8b7c21e3b96249f288c0434b0fc5df21d3d657",
+    "source_sha256": "ab97bf07c518fcfcfc9e07962617372e99bec16a4a2bb73188cb0707952670c4",
     "source_dataset_sha256": "f2a8b89594425cd01d74fb93d4e799667594bf26276e2d67fac01f02c70a6c1c",
     "dataset_alignment": "conversation_id",
     "closing_policy": "lenient"
@@ -105,7 +105,7 @@
   "counts": {
     "annotated": 65,
     "dataset": 65,
-    "review_required": 29,
+    "review_required": 27,
     "critical": 8
   },
   "annotations": [
@@ -592,20 +592,26 @@
         },
         {
           "criterion_id": "empathy",
-          "value": "Да",
-          "raw_points": 15.0,
-          "rationale": "Оператор вежлив; недовольства клиент не выражал.",
+          "value": "Нет",
+          "raw_points": 0.0,
+          "rationale": "На повторный вопрос клиента о комиссии (m14) оператор ответил отпиской и завершил чат — пренебрежение к запросу.",
           "evidence": [
             {
-              "message_index": 11,
-              "timestamp": "02:49",
+              "message_index": 15,
+              "timestamp": "05:07",
               "speaker": "operator",
-              "quote": "Добрый день! Я Лера из поддержки. Вы через"
+              "quote": "Название тарифа смотрите там же."
+            },
+            {
+              "message_index": 14,
+              "timestamp": "04:32",
+              "speaker": "client",
+              "quote": "Да, «Инвестор». А комиссию где искать?"
             }
           ],
           "inspected_range": null,
-          "review_required": true,
-          "review_note": "Claude пометил этот критерий как спорный."
+          "review_required": false,
+          "review_note": null
         },
         {
           "criterion_id": "management",
@@ -678,8 +684,8 @@
         }
       ],
       "applicable_weight": 80,
-      "earned_weighted_points": 65.5,
-      "total_score": 81.88,
+      "earned_weighted_points": 50.5,
+      "total_score": 63.13,
       "critical_flag": false,
       "review_required": true,
       "channel_scope": "chat_transcript",
@@ -1354,20 +1360,26 @@
         },
         {
           "criterion_id": "empathy",
-          "value": "Да",
-          "raw_points": 15.0,
-          "rationale": "Оператор вежлив; недовольства клиент не выражал.",
+          "value": "Нет",
+          "raw_points": 0.0,
+          "rationale": "На вопрос, когда снова подавать вывод (m12), оператор отмахнулся «я указал» и попрощался.",
           "evidence": [
             {
-              "message_index": 11,
-              "timestamp": "03:02",
+              "message_index": 13,
+              "timestamp": "03:41",
               "speaker": "operator",
-              "quote": "Здравствуйте, я Дамир. В приложении откройте"
+              "quote": "Путь к обновлению я указал."
+            },
+            {
+              "message_index": 12,
+              "timestamp": "03:21",
+              "speaker": "client",
+              "quote": "Нашёл. После отправки сразу заново подавать на вывод?"
             }
           ],
           "inspected_range": null,
-          "review_required": true,
-          "review_note": "Claude пометил этот критерий как спорный."
+          "review_required": false,
+          "review_note": null
         },
         {
           "criterion_id": "management",
@@ -1434,10 +1446,10 @@
         }
       ],
       "applicable_weight": 65,
-      "earned_weighted_points": 50.5,
-      "total_score": 77.69,
+      "earned_weighted_points": 35.5,
+      "total_score": 54.62,
       "critical_flag": false,
-      "review_required": true,
+      "review_required": false,
       "channel_scope": "chat_transcript",
       "notes": [
         "Вопрос «когда снова подавать вывод» проигнорирован (m5, m12 → m13)."
@@ -9851,20 +9863,26 @@
         },
         {
           "criterion_id": "empathy",
-          "value": "Да",
-          "raw_points": 15.0,
-          "rationale": "Оператор вежлив; недовольства клиент не выражал.",
+          "value": "Нет",
+          "raw_points": 0.0,
+          "rationale": "На вопрос, можно ли сразу подавать вывод (m11), оператор отмахнулся и попрощался.",
           "evidence": [
             {
-              "message_index": 10,
-              "timestamp": "01:36",
+              "message_index": 12,
+              "timestamp": "02:15",
               "speaker": "operator",
-              "quote": "Hi, I'm Chris. Go to Menu, Orders, Personal"
+              "quote": "That's where the profile request is."
+            },
+            {
+              "message_index": 11,
+              "timestamp": "01:55",
+              "speaker": "client",
+              "quote": "Okay, I found it. Can I submit the withdrawal right after this?"
             }
           ],
           "inspected_range": null,
-          "review_required": true,
-          "review_note": "Claude пометил этот критерий как спорный."
+          "review_required": false,
+          "review_note": null
         },
         {
           "criterion_id": "management",
@@ -9931,10 +9949,10 @@
         }
       ],
       "applicable_weight": 65,
-      "earned_weighted_points": 50.5,
-      "total_score": 77.69,
+      "earned_weighted_points": 35.5,
+      "total_score": 54.62,
       "critical_flag": false,
-      "review_required": true,
+      "review_required": false,
       "channel_scope": "chat_transcript",
       "notes": [
         "Вопрос «can I submit the withdrawal right after» проигнорирован."
