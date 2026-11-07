@@ -24,7 +24,6 @@ PREAMBLE = """Ты — эксперт контроля качества конт
 - Доказательство — ID конкретных реплик, включая системные сообщения. Для пропущенного действия укажи в checked_range участок, где оно ожидалось. Для N/A объясни, какое условие выполнено.
 - reasoning — по-русски, 1–2 коротких предложения; цитаты — на языке оригинала.
 - quote — дословный фрагмент одной из реплик-доказательств; выдуманная или пересказанная цитата считается ошибкой.
-- Для выявления потребности, консультации и ведения диалога сначала честно заполни поля-факты (вопросы оператора, вопросы клиента, сбои). Итоговую ступень по этим критериям посчитает программа по правилам чек-листа, поле answer там — твоя предварительная оценка.
 - Сначала найди реплики-доказательства, затем рассуждай, затем выноси ответ."""
 
 
@@ -82,8 +81,22 @@ def render_example(conv: dict, checklist: dict, gold_item: dict) -> str:
             f"Пояснение: {gold_item.get('note') or '—'}")
 
 
+FACTS_NOTE = ("- Для критериев {names} сначала честно заполни поля-факты (вопросы оператора, вопросы клиента, сбои). "
+              "Итоговую ступень по ним посчитает программа по правилам чек-листа, поле answer там — твоя предварительная оценка.")
+
+
+def build_preamble(checklist: dict) -> str:
+    """Строка о полях-фактах — только если в чек-листе есть критерии, для которых их считает код."""
+    from .derive import kind_of
+    names = [f"«{c['title']}»" for c in checklist["criteria"] if kind_of(c)]
+    if not names:
+        return PREAMBLE
+    head, tail = PREAMBLE.rsplit("\n- Сначала найди", 1)
+    return head + "\n" + FACTS_NOTE.format(names=", ".join(names)) + "\n- Сначала найди" + tail
+
+
 def build_system_prompt(checklist: dict, examples: list[tuple[dict, dict]] | None = None) -> str:
-    parts = [PREAMBLE, render_checklist(checklist)]
+    parts = [build_preamble(checklist), render_checklist(checklist)]
     if examples:
         parts.append("# Примеры рабочей разметки команды\n\n" +
                      "\n\n".join(render_example(conv, checklist, g) for conv, g in examples))

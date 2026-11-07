@@ -1,12 +1,30 @@
 <!doctype html>
-<html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#edf3ef"><title>Диалоги — Data Challenge</title><link rel="icon" href="data:,"><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script></head>
-<body>
-<header class="topbar"><div class="brand"><svg width="26" height="28" viewBox="0 0 26 28" fill="none" aria-hidden="true"><path d="M3 3h20v14H12l-9 7V3Z" stroke="currentColor" stroke-width="2.3"/><path d="M8 9h10M8 13h6" stroke="currentColor" stroke-width="2"/></svg><span>Data Challenge<span class="brand-sub">Freedom Broker</span></span></div><nav class="main-nav" aria-label="Разделы"><a href="/" data-section="dialogs" aria-current="page">Диалоги</a><a href="/annotations.html?source=chatgpt" data-source="chatgpt">Разметка ChatGPT</a><a href="/annotations.html?source=claude" data-source="claude">Разметка Claude v2</a></nav></header>
-<main class="sheet">
-<section class="page-heading"><div><h1>Диалоги</h1><p>Посмотрите, как устроены разговоры из набора организаторов.</p></div><div class="dataset-summary" id="summary">Загружаем DEV…</div></section>
-<div class="workspace">
-<aside class="inbox" aria-label="Список диалогов"><div class="list-tools"><label class="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><input id="search" type="search" placeholder="Поиск по тексту или ID" aria-label="Поиск по тексту или ID" autocomplete="off"></label><div class="filters"><div class="channel-tabs" role="group" aria-label="Тип диалога"><button data-channel="all" aria-pressed="true">Все</button><button data-channel="agent chat" aria-pressed="false">Чаты</button><button data-channel="voice call" aria-pressed="false">Звонки</button></div><select id="language" aria-label="Язык диалогов"><option value="all">Все языки</option><option value="RU">Русский</option><option value="KZ">Қазақша</option><option value="EN">English</option></select></div><div class="list-caption"><span id="list-count" aria-live="polite">Загрузка</span><button id="reset" class="text-button" hidden>Сбросить</button></div></div><div id="conversation-list" class="conversation-list"></div><div class="source-note">DEV · снимок от 7 ноября 2026<br>Исходные тексты организаторов</div></aside>
-<section class="reader" aria-label="Переписка"><div id="conversation-header" class="conversation-header"></div><div class="reader-toolbar"><div role="group" aria-label="Вид диалога" class="view-tabs"><button id="view-chat" aria-pressed="true">Переписка</button><button id="view-json" aria-pressed="false">Исходный JSON</button></div><label class="context-toggle"><input type="checkbox" id="context" checked>Бот и события</label></div><div id="audio" class="audio-section" hidden></div><div id="messages" class="messages" tabindex="0" aria-label="Реплики диалога"></div><div id="reader-footer" class="reader-footer"></div></section>
-<aside id="facts" class="facts" aria-label="О диалоге"></aside>
-</div></main><div id="toast" class="toast" role="status" hidden></div>
-</body></html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CQA · Freedom Broker</title>
+<link rel="icon" href="art/logo.png">
+<link rel="preload" href="fonts/manrope-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/literata-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="cqa.css">
+</head>
+<body data-api="">
+<header class="top">
+  <a class="brand" href="#/"><img src="art/logo.png" alt="">CQA</a>
+  <nav class="tabs" aria-label="Разделы">
+    <a class="tab" href="#/" data-route="home">Главная</a>
+    <a class="tab" href="#/queue" data-route="queue">Очередь</a>
+    <a class="tab" href="#/appeals" data-route="appeals">Апелляции<span class="count" hidden></span></a>
+    <a class="tab" href="#/checklists" data-route="checklists">Чек-листы</a>
+    <a class="tab" href="#/analytics" data-route="analytics">Аналитика</a>
+  </nav>
+  <div class="role" role="group" aria-label="Роль">
+    <button type="button" data-role="operator">Оператор</button>
+    <button type="button" data-role="reviewer">Проверяющий</button>
+  </div>
+</header>
+<main id="view" tabindex="-1"></main>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

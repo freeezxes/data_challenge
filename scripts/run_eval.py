@@ -42,7 +42,7 @@ def main():
     ap.add_argument('--lang')
     ap.add_argument('--channel')
     ap.add_argument('--limit', type=int)
-    ap.add_argument('--model', default='claude-sonnet-5-5')
+    ap.add_argument('--model', default='claude-opus-5-5')
     ap.add_argument('--effort', default='high', choices=['low', 'medium', 'high', 'xhigh', 'max'])
     ap.add_argument('--votes', type=int, default=1)
     ap.add_argument('--workers', type=int, default=3)
