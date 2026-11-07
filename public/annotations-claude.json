@@ -8,7 +8,7 @@
     "human_reviewed": false,
     "source_commit": "working-tree (gold v2)",
     "source_path": "data/gold/dev_gold.json",
-    "source_sha256": "e8a7b87ff3c8d5e1dac2a5a68f44f27c62062f130ea544c595afd6b666b990ec",
+    "source_sha256": "0708bb89df0d8ac7dc30286cf5e526929d4fa7fff79cc8b1caa361497643ac3b",
     "source_dataset_sha256": "f2a8b89594425cd01d74fb93d4e799667594bf26276e2d67fac01f02c70a6c1c",
     "dataset_alignment": "conversation_id",
     "closing_policy": "strict"
@@ -638,9 +638,9 @@
         },
         {
           "criterion_id": "closing",
-          "value": "Да",
-          "raw_points": 5.0,
-          "rationale": "Прощание с итогом / следующим шагом.",
+          "value": "Нет",
+          "raw_points": 0.0,
+          "rationale": "Ссылка на уже сказанное и прощание — не итог разговора: вопрос клиента остался без ответа.",
           "evidence": [
             {
               "message_index": 15,
@@ -684,15 +684,15 @@
         }
       ],
       "applicable_weight": 80,
-      "earned_weighted_points": 50.5,
-      "total_score": 63.13,
+      "earned_weighted_points": 45.5,
+      "total_score": 56.88,
       "critical_flag": false,
       "review_required": true,
       "channel_scope": "chat_transcript",
       "notes": [
         "Вопрос о комиссии (основной) проигнорирован дважды: m1/m14 → m15."
       ],
-      "closing_type": "summary"
+      "closing_type": "bare"
     },
     {
       "conversation_id": "p1-ru-004",
@@ -1406,9 +1406,9 @@
         },
         {
           "criterion_id": "closing",
-          "value": "Да",
-          "raw_points": 5.0,
-          "rationale": "Прощание с итогом / следующим шагом.",
+          "value": "Нет",
+          "raw_points": 0.0,
+          "rationale": "Ссылка на уже сказанное и прощание — не итог разговора: вопрос клиента остался без ответа.",
           "evidence": [
             {
               "message_index": 13,
@@ -1446,15 +1446,15 @@
         }
       ],
       "applicable_weight": 65,
-      "earned_weighted_points": 35.5,
-      "total_score": 54.62,
+      "earned_weighted_points": 30.5,
+      "total_score": 46.92,
       "critical_flag": false,
       "review_required": false,
       "channel_scope": "chat_transcript",
       "notes": [
         "Вопрос «когда снова подавать вывод» проигнорирован (m5, m12 → m13)."
       ],
-      "closing_type": "summary"
+      "closing_type": "bare"
     },
     {
       "conversation_id": "p1-ru-008",
@@ -4230,9 +4230,9 @@
         },
         {
           "criterion_id": "management",
-          "value": 4,
-          "raw_points": 6.0,
-          "rationale": "Ответ не по запросу — клиенту пришлось поправить оператора: «Я про консультацию в приложении спрашивал» (m11).",
+          "value": 7,
+          "raw_points": 10.5,
+          "rationale": "Ответ не по теме запроса — один заметный сбой; клиент понял его и отказался.",
           "evidence": [
             {
               "message_index": 10,
@@ -4299,8 +4299,8 @@
         }
       ],
       "applicable_weight": 80,
-      "earned_weighted_points": 16.0,
-      "total_score": 20.0,
+      "earned_weighted_points": 20.5,
+      "total_score": 25.63,
       "critical_flag": true,
       "review_required": true,
       "channel_scope": "chat_transcript",
@@ -9909,9 +9909,9 @@
         },
         {
           "criterion_id": "closing",
-          "value": "Да",
-          "raw_points": 5.0,
-          "rationale": "Прощание с итогом / следующим шагом.",
+          "value": "Нет",
+          "raw_points": 0.0,
+          "rationale": "Ссылка на уже сказанное и прощание — не итог разговора: вопрос клиента остался без ответа.",
           "evidence": [
             {
               "message_index": 12,
@@ -9949,15 +9949,15 @@
         }
       ],
       "applicable_weight": 65,
-      "earned_weighted_points": 35.5,
-      "total_score": 54.62,
+      "earned_weighted_points": 30.5,
+      "total_score": 46.92,
       "critical_flag": false,
       "review_required": false,
       "channel_scope": "chat_transcript",
       "notes": [
         "Вопрос «can I submit the withdrawal right after» проигнорирован."
       ],
-      "closing_type": "summary"
+      "closing_type": "bare"
     },
     {
       "conversation_id": "p1-en-008",
