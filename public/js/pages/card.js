@@ -347,18 +347,69 @@ export default async function card(root, params) {
 
   paint();
 
-  let seen = null;
+  let seen = null, livePoll = null, liveSeen = false, liveChecklist = null;
+  const shownLive = new Set();
+
+  async function liveTick() {
+    let v;
+    try { v = await api(`/live/${encodeURIComponent(ds)}/${encodeURIComponent(cid)}`); } catch { return; }
+    if (v.state === "none") {
+      if (liveSeen) { clearInterval(livePoll); livePoll = null; }  // оценка дописана — финал подхватит onJobs
+      return;
+    }
+    liveSeen = true;
+    if (!liveChecklist || liveChecklist.key !== v.checklist_key) {
+      liveChecklist = { key: v.checklist_key, body: await api(`/checklists/${encodeURIComponent(v.checklist_key)}`) };
+    }
+    paintLive(v, liveChecklist.body);
+  }
+
+  function paintLive(v, checklist) {
+    const aside = root.querySelector(".scores");
+    if (!aside) return;
+    const done = Object.keys(v.criteria).length;
+    if (!aside.classList.contains("live")) {
+      aside.classList.add("live");
+      aside.innerHTML = String(html`<header><h2>Прямой эфир</h2><span class="meta" id="live-meta"></span></header>
+        <div class="list-c">${checklist.criteria.map((c) => html`<div class="crit pending" id="live-${c.id}"><div class="row"><h3>${c.title}</h3><span class="pts"><span class="skel"></span></span></div><p class="why"><span class="skel wide"></span></p></div>`)}</div>
+        <div class="meta-line"><span>Черновик первого прогона модели. Итог — после всех прогонов и проверки доказательств.</span></div>`);
+    }
+    aside.querySelector("#live-meta").textContent = v.state === "thinking"
+      ? `модель читает диалог и думает · ${Math.round(v.elapsed_s)} с`
+      : `модель пишет оценку · ${done} из ${checklist.criteria.length} · ${Math.round(v.elapsed_s)} с`;
+    for (const c of checklist.criteria) {
+      const d = v.criteria[c.id];
+      if (!d || shownLive.has(c.id)) continue;
+      shownLive.add(c.id);
+      const tone = answerTone(c, d.answer);
+      const el = aside.querySelector(`#live-${c.id}`);
+      el.classList.remove("pending"); el.classList.add("live-in");
+      el.innerHTML = String(html`<div class="row"><h3>${c.title}</h3><span class="pts ${tone}-c" style="font-size:15px">${answerLabel(c, d.answer)}</span></div>
+        <p class="why">${d.reasoning}</p>${d.quote ? html`<span class="quote">«${d.quote}»</span>` : ""}`);
+      for (const id of d.evidence_ids || []) {
+        const m = document.getElementById(id);
+        if (!m) continue;
+        m.classList.add("live-ev", `live-${tone}`, "flash");
+        setTimeout(() => m.classList.remove("flash"), 1600);
+      }
+    }
+  }
+
   const off = onJobs(async (jobs) => {
     const job = jobs.find((j) => j.dataset_id === ds && j.status === "running");
     const el = root.querySelector("#run");
-    if (job && el) el.innerHTML = String(html`<div class="run" role="status"><span class="dot live"></span><div><b>Модель оценивает диалог</b><small>Обычно 20–40 секунд. Результат появится здесь сам.</small></div></div>`);
+    if (job && el) el.innerHTML = String(html`<div class="run" role="status"><span class="dot live"></span><div><b>Модель оценивает диалог</b><small>Критерии появляются справа по мере того, как модель их пишет.</small></div></div>`);
+    if (job && !livePoll) { liveSeen = false; shownLive.clear(); livePoll = setInterval(liveTick, 600); liveTick(); }
     const count = (await api(`/conversations/${encodeURIComponent(ds)}/${encodeURIComponent(cid)}`)).evaluations.length;
-    if (seen !== null && count !== seen) { data = await api(`/conversations/${encodeURIComponent(ds)}/${encodeURIComponent(cid)}`); evIndex = 0; paint(); toast("Оценка готова"); }
+    if (seen !== null && count !== seen) {
+      clearInterval(livePoll); livePoll = null;
+      data = await api(`/conversations/${encodeURIComponent(ds)}/${encodeURIComponent(cid)}`); evIndex = 0; paint(); toast("Оценка готова");
+    }
     seen = count;
-    if (!job && el) el.innerHTML = "";
+    if (!job && el) { el.innerHTML = ""; clearInterval(livePoll); livePoll = null; }
   });
   watchJobs();
-  return off;
+  return () => { off(); clearInterval(livePoll); };
 }
 
 export { esc };

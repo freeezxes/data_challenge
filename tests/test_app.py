@@ -244,3 +244,26 @@ def test_coach_variant_and_second_opinion(app, checklist):
     assert op["verdict"] == "appeal_invalid" and op["evidence_ids"] == ["m10"]
     n = len(app.fake.calls)
     assert second_opinion(app, ap)["reasoning"] == op["reasoning"] and len(app.fake.calls) == n  # из кэша, без вызова
+
+
+def test_partial_criteria_from_unfinished_json():
+    from app.live import partial_criteria
+    full = json.dumps({"criteria": {"c01": {"answer": "yes", "quote": 'скобка } и "кавычка"'},
+                                    "c02": {"answer": "na", "evidence_ids": ["m1"]}}, "summary": "s"}, ensure_ascii=False)
+    cut = full[: full.index('"c02"') + 20]
+    assert list(partial_criteria(cut)) == ["c01"] and partial_criteria(cut)["c01"]["quote"].startswith("скобка }")
+    assert set(partial_criteria(full)) == {"c01", "c02"}
+    assert partial_criteria('{"crit') == {} and partial_criteria("") == {}
+
+
+def test_live_board_shows_derived_answers(checklist):
+    from app.live import LiveBoard
+    b = LiveBoard()
+    assert b.view("DEV", "x", checklist)["state"] == "none"
+    b.start("DEV", "x", "k")
+    assert b.view("DEV", "x", checklist)["state"] == "thinking"
+    b.update("DEV", "x", '{"criteria": {"c04": {"client_questions": "essential_closed, minor_open", "answer": "20", "reasoning": "r"}, "c05"')
+    v = b.view("DEV", "x", checklist)
+    assert v["state"] == "writing" and v["criteria"]["c04"]["answer"] == 15  # ступень посчитана кодом из фактов
+    b.finish("DEV", "x")
+    assert b.view("DEV", "x", checklist)["state"] == "none"

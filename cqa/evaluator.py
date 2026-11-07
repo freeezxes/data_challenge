@@ -160,7 +160,7 @@ class Evaluator:
         self.prompt_hash = hashlib.sha256(
             (self.system_prompt + json.dumps(self.schema, sort_keys=True)).encode()).hexdigest()[:12]
 
-    def _call(self, user_text: str, calls: list) -> tuple[dict, dict, str]:
+    def _call(self, user_text: str, calls: list, on_partial=None) -> tuple[dict, dict, str]:
         cfg = self.config
         kwargs = dict(
             model=cfg.model,
@@ -171,6 +171,17 @@ class Evaluator:
         )
         if cfg.use_fallback and cfg.model in FALLBACK_MODELS:
             resp = self.client.beta.messages.create(betas=[FALLBACK_BETA], fallbacks="default", **kwargs)
+        elif on_partial and hasattr(self.client.messages, "stream"):
+            # «прямой эфир»: отдаём накопленный текст ответа по мере генерации, итог — тот же ответ целиком
+            buf = ""
+            with self.client.messages.stream(**kwargs) as stream:
+                for text in stream.text_stream:
+                    buf += text
+                    try:
+                        on_partial(buf)
+                    except Exception:
+                        pass  # сбой показа не должен ломать оценку
+                resp = stream.get_final_message()
         else:
             resp = self.client.messages.create(**kwargs)
         calls.append({"model": getattr(resp, "model", cfg.model), "usage": _usage_dict(resp.usage),
@@ -202,10 +213,10 @@ class Evaluator:
         )
         return cost_usd(getattr(resp, "model", cfg.model), _usage_dict(resp.usage))
 
-    def evaluate_once(self, conv: dict, facts: dict, calls: list) -> dict:
+    def evaluate_once(self, conv: dict, facts: dict, calls: list, on_partial=None) -> dict:
         user_text = build_user_message(conv, facts)
         usage: dict = {}
-        raw, u, served = self._call(user_text, calls)
+        raw, u, served = self._call(user_text, calls, on_partial)
         _add_usage(usage, u)
         details, issues = validate_run(self.checklist, conv, facts, raw)
         repaired = False
@@ -221,7 +232,8 @@ class Evaluator:
         return {"details": details, "issues": issues, "summary": raw.get("summary", ""),
                 "usage": usage, "served_model": served, "repaired": repaired}
 
-    def evaluate(self, conv: dict) -> dict:
+    def evaluate(self, conv: dict, on_partial=None) -> dict:
+        """on_partial(text) — частичный ответ первого прогона для показа в интерфейсе."""
         started = time.monotonic()
         facts = extract_facts(conv)
         calls = []
@@ -229,13 +241,13 @@ class Evaluator:
         runs, failures = [], []
         if n == 1:
             try:
-                runs = [self.evaluate_once(conv, facts, calls)]
+                runs = [self.evaluate_once(conv, facts, calls, on_partial)]
             except Exception as exc:
                 failures.append(exc)
         else:
             # Прогоны независимы — запускаем одновременно: задержка как у одного прогона.
             with ThreadPoolExecutor(max_workers=n) as pool:
-                futures = [pool.submit(self.evaluate_once, conv, facts, calls) for _ in range(n)]
+                futures = [pool.submit(self.evaluate_once, conv, facts, calls, on_partial if i == 0 else None) for i in range(n)]
                 for f in futures:
                     try:
                         runs.append(f.result())

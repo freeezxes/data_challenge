@@ -34,6 +34,7 @@ from cqa.gold import load_gold  # noqa: E402
 from cqa.metrics import compare  # noqa: E402
 
 from .assist import coach, make_variant, second_opinion  # noqa: E402
+from .live import LiveBoard  # noqa: E402
 from .store import Store, StoreError  # noqa: E402
 
 PUBLIC = ROOT / "public"
@@ -59,6 +60,7 @@ class App:
                                  votes=int(os.environ.get("CQA_VOTES", "3")))
         self.client_factory = client_factory
         self.pool = ThreadPoolExecutor(max_workers=workers or int(os.environ.get("CQA_WORKERS", "3")))
+        self.live = LiveBoard()
         self.seed()
 
     def seed(self):
@@ -106,7 +108,9 @@ class App:
         def run(conv_id):
             ok, cost = False, None
             try:
-                result = evaluator.evaluate(normalize(records[conv_id]))
+                self.live.start(ds_id, conv_id, checklist_key)
+                result = evaluator.evaluate(normalize(records[conv_id]),
+                                            on_partial=lambda text: self.live.update(ds_id, conv_id, text))
                 result["calls"] = [_trim_call(c) for c in result.get("calls", [])]  # для «Как получена оценка»
                 cost = result.get("cost_usd")
                 self.store.add_evaluation(ds_id, conv_id, checklist_key, result["status"], result, job_id=job_id)
@@ -115,6 +119,7 @@ class App:
                 self.store.add_evaluation(ds_id, conv_id, checklist_key, "error", error=_short(exc), job_id=job_id)
                 traceback.print_exc()
             finally:
+                self.live.finish(ds_id, conv_id)
                 self.store.job_progress(job_id, ok, cost)
                 with lock:
                     remaining["n"] -= 1
@@ -415,6 +420,13 @@ def _decide(app, m, q, body):
 @route("POST", r"/api/evaluations/(?P<id>\d+)/preview")
 def _preview(app, m, q, body):
     return app.store.preview(int(m["id"]), body["criterion_id"], body["new_answer"])
+
+
+@route("GET", r"/api/live/(?P<ds>[^/]+)/(?P<cid>[^/]+)")
+def _live(app, m, q, body):
+    """Что модель уже написала про этот диалог, пока идёт оценка."""
+    item = app.live.items.get((m["ds"], m["cid"]))
+    return app.live.view(m["ds"], m["cid"], app.store.checklist(item["checklist_key"]) if item else None)
 
 
 @route("GET", r"/api/conversations/(?P<ds>[^/]+)/(?P<cid>[^/]+)/voice")
