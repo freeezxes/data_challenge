@@ -8,7 +8,7 @@
     "human_reviewed": false,
     "source_commit": "working-tree (gold v2)",
     "source_path": "data/gold/dev_gold.json",
-    "source_sha256": "e8b6efa94c40e67963a635c45a15f5cfe082529012b0037d095957e4940596a0",
+    "source_sha256": "7ac31655d32e3a1c833b7fff8d8b7c21e3b96249f288c0434b0fc5df21d3d657",
     "source_dataset_sha256": "f2a8b89594425cd01d74fb93d4e799667594bf26276e2d67fac01f02c70a6c1c",
     "dataset_alignment": "conversation_id",
     "closing_policy": "lenient"
@@ -105,7 +105,7 @@
   "counts": {
     "annotated": 65,
     "dataset": 65,
-    "review_required": 30,
+    "review_required": 29,
     "critical": 8
   },
   "annotations": [
@@ -4218,9 +4218,9 @@
         },
         {
           "criterion_id": "management",
-          "value": 7,
-          "raw_points": 10.5,
-          "rationale": "Ответ не по запросу — клиенту пришлось повторить, что он спрашивал о консультации в приложении (m11).",
+          "value": 4,
+          "raw_points": 6.0,
+          "rationale": "Ответ не по запросу — клиенту пришлось поправить оператора: «Я про консультацию в приложении спрашивал» (m11).",
           "evidence": [
             {
               "message_index": 10,
@@ -4287,8 +4287,8 @@
         }
       ],
       "applicable_weight": 80,
-      "earned_weighted_points": 20.5,
-      "total_score": 25.63,
+      "earned_weighted_points": 16.0,
+      "total_score": 20.0,
       "critical_flag": true,
       "review_required": true,
       "channel_scope": "chat_transcript",
@@ -4403,26 +4403,20 @@
         },
         {
           "criterion_id": "management",
-          "value": 10,
-          "raw_points": 15.0,
-          "rationale": "Ответы ясные и последовательные; первая реплика через 00:59 после подключения; явных ожиданий без предупреждения нет.",
+          "value": 7,
+          "raw_points": 10.5,
+          "rationale": "Одна реплика не по теме — предложение частной платной консультации.",
           "evidence": [
             {
-              "message_index": 10,
-              "timestamp": "02:01",
+              "message_index": 12,
+              "timestamp": "03:03",
               "speaker": "operator",
-              "quote": "Здравствуйте, я Марк. Откройте «Котировки». Если"
-            },
-            {
-              "message_index": 14,
-              "timestamp": "03:51",
-              "speaker": "operator",
-              "quote": "Хорошо. Всего доброго."
+              "quote": "Можете дать личный номер?"
             }
           ],
           "inspected_range": null,
-          "review_required": true,
-          "review_note": "Claude пометил этот критерий как спорный."
+          "review_required": false,
+          "review_note": null
         },
         {
           "criterion_id": "closing",
@@ -4460,8 +4454,8 @@
         }
       ],
       "applicable_weight": 65,
-      "earned_weighted_points": 60.0,
-      "total_score": 92.31,
+      "earned_weighted_points": 55.5,
+      "total_score": 85.38,
       "critical_flag": true,
       "review_required": true,
       "channel_scope": "chat_transcript",
@@ -8191,26 +8185,20 @@
         },
         {
           "criterion_id": "management",
-          "value": 10,
-          "raw_points": 15.0,
-          "rationale": "Ответы ясные и последовательные; первая реплика через 02:13 после подключения; явных ожиданий без предупреждения нет.",
+          "value": 7,
+          "raw_points": 10.5,
+          "rationale": "Одна реплика не по теме — предложение частной платной консультации.",
           "evidence": [
-            {
-              "message_index": 10,
-              "timestamp": "03:30",
-              "speaker": "operator",
-              "quote": "Сәлеметсіз бе, мен Айданамын. «Котировки» бөлімін"
-            },
             {
               "message_index": 12,
               "timestamp": "04:36",
               "speaker": "operator",
-              "quote": "Жеке нөміріңізді қалдырсаңыз, жұмыстан кейін хабарласып, қандай қағаз алу керегін ақылы түрде айтып беремін."
+              "quote": "Жеке нөміріңізді қалдырсаңыз"
             }
           ],
           "inspected_range": null,
-          "review_required": true,
-          "review_note": "Claude пометил этот критерий как спорный."
+          "review_required": false,
+          "review_note": null
         },
         {
           "criterion_id": "closing",
@@ -8254,8 +8242,8 @@
         }
       ],
       "applicable_weight": 65,
-      "earned_weighted_points": 60.0,
-      "total_score": 92.31,
+      "earned_weighted_points": 55.5,
+      "total_score": 85.38,
       "critical_flag": true,
       "review_required": true,
       "channel_scope": "chat_transcript",
@@ -10947,43 +10935,49 @@
         },
         {
           "criterion_id": "empathy",
-          "value": "Да",
-          "raw_points": 15.0,
-          "rationale": "Оператор вежлив; недовольства клиент не выражал.",
+          "value": "Нет",
+          "raw_points": 0.0,
+          "rationale": "Клиент возразил против частной услуги и повторил свой запрос (m13) — оператор не отреагировал и закрыл чат (m14).",
           "evidence": [
-            {
-              "message_index": 10,
-              "timestamp": "03:30",
-              "speaker": "operator",
-              "quote": "Hi, I'm Adrian. Open Quotes and search by the"
-            }
-          ],
-          "inspected_range": null,
-          "review_required": true,
-          "review_note": "Claude пометил этот критерий как спорный."
-        },
-        {
-          "criterion_id": "management",
-          "value": 10,
-          "raw_points": 15.0,
-          "rationale": "Ответы ясные и последовательные; первая реплика через 02:13 после подключения; явных ожиданий без предупреждения нет.",
-          "evidence": [
-            {
-              "message_index": 10,
-              "timestamp": "03:30",
-              "speaker": "operator",
-              "quote": "Hi, I'm Adrian. Open Quotes and search by the"
-            },
             {
               "message_index": 12,
               "timestamp": "04:36",
               "speaker": "operator",
               "quote": "Send me your personal number and I'll call you after work. I charge for private advice and can tell you which bonds to buy."
+            },
+            {
+              "message_index": 13,
+              "timestamp": "05:03",
+              "speaker": "client",
+              "quote": "No, I'm only asking for help with the app."
+            },
+            {
+              "message_index": 14,
+              "timestamp": "05:31",
+              "speaker": "system",
+              "quote": "Agent closed the chat."
             }
           ],
           "inspected_range": null,
-          "review_required": true,
-          "review_note": "Claude пометил этот критерий как спорный."
+          "review_required": false,
+          "review_note": null
+        },
+        {
+          "criterion_id": "management",
+          "value": 7,
+          "raw_points": 10.5,
+          "rationale": "Одна реплика не по теме — предложение частной услуги вместо помощи с приложением.",
+          "evidence": [
+            {
+              "message_index": 12,
+              "timestamp": "04:36",
+              "speaker": "operator",
+              "quote": "Send me your personal number"
+            }
+          ],
+          "inspected_range": null,
+          "review_required": false,
+          "review_note": null
         },
         {
           "criterion_id": "closing",
@@ -11027,10 +11021,10 @@
         }
       ],
       "applicable_weight": 65,
-      "earned_weighted_points": 60.0,
-      "total_score": 92.31,
+      "earned_weighted_points": 40.5,
+      "total_score": 62.31,
       "critical_flag": true,
-      "review_required": true,
+      "review_required": false,
       "channel_scope": "chat_transcript",
       "notes": [
         "Платная частная консультация (m12); закрыл чат."
@@ -12328,21 +12322,21 @@
         },
         {
           "criterion_id": "empathy",
-          "value": "Нет",
-          "raw_points": 0.0,
-          "rationale": "Клиент недоволен («отфутболили», m34; «неприятное чувство», m42) — ответы сухие, реакции на проблему нет.",
+          "value": "Да",
+          "raw_points": 15.0,
+          "rationale": "Реакция запоздалая, но есть: оператор признаёт чувство клиента и объясняет, откуда недопонимание (m43); клиент отмечает отклик (m45).",
           "evidence": [
             {
-              "message_index": 40,
-              "timestamp": "2026-11-03T13:14:31.8863066+00:00",
+              "message_index": 43,
+              "timestamp": "2026-11-03T13:15:13.5280812+00:00",
               "speaker": "operator",
-              "quote": "Нет, не делаем."
+              "quote": "Да я вас понимаю"
             },
             {
-              "message_index": 34,
-              "timestamp": "2026-11-03T13:13:45.9880894+00:00",
+              "message_index": 45,
+              "timestamp": "2026-11-03T13:15:20.8511784+00:00",
               "speaker": "client",
-              "quote": "Да говорит то же самое сказали Трамп вам помогут, подскажется, что купить, а вы этого не делаете. Короче, у меня просто отфутболили выходит так."
+              "quote": "Мы сейчас хотя бы както слышу какойто отклик от вас както более ну."
             }
           ],
           "inspected_range": null,
@@ -12486,8 +12480,8 @@
         }
       ],
       "applicable_weight": 60,
-      "earned_weighted_points": 40.5,
-      "total_score": 67.5,
+      "earned_weighted_points": 55.5,
+      "total_score": 92.5,
       "critical_flag": false,
       "review_required": true,
       "channel_scope": "transcript_only",
@@ -12927,9 +12921,9 @@
         },
         {
           "criterion_id": "consultation",
-          "value": 15,
-          "raw_points": 15.0,
-          "rationale": "Объяснено, что купить можно только через трейдеров (m90, m94); прямого ответа на «постоянно писать?» (m97–m111) нет (спорно).",
+          "value": 10,
+          "raw_points": 10.0,
+          "rationale": "Как купить облигацию — объяснено (m90, m94), но существенный вопрос клиента «придётся писать при каждой покупке?» (m97–m111) остался без прямого ответа.",
           "evidence": [
             {
               "message_index": 112,
@@ -12945,8 +12939,8 @@
             }
           ],
           "inspected_range": null,
-          "review_required": true,
-          "review_note": "Claude пометил этот критерий как спорный."
+          "review_required": false,
+          "review_note": null
         },
         {
           "criterion_id": "empathy",
@@ -13264,8 +13258,8 @@
         }
       ],
       "applicable_weight": 95,
-      "earned_weighted_points": 81.0,
-      "total_score": 85.26,
+      "earned_weighted_points": 76.0,
+      "total_score": 80.0,
       "critical_flag": false,
       "review_required": true,
       "channel_scope": "transcript_only",
