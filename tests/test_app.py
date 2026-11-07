@@ -298,3 +298,16 @@ def test_copilot_opening_and_finish(app, checklist):
                  {"dataset_id": "DEV", "conversation_id": "p1-ru-001"}, "Алина")
     _wait(app, out["job"]["id"])
     assert app.store.record("PRACTICE", out["conversation_id"])["practice"]["mode"] == "sim"
+
+
+def test_operator_names_and_skills_map(app):
+    from app.operators import HIDDEN, NO_NAME, operator_name, skills
+    recs = {r["conversation_id"]: r for r in app.store.records("DEV")}
+    assert operator_name(recs["p1-ru-001"]) == "Алина"
+    assert operator_name(recs["p1-kz-012"]) == "Дидар"  # «мен Дидармын» — «я Дидар»
+    assert operator_name(recs["p1-ru-014"]) == NO_NAME and operator_name(recs["p4-ru-001"]) == HIDDEN
+    _wait(app, app.start_job("DEV", ["p1-ru-001", "p1-kz-012"], votes=1)["id"])
+    d = skills(app, ["DEV"], app.store.get_setting("active_checklist"))
+    names = {o["name"]: o for o in d["operators"]}
+    assert {"Алина", "Дидар"} <= set(names) and names["Алина"]["n"] == 1
+    assert d["team"]["c01"] is not None and "c08" not in names["Алина"]["cells"] or names["Алина"]["cells"].get("c08") is None

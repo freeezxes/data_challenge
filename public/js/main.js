@@ -6,8 +6,9 @@ import appeals from "./pages/appeals.js";
 import checklists from "./pages/checklists.js";
 import analytics from "./pages/analytics.js";
 import copilot from "./pages/copilot.js";
+import operators from "./pages/operators.js";
 
-const PAGES = { home, queue, card, appeals, checklists, analytics, copilot };
+const PAGES = { home, queue, card, appeals, checklists, analytics, copilot, operators };
 const view = document.getElementById("view");
 let cleanup = null;
 

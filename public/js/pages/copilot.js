@@ -7,14 +7,15 @@ const SYS = {
 const WHO = { client: "Клиент", operator: "Вы", bot: "Бот", system: "" };
 const SEV = { stop: "Стоп", warn: "Важно", info: "Совет" };
 
-export default async function copilot(root) {
+export default async function copilot(root, params = {}) {
   const scenarios = await api("/copilot/scenarios");
   const s = {
     mode: localStorage.getItem("cqa-cp-mode") || "sim", base: null, language: "RU", messages: [], beats: [],
     name: localStorage.getItem("cqa-cp-name") || "Алина", started: 0, ended: false, busy: false, cost: 0,
     hints: null, instant: [], typing: false, armed: false, draftTimer: null,
   };
-  const pickDefault = scenarios.find((x) => x.conversation_id === "p1-ru-009") || scenarios[0];
+  const fromLink = params.sc && scenarios.find((x) => `${x.dataset_id}|${x.conversation_id}` === params.sc);
+  const pickDefault = fromLink || scenarios.find((x) => x.conversation_id === "p1-ru-009") || scenarios[0];
 
   root.innerHTML = String(html`
     ${hero({ title: "Суфлёр", art: "chat",

@@ -422,6 +422,20 @@ def _preview(app, m, q, body):
     return app.store.preview(int(m["id"]), body["criterion_id"], body["new_answer"])
 
 
+@route("GET", r"/api/operators")
+def _operators(app, m, q, body):
+    from .operators import skills
+    ds = [q["ds"]] if q.get("ds") else [d["id"] for d in app.store.datasets() if d["id"] != "SANDBOX"]
+    return skills(app, ds, q.get("checklist") or app.store.get_setting("active_checklist"))
+
+
+@route("POST", r"/api/operators/plan")
+def _operators_plan(app, m, q, body):
+    from .operators import plan
+    ds = [body["ds"]] if body.get("ds") else [d["id"] for d in app.store.datasets() if d["id"] != "SANDBOX"]
+    return plan(app, ds, body.get("checklist") or app.store.get_setting("active_checklist"), body["name"])
+
+
 @route("GET", r"/api/copilot/scenarios")
 def _cp_scenarios(app, m, q, body):
     out = []
