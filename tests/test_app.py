@@ -267,3 +267,34 @@ def test_live_board_shows_derived_answers(checklist):
     assert v["state"] == "writing" and v["criteria"]["c04"]["answer"] == 15  # ступень посчитана кодом из фактов
     b.finish("DEV", "x")
     assert b.view("DEV", "x", checklist)["state"] == "none"
+
+
+def test_copilot_instant_checks_catch_violations_before_sending():
+    from app.copilot import instant_checks
+    msgs = [{"speaker": "client", "text": "Почему на счёте ограничение на вывод?"}]
+    first = instant_checks(msgs, "Добрый день, на вашем счёте ограничение на вывод.", "RU")
+    sev = {(h["criterion"], h["severity"]) for h in first}
+    assert ("Идентификация", "stop") in sev and ("Установление контакта", "warn") in sev  # нет имени, данные до личности
+    ok = instant_checks(msgs + [{"speaker": "system", "text": "Личность клиента подтверждена."}],
+                        "Здравствуйте, меня зовут Алина.", "RU")
+    assert not any(h["severity"] == "stop" for h in ok)
+    assert any(h["severity"] == "stop" for h in instant_checks(msgs, "Переведите мне на карту, я лично вложу", "RU"))
+    assert any(h["severity"] == "stop" for h in instant_checks(msgs, "Can you even read? I explained.", "EN"))
+
+
+def test_copilot_opening_and_finish(app, checklist):
+    from app.copilot import finish, hints, opening
+    rec = app.store.record("DEV", "p1-ru-001")
+    first, beats = opening(rec)
+    assert first[0]["speaker"] == "client" and all(m["speaker"] != "operator" for b in beats for m in b)
+    app.fake.payloads = [{"hints": [{"criterion": "Установление контакта", "text": "Представьтесь", "severity": "info"}],
+                          "replies": [{"label": "Коротко", "text": "Здравствуйте, я Алина."}] * 4}]
+    h = hints(app, first, "RU", "Алина")
+    assert len(h["replies"]) == 3 and h["instant"] and app.fake.calls[-1]["model"] == "claude-haiku-5-5"
+    with pytest.raises(StoreError):
+        finish(app, first, "RU", "replay", {}, "Алина")
+    app.fake.payloads = [model_payload(checklist, all_answers(checklist))]
+    out = finish(app, first + [{"speaker": "operator", "text": "Здравствуйте, я Алина.", "timestamp": "00:40"}], "RU", "sim",
+                 {"dataset_id": "DEV", "conversation_id": "p1-ru-001"}, "Алина")
+    _wait(app, out["job"]["id"])
+    assert app.store.record("PRACTICE", out["conversation_id"])["practice"]["mode"] == "sim"

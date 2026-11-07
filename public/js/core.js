@@ -41,7 +41,7 @@ export function toast(text, err = false) {
 
 export const fmtTotal = (t) => (t == null ? "—" : Number(t).toLocaleString("ru-RU", { minimumFractionDigits: t % 1 ? 1 : 0, maximumFractionDigits: 2 }));
 export const scoreClass = (t) => (t == null ? "" : t >= 80 ? "score-hi" : t >= 60 ? "score-mid" : "score-lo");
-export const money = (v) => (v == null ? "—" : "$" + Number(v).toFixed(v < 0.1 ? 3 : 2));
+export const money = (v) => (v == null ? "—" : v > 0 && v < 0.001 ? "< $0.001" : "$" + Number(v).toFixed(v < 0.1 ? 3 : 2));
 export const CHANNEL = { "agent chat": "Чат", "voice call": "Звонок" };
 
 export const ANSWER = { yes: "Да", no: "Нет", na: "Не применяется" };

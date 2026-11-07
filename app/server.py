@@ -422,6 +422,52 @@ def _preview(app, m, q, body):
     return app.store.preview(int(m["id"]), body["criterion_id"], body["new_answer"])
 
 
+@route("GET", r"/api/copilot/scenarios")
+def _cp_scenarios(app, m, q, body):
+    out = []
+    for d in app.store.datasets():
+        if d["id"] in ("PRACTICE", "SANDBOX"):
+            continue
+        for r in app.queue(d["id"]):
+            if r["channel"] == "agent chat":
+                out.append({"dataset_id": d["id"], "conversation_id": r["conversation_id"], "language": r["language"], "topic": r["topic"]})
+    return out
+
+
+@route("POST", r"/api/copilot/start")
+def _cp_start(app, m, q, body):
+    from .copilot import opening
+    rec = app.store.record(body["dataset_id"], body["conversation_id"])
+    first, beats = opening(rec)
+    return {"language": rec.get("language"), "opening": first, "beats": beats}
+
+
+@route("POST", r"/api/copilot/check")
+def _cp_check(app, m, q, body):
+    from .copilot import instant_checks
+    return {"instant": instant_checks(body.get("messages", []), body.get("draft", ""), body.get("language", "RU"))}
+
+
+@route("POST", r"/api/copilot/hint")
+def _cp_hint(app, m, q, body):
+    from .copilot import hints
+    return hints(app, body.get("messages", []), body.get("language", "RU"), body.get("operator_name", ""), body.get("draft", ""))
+
+
+@route("POST", r"/api/copilot/client")
+def _cp_client(app, m, q, body):
+    from .copilot import simulated_client
+    return simulated_client(app, app.store.record(body["dataset_id"], body["conversation_id"]),
+                            body.get("messages", []), body.get("language", "RU"))
+
+
+@route("POST", r"/api/copilot/finish")
+def _cp_finish(app, m, q, body):
+    from .copilot import finish
+    return finish(app, body.get("messages", []), body.get("language", "RU"), body.get("mode", "replay"),
+                  body.get("base") or {}, body.get("operator_name", ""))
+
+
 @route("GET", r"/api/live/(?P<ds>[^/]+)/(?P<cid>[^/]+)")
 def _live(app, m, q, body):
     """Что модель уже написала про этот диалог, пока идёт оценка."""
