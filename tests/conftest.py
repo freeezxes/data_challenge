@@ -75,5 +75,25 @@ def model_payload(checklist, answers, evidence=("m4", "m5", "m6", "m8"), violati
                 "reasoning": "тестовое обоснование", "answer": str(a)}
         if c["type"] == "critical":
             item["violations"] = violations or []
+        item.update(facts_for(c, a))
         crit[c["id"]] = item
     return {"criteria": crit, "summary": "тест"}
+
+
+def facts_for(criterion, answer):
+    """Факты, из которых cqa.derive выведет тот же ответ."""
+    from cqa.derive import kind_of
+    k = kind_of(criterion); a = str(answer)
+    if k == "needs":
+        qs = {"yes": [{"id": "m4", "kind": "needed"}], "no": [{"id": "m4", "kind": "known_repeat"}]}.get(a, [])
+        return {"request_formulated_before_operator": True, "operator_questions": qs, "answered_by_guess": False, "ignored_request": False}
+    if k == "consult":
+        st = {"20": [("closed", True)], "15": [("closed", True), ("ignored", False)], "10": [("closed", True), ("ignored", True)],
+              "5": [("partial", True)], "0": [("wrong", True)], "na": []}[a]
+        return {"client_questions": [{"id": "m4", "essential": e, "status": x} for x, e in st]}
+    if k == "flow":
+        gl = {"10": [], "7": [{"id": "m4", "type": "missed_question", "client_confused": False}],
+              "4": [{"id": "m4", "type": "unclear_wording", "client_confused": True}],
+              "0": [{"id": "m4", "type": "contradiction", "client_confused": False}]}[a]
+        return {"glitches": gl}
+    return {}

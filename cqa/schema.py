@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 from .checklist import allowed_answers
+from .derive import extra_schema, kind_of
 
 
 def criterion_schema(criterion: dict) -> dict:
@@ -29,6 +30,14 @@ def criterion_schema(criterion: dict) -> dict:
         "answer": {"type": "string", "enum": allowed_answers(criterion)},
     }
     required = ["evidence_ids", "checked_range", "quote", "reasoning", "answer"]
+    kind = kind_of(criterion)
+    if kind:
+        extra, names = extra_schema(kind)
+        ordered = {k: props[k] for k in ("evidence_ids", "checked_range", "quote")}
+        ordered.update(extra)
+        ordered.update({k: v for k, v in props.items() if k not in ordered})
+        props = ordered
+        required = ["evidence_ids", "checked_range", "quote", *names, "reasoning", "answer"]
     if criterion["type"] == "critical":
         props["violations"] = {
             "type": "array",

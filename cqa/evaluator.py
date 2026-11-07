@@ -16,6 +16,11 @@ from .prompt import build_system_prompt, build_user_message
 from .schema import output_schema
 from .scoring import score
 from .verify import check_rationale
+from .derive import derive, kind_of, extra_schema
+
+
+def extra_fields(kind):
+    return extra_schema(kind)[1]
 
 # $ за 1M токенов: вход, выход, чтение кэша, запись кэша (5 мин). Цены Anthropic на 2026-10.
 PRICES = {
@@ -75,12 +80,20 @@ def validate_run(checklist: dict, conv: dict, facts: dict, raw: dict) -> tuple[d
     for cid, c in cmap.items():
         item = raw["criteria"][cid]
         answer = normalize_answer(c, item["answer"])
+        model_answer = answer
+        kind = kind_of(c)
+        derived = derive(kind, item, c) if kind else None
+        if derived is not None:
+            answer = normalize_answer(c, derived)
         evidence = [e for e in item.get("evidence_ids", []) if e in ids]
         bad = [e for e in item.get("evidence_ids", []) if e not in ids]
         if bad:
             issues.append(f"{cid}: несуществующие ID реплик {bad}")
         d = {"answer": answer, "evidence_ids": evidence, "checked_range": item.get("checked_range", ""),
              "quote": item.get("quote", ""), "reasoning": item.get("reasoning", "")}
+        if kind:
+            d["facts"] = {k: item.get(k) for k in extra_fields(kind)}
+            d["model_answer"] = model_answer
         issues += [i for i in check_rationale(conv, facts, c, answer, d) if "несуществующие" not in i]
         if c["type"] == "critical":
             d["violations"] = item.get("violations", [])
