@@ -2,7 +2,7 @@ import { api, html, hero, money, store, toast, dialog } from "../core.js";
 
 export default async function home(root) {
   const st = await api("/state");
-  const perDialog = st.price_per_mtok ? "≈ $0,04 за диалог" : "";
+  const perDialog = st.votes > 1 ? "≈ $0,12–0,19 за диалог (прогоны идут одновременно)" : "≈ $0,04 за диалог";
   root.innerHTML = String(html`
     ${hero({ title: "Контроль качества диалогов", art: "home",
       text: "Модель проверяет каждый чат и звонок по чек-листу, показывает реплику-доказательство для каждого балла. Спорную оценку можно оспорить, проверяющий решает и итог пересчитывается.",
@@ -24,7 +24,7 @@ export default async function home(root) {
       </div></section>
       <section class="panel"><header><h2>Модель</h2></header><div class="body">
         <div class="stat" style="font-size:20px">${st.model}</div>
-        <p class="muted" style="margin:0">Усилие ${st.effort}, ${st.votes} ${st.votes === 1 ? "прогон" : "прогона"} на диалог, ${perDialog}. Ступени потребности, консультации и ведения диалога считает код по фактам из ответа модели, итог — по весам чек-листа.</p>
+        <p class="muted" style="margin:0">Усилие ${st.effort}, ${st.votes} ${st.votes === 1 ? "прогон" : "прогона"} на диалог, ответ по большинству, ${perDialog}. Ступени потребности, консультации и ведения диалога считает код по фактам из ответа модели, итог — по весам чек-листа.</p>
         <div><a class="btn small" href="#/analytics">Точность и стоимость</a></div>
       </div></section>
     </div>

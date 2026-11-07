@@ -292,3 +292,12 @@ dialog footer{display:flex;gap:10px;justify-content:flex-end;padding:16px 24px 2
   .hbar{grid-template-columns:110px 1fr 50px}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* журнал оценки */
+dialog.wide{width:min(980px,calc(100vw - 32px))}
+.trace section{display:grid;gap:8px}
+.trace-row{display:grid;gap:2px;padding:8px 10px;border-radius:8px;background:var(--panel2);font-size:13px}
+pre.code{margin:0;max-height:46vh;overflow:auto;padding:12px 14px;border-radius:10px;background:#050807;border:1px solid var(--line);color:var(--ink2);font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere}
+details summary{cursor:pointer;padding:6px 0;color:var(--ink2);font-size:13px}
+.crit .row .tag{font-size:11px;padding:1px 6px}
+.crit .facts{margin:2px 0 6px;color:var(--muted);font-size:12px}

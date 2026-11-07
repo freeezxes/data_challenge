@@ -41,7 +41,7 @@ export default async function checklists(root, params) {
       ${hero({ title: body.name || "Чек-лист", art: "checklist",
         tag: html`<span class="tag ${isActive ? "ok" : ""}" style="vertical-align:middle;font-size:13px">${dirty() ? "черновик новой версии" : isActive ? `версия ${saved.version}, активна` : `версия ${saved.version}`}</span>`,
         text: "Сохранение создаёт новую версию. Старые оценки остаются со своей версией — их видно в карточке и можно переоценить.",
-        actions: html`<button class="btn" id="add">Новый критерий</button><button class="btn primary" id="apply" ${raw(dirty() ? "disabled title='Сначала сохраните версию'" : "")}>Применить к набору</button>` })}
+        actions: html`<button class="btn ghost" id="prompt" title="Инструкция для модели, собранная из сохранённой версии">Что получит модель</button><button class="btn" id="add">Новый критерий</button><button class="btn primary" id="apply" ${raw(dirty() ? "disabled title='Сначала сохраните версию'" : "")}>Применить к набору</button>` })}
       <div class="cl">
         <div class="grid">
           <section class="panel cl-list" aria-label="Критерии">
@@ -162,6 +162,14 @@ export default async function checklists(root, params) {
     root.querySelector("#add").onclick = add;
     root.querySelector("#add2")?.addEventListener("click", add);
     root.querySelector("#apply").onclick = applyDialog;
+    root.querySelector("#prompt").onclick = async () => {
+      const r = await api(`/checklists/${encodeURIComponent(key)}/prompt`);
+      const d = dialog(html`<header><h2>Что получит модель · версия ${saved.version}</h2></header><div class="content">
+        <p class="muted" style="margin:0">Инструкция собирается из сохранённой версии чек-листа при каждой оценке: новый или изменённый критерий попадает сюда и в схему ответа без правки кода.${dirty() ? " Несохранённые правки сюда ещё не вошли." : ""}</p>
+        <pre class="code">${r.system_prompt}</pre></div><footer><button class="btn" value="c">Закрыть</button></footer>`);
+      d.classList.add("wide");
+      d.querySelector('[value="c"]').onclick = () => d.close();
+    };
     root.querySelector('[data-k="name"]').oninput = (e) => { body.name = e.target.value; paintBar(); };
     root.querySelectorAll("[data-activate]").forEach((b) => (b.onclick = async () => {
       await api(`/checklists/${encodeURIComponent(b.dataset.activate)}/activate`, {}); versions = await api("/checklists"); paint(); toast("Активная версия изменена");

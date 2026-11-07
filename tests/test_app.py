@@ -135,3 +135,50 @@ def test_no_key_gives_clear_error(tmp_path, monkeypatch):
     a = App(tmp_path / "k.db")
     with pytest.raises(StoreError, match="ANTHROPIC_API_KEY"):
         a.start_job("DEV", ["p1-ru-001"])
+
+
+def test_three_votes_run_in_parallel_and_report_agreement(app):
+    job = _wait(app, app.start_job("DEV", ["p1-ru-003"], votes=3)["id"])
+    assert job["done"] == 1
+    ev = app.store.latest("DEV")["p1-ru-003"]
+    # фейковые доказательства не совпадают с транскриптом → у каждого прогона есть попытка исправления
+    # +1 — подготовка кэша перед параллельными вызовами
+    assert ev["result"]["votes"] == 3 and len(app.fake.calls) in (4, 7)
+    assert "Подготовка кэша" in app.fake.calls[0]["messages"][0]["content"]
+    assert all(d["confidence"] == 1.0 and len(d["votes"]) == 3 for d in ev["result"]["criteria"].values())
+    with pytest.raises(StoreError):
+        app.start_job("DEV", ["p1-ru-003"], votes=9)
+
+
+def test_one_failed_vote_does_not_lose_the_dialog(tmp_path, checklist):
+    good = model_payload(checklist, all_answers(checklist))
+    calls = {"n": 0}
+    fake = FakeAPI([good])
+    original = fake._create
+
+    def flaky(**kw):
+        calls["n"] += 1
+        if calls["n"] == 2:
+            raise RuntimeError("сбой сети")
+        return original(**kw)
+    fake.messages.create = flaky
+    a = App(tmp_path / "f.db", client_factory=lambda: fake, workers=1)
+    _wait(a, a.start_job("DEV", ["p1-ru-001"], votes=3)["id"])
+    ev = a.store.latest("DEV")["p1-ru-001"]
+    assert ev["status"] != "error" and ev["result"]["votes"] == 2 and ev["result"]["votes_failed"] == 1
+
+
+def test_trace_shows_prompt_model_answers_and_code_facts(app):
+    _wait(app, app.start_job("DEV", ["p1-kz-003"], votes=1)["id"])
+    ev = app.store.latest("DEV")["p1-kz-003"]
+    from app.server import _trace, _export
+    t = _trace(app, {"id": str(ev["id"])}, {}, {})
+    assert "Установление контакта" in t["system_prompt"] and "ТРАНСКРИПТ" in t["user_message"]
+    assert t["calls"] and json.loads(t["calls"][0]["text"])["criteria"]["c01"]["answer"] == "yes"
+    assert "c02" in t["derived"] and t["facts"]
+    csv_out = _export(app, {"ds": "DEV"}, {}, {})
+    lines = csv_out.data.decode("utf-8-sig").splitlines()
+    assert lines[0].startswith("conversation_id;channel;language;status;c01") and len(lines) == 66
+    assert any(l.startswith("p1-kz-003;") and ";100.0;" in l for l in lines)
+    js = json.loads(_export(app, {"ds": "DEV"}, {"format": "json"}, {}).data)
+    assert js["criteria"][0] == "c01" and len(js["results"]) == 65

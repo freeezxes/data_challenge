@@ -1,3 +1,4 @@
+import { factsText } from "../core.js";
 import { api, html, raw, hero, esc, fmtTotal, scoreClass, answerLabel, answerTone, role, toast, dialog, watchJobs, onJobs, money, CHANNEL } from "../core.js";
 
 const ROLE = { client: "Клиент", operator: "Оператор", bot: "Бот", system: "Система" };
@@ -83,14 +84,18 @@ export default async function card(root, params) {
       parts.push(critBlock(conv, ev, c, rows[c.id]));
     }
     const appeals = ev.appeals;
-    return html`<header><h2>Баллы</h2><span class="meta">${ev.status === "needs_review" ? "часть доказательств требует проверки" : "у каждого балла есть реплика-доказательство"}</span></header>
+    const nv = ev.result.votes || 1;
+    const agreed = Object.values(ev.result.criteria).filter((d) => (d.confidence ?? 1) === 1).length;
+    const meta = ev.status === "needs_review" ? "часть доказательств требует проверки"
+      : nv > 1 ? `${nv} прогона модели совпали по ${agreed} из ${checklist.criteria.length} критериев` : "у каждого балла есть реплика-доказательство";
+    return html`<header><h2>Баллы</h2><span class="meta ${nv > 1 && agreed < checklist.criteria.length ? "mid-c" : ""}">${meta}</span></header>
       <div class="list-c">${parts}
         ${ev.result.issues?.length ? html`<div class="alert warn"><b>Проверьте доказательства</b>${ev.result.issues.join("; ")}</div>` : ""}
       </div>
       <div class="sum"><div class="row"><span>Итог</span><b class="num ${scoreClass(fin.score.total)}">${Object.keys(fin.changed).length ? html`<span class="was">${fmtTotal(ev.result.score.total)}</span>` : ""}${fmtTotal(fin.score.total)}</b></div>
         <div class="muted" style="font-size:12px">Вес «Не применяется» распределён между остальными критериями. ${appeals.length ? `Апелляций: ${appeals.length}, решено ${appeals.filter((a) => a.status === "decided").length}.` : ""}</div></div>
       ${fin.score.critical ? html`<div class="alert"><b>Грубое нарушение</b>${checklist.criteria.filter((c) => c.type === "critical" && fin.answers[c.id] === "yes").map((c) => (ev.result.criteria[c.id].violations || []).map((v) => VIOL[v] || v).join(", ") || c.title).join("; ")}. На баллы не влияет, отмечается отдельно.</div>` : ""}
-      <div class="meta-line"><span>${ev.result.model}</span><span>чек-лист ${ev.checklist_key}</span><span>${money(ev.result.cost_usd)}</span><span>${ev.result.latency_s ? Math.round(ev.result.latency_s) + " с" : ""}</span><span>${ev.source === "live" ? "оценено в интерфейсе" : ev.source}</span></div>`;
+      <div class="meta-line"><span>${ev.result.model}</span><span>чек-лист ${ev.checklist_key}</span><span>${money(ev.result.cost_usd)}</span><span>${ev.result.latency_s ? Math.round(ev.result.latency_s) + " с" : ""}</span><span>${ev.source === "live" ? "оценено в интерфейсе" : ev.source}</span><button class="link" id="trace">Как получена оценка</button></div>`;
   }
 
   function critBlock(conv, ev, c, row) {
@@ -108,9 +113,10 @@ export default async function card(root, params) {
     else pts = html`<span class="${tone}-c">${fmtTotal(row.points)}</span><small> / ${fmtTotal(row.effective_weight)}</small>`;
     const label = c.type === "scale" && a !== "na" ? `Ступень ${a} из ${Math.max(...c.scale.map((s) => s.value))}` : c.type === "binary" && a !== "na" ? answerLabel(c, a) : "";
     return html`<div class="crit ${c.type === "critical" && a === "yes" ? "critical-hit" : ""}" id="crit-${c.id}">
-      <div class="row"><h3>${c.title}</h3><span class="pts num">${pts}</span></div>
+      <div class="row"><h3>${c.title}</h3>${(d.votes || []).length > 1 ? html`<span class="tag ${d.confidence === 1 ? "" : "warn"}" title="Ответы прогонов: ${d.votes.map((v) => answerLabel(c, v)).join(" · ")}">${d.confidence === 1 ? `${d.votes.length}/${d.votes.length}` : c.type === "scale" && d.votes.every((v) => v !== "na") ? `разброс ${Math.min(...d.votes)}–${Math.max(...d.votes)}` : `${d.votes.filter((v) => String(v) === String(orig)).length} из ${d.votes.length}`}</span>` : ""}<span class="pts num">${pts}</span></div>
       <p class="why">${label ? html`<b class="${tone}-c">${label}.</b> ` : ""}${d.reasoning}</p>
       ${d.quote ? html`<span class="quote">«${d.quote}»</span>` : ""}
+      ${d.facts ? html`<p class="facts" title="Модель назвала факты, ступень по правилам чек-листа вывел код">Факты: ${factsText(d.facts) || "сбоев и вопросов нет"}</p>` : ""}
       <div class="ev">
         ${evid.length ? html`<button class="link" data-jump="${evid[0]}" data-hl="${evid.join(",")}">Перейти к ${tsOf(conv, byId[evid[0]])}</button>` : ""}
         ${evid.length > 1 ? html`<span class="muted" style="font-size:12px">ещё ${raw(evid.slice(1).map((id) => `<button class="link" data-jump="${esc(id)}">${esc(id)}</button>`).join(", "))}</span>` : ""}
@@ -150,6 +156,36 @@ export default async function card(root, params) {
     }));
     root.querySelectorAll("[data-seek]").forEach((b) => (b.onclick = () => { const a = document.getElementById("audio"); a.currentTime = Number(b.dataset.seek); a.play().catch(() => {}); }));
     root.querySelectorAll("[data-appeal]").forEach((b) => (b.onclick = () => appealDialog(ev, checklist, b.dataset.appeal)));
+    root.querySelector("#trace")?.addEventListener("click", () => traceDialog(ev, checklist));
+  }
+
+  async function traceDialog(ev, checklist) {
+    const t = await api(`/evaluations/${ev.id}/trace`);
+    const titles = Object.fromEntries(checklist.criteria.map((c) => [c.id, c]));
+    const pretty = (txt) => { try { return JSON.stringify(JSON.parse(txt), null, 2); } catch { return txt; } };
+    const u = t.usage || {};
+    const d = dialog(html`<header><h2>Как получена оценка #${t.evaluation_id}</h2></header><div class="content trace">
+      <p class="muted" style="margin:0">${t.source === "live" ? "Оценено в интерфейсе" : t.source} ${new Date(t.created_at).toLocaleString("ru-RU")} · ${t.model} · усилие ${t.effort} · прогонов ${t.votes} · вызовов API ${t.calls.length} · ${money(t.cost_usd)} · ${t.latency_s ? Math.round(t.latency_s) + " с" : ""}<br>
+        Токены: вход ${u.input_tokens ?? "—"}, из кэша ${u.cache_read_input_tokens ?? "—"}, запись кэша ${u.cache_creation_input_tokens ?? "—"}, выход ${u.output_tokens ?? "—"} · чек-лист ${t.checklist_key} · промпт ${t.prompt_hash}</p>
+      <div class="seg" role="tablist">${["Что посчитал код", "Ответы модели", "Что получила модель"].map((x, i) => html`<button type="button" data-tab="${i}" aria-pressed="${String(i === 0)}">${x}</button>`)}</div>
+      <section data-pane="0">
+        <p class="muted" style="margin:0 0 8px">Ступени этих критериев выводит код из фактов, которые назвала модель. Итог и перераспределение веса N/A тоже считает код.</p>
+        ${Object.entries(t.derived).map(([cid, x]) => html`<div class="trace-row"><b>${titles[cid]?.title || cid}: ${answerLabel(titles[cid], x.answer)}</b>
+          <span class="muted">${factsText(x.facts) || "фактов нет"}${String(x.model_answer) !== String(x.answer) ? ` · модель предлагала ${answerLabel(titles[cid], x.model_answer)}` : ""}</span></div>`)}
+        <pre class="code">${JSON.stringify(t.facts, null, 2)}</pre>
+        ${t.issues?.length ? html`<div class="alert warn" style="margin:8px 0 0"><b>Замечания проверки доказательств</b>${t.issues.join("; ")}</div>` : ""}
+      </section>
+      <section data-pane="1" hidden>${t.calls.length ? t.calls.map((c, i) => html`<details ${raw(i === 0 ? "open" : "")}><summary>Вызов ${i + 1} · ${c.model} · ${c.stop_reason} · вход ${c.usage?.input_tokens + (c.usage?.cache_read_input_tokens || 0)} / выход ${c.usage?.output_tokens} токенов</summary><pre class="code">${pretty(c.text)}</pre></details>`)
+        : html`<p class="muted">Сырые ответы не сохранены: оценка импортирована из прогона CLI, его полный журнал — в data/runs.</p>`}</section>
+      <section data-pane="2" hidden><details open><summary>Инструкция, собранная из чек-листа ${t.checklist_key}</summary><pre class="code">${t.system_prompt}</pre></details>
+        <details><summary>Сообщение с диалогом и фактами</summary><pre class="code">${t.user_message}</pre></details></section>
+      </div><footer><button class="btn" value="c">Закрыть</button></footer>`);
+    d.classList.add("wide");
+    d.querySelector('[value="c"]').onclick = () => d.close();
+    d.querySelectorAll("[data-tab]").forEach((b) => (b.onclick = () => {
+      d.querySelectorAll("[data-tab]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+      d.querySelectorAll("[data-pane]").forEach((p) => (p.hidden = p.dataset.pane !== b.dataset.tab));
+    }));
   }
 
   function appealDialog(ev, checklist, critId) {

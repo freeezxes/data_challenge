@@ -7,6 +7,9 @@
 """
 from __future__ import annotations
 
+import csv
+import dataclasses
+import io
 import json
 import mimetypes
 import os
@@ -26,6 +29,7 @@ sys.path.insert(0, str(ROOT))
 from cqa.checklist import load_checklist  # noqa: E402
 from cqa.dataset import fetch_dataset, normalize  # noqa: E402
 from cqa.evaluator import EvalConfig, Evaluator, PRICES  # noqa: E402
+from cqa.prompt import build_system_prompt, build_user_message  # noqa: E402
 from cqa.gold import load_gold  # noqa: E402
 from cqa.metrics import compare  # noqa: E402
 
@@ -51,7 +55,7 @@ class App:
         self.store = Store(db_path)
         self.config = EvalConfig(model=os.environ.get("CQA_MODEL", "claude-opus-5-5"),
                                  effort=os.environ.get("CQA_EFFORT", "high"),
-                                 votes=int(os.environ.get("CQA_VOTES", "1")))
+                                 votes=int(os.environ.get("CQA_VOTES", "3")))
         self.client_factory = client_factory
         self.pool = ThreadPoolExecutor(max_workers=workers or int(os.environ.get("CQA_WORKERS", "3")))
         self.seed()
@@ -71,10 +75,10 @@ class App:
         if self.client_factory:
             return self.client_factory()
         import anthropic
-        return anthropic.Anthropic(timeout=180.0, max_retries=2)
+        return anthropic.Anthropic(timeout=180.0, max_retries=4)
 
     # --- оценка ---
-    def start_job(self, ds_id, ids=None, checklist_key=None, only_missing=False):
+    def start_job(self, ds_id, ids=None, checklist_key=None, only_missing=False, votes=None):
         if not self.has_key():
             raise StoreError("Не задан ANTHROPIC_API_KEY: добавьте его в .env и перезапустите сервер")
         checklist_key = checklist_key or self.store.get_setting("active_checklist")
@@ -91,7 +95,10 @@ class App:
         if not ids:
             raise StoreError("все выбранные диалоги уже оценены этой версией чек-листа")
         job_id = self.store.create_job(ds_id, checklist_key, len(ids))
-        evaluator = Evaluator(checklist, client=self.client(), config=self.config)
+        votes = int(votes or self.config.votes)
+        if not 1 <= votes <= 5:
+            raise StoreError("число прогонов — от 1 до 5")
+        evaluator = Evaluator(checklist, client=self.client(), config=dataclasses.replace(self.config, votes=votes))
         remaining = {"n": len(ids)}
         lock = threading.Lock()
 
@@ -99,7 +106,7 @@ class App:
             ok, cost = False, None
             try:
                 result = evaluator.evaluate(normalize(records[conv_id]))
-                result.pop("calls", None)  # сырой ответ модели не нужен интерфейсу и раздувает базу
+                result["calls"] = [_trim_call(c) for c in result.get("calls", [])]  # для «Как получена оценка»
                 cost = result.get("cost_usd")
                 self.store.add_evaluation(ds_id, conv_id, checklist_key, result["status"], result, job_id=job_id)
                 ok = True
@@ -114,8 +121,17 @@ class App:
                         job = self.store.job(job_id)
                         self.store.finish_job(job_id, "done" if not job["failed"] else "done_with_errors")
 
-        for conv_id in ids:
-            self.pool.submit(run, conv_id)
+        def launch():
+            # Одновременных вызовов несколько — сначала один раз пишем кэш промпта, потом все читают его.
+            if votes * min(len(ids), self.pool._max_workers) > 1:
+                try:
+                    self.store.job_progress(job_id, None, evaluator.warm_cache())
+                except Exception:
+                    traceback.print_exc()
+            for conv_id in ids:
+                self.pool.submit(run, conv_id)
+
+        threading.Thread(target=launch, daemon=True).start()
         return self.store.job(job_id)
 
     # --- представления для интерфейса ---
@@ -139,7 +155,9 @@ class App:
         for r in self.store.records(ds_id):
             cid = r["conversation_id"]
             transcript = r["transcript"] if isinstance(r["transcript"], list) else json.loads(r["transcript"])
-            first_client = next((m["text"] for m in transcript if m["speaker"] == "client"), "")
+            said = [m["text"] for m in transcript if m["speaker"] == "client"]
+            # в звонках первые «реплики» клиента — нажатия в меню («2», «0»): берём первую осмысленную
+            first_client = next((t for t in said if len(t.split()) >= 3), said[0] if said else "")
             ev = latest.get(cid)
             row = {"conversation_id": cid, "channel": r.get("channel"), "language": r.get("language"),
                    "topic": first_client[:90], "messages": len(transcript), "evaluation": None}
@@ -152,6 +170,8 @@ class App:
                     "critical": fin["score"]["critical"] if fin else False,
                     "violations": sorted({v for d in (ev["result"] or {}).get("criteria", {}).values() for v in d.get("violations", [])}),
                     "open_appeals": sum(a["status"] == "open" for a in ev["appeals"]),
+                    "uncertain": sum(1 for d in (ev["result"] or {}).get("criteria", {}).values() if (d.get("confidence") or 1) < 1),
+                    "votes": (ev["result"] or {}).get("votes"),
                     "decided_appeals": sum(a["status"] == "decided" for a in ev["appeals"]),
                 }
             rows.append(row)
@@ -226,6 +246,18 @@ class App:
                 "all_exact": rep["all_criteria_exact"], "total_mae": rep["total_mae"],
                 "criteria": {k: v["accuracy"] for k, v in rep["criteria"].items()},
                 "note": "Рабочая разметка команды, не официальный эталон организаторов."}
+
+
+def _trim_call(call: dict) -> dict:
+    """Сырой ответ модели для журнала оценки: текст JSON, токены, причина остановки."""
+    text = "".join(b.get("text", "") for b in call.get("content", []))
+    return {"model": call.get("model"), "usage": call.get("usage"), "stop_reason": call.get("stop_reason"),
+            "text": text[:60000]}
+
+
+class FileResponse:
+    def __init__(self, name, ctype, data: bytes):
+        self.name, self.ctype, self.data = name, ctype, data
 
 
 def _short(exc: Exception) -> str:
@@ -320,7 +352,7 @@ def _conversation(app, m, q, body):
 @route("POST", r"/api/jobs")
 def _start(app, m, q, body):
     return app.start_job(body["dataset_id"], body.get("conversation_ids"), body.get("checklist_key"),
-                         bool(body.get("only_missing")))
+                         bool(body.get("only_missing")), body.get("votes"))
 
 
 @route("GET", r"/api/jobs")
@@ -367,6 +399,68 @@ def _analytics(app, m, q, body):
     return app.analytics(m["ds"], q.get("checklist"))
 
 
+@route("GET", r"/api/checklists/(?P<key>[^/]+)/prompt")
+def _prompt(app, m, q, body):
+    return {"system_prompt": build_system_prompt(app.store.checklist(m["key"]))}
+
+
+@route("GET", r"/api/evaluations/(?P<id>\d+)/trace")
+def _trace(app, m, q, body):
+    """Как получена оценка: что ушло в модель, что она ответила, что посчитал код."""
+    ev = app.store.evaluation(int(m["id"]))
+    conv = normalize(app.store.record(ev["dataset_id"], ev["conversation_id"]))
+    res = ev["result"] or {}
+    return {"evaluation_id": ev["id"], "checklist_key": ev["checklist_key"], "source": ev["source"],
+            "created_at": ev["created_at"], "status": ev["status"], "error": ev["error"],
+            "model": res.get("model"), "served_models": res.get("served_models"), "effort": res.get("effort"),
+            "votes": res.get("votes"), "prompt_hash": res.get("prompt_hash"), "latency_s": res.get("latency_s"),
+            "cost_usd": res.get("cost_usd"), "usage": res.get("usage"), "issues": res.get("issues"),
+            "facts": res.get("facts"), "calls": res.get("calls") or [],
+            "per_criterion_votes": {k: v.get("votes") for k, v in res.get("criteria", {}).items()},
+            "derived": {k: {"facts": v.get("facts"), "model_answer": v.get("model_answer"), "answer": v.get("answer")}
+                        for k, v in res.get("criteria", {}).items() if "facts" in v},
+            "system_prompt": build_system_prompt(app.store.checklist(ev["checklist_key"])),
+            "user_message": build_user_message(conv)}
+
+
+@route("GET", r"/api/datasets/(?P<ds>[^/]+)/export")
+def _export(app, m, q, body):
+    """Результаты набора для сверки с эталоном: финальные ответы (после апелляций) и исходные."""
+    key = q.get("checklist") or app.store.get_setting("active_checklist")
+    checklist = app.store.checklist(key)
+    latest = app.store.latest(m["ds"])
+    if q.get("checklist"):
+        latest = {k: v for k, v in latest.items() if v["checklist_key"] == key}
+    ids = [c["id"] for c in checklist["criteria"]]
+    rows = []
+    for r in app.store.records(m["ds"]):
+        ev = latest.get(r["conversation_id"])
+        row = {"conversation_id": r["conversation_id"], "channel": r.get("channel"), "language": r.get("language")}
+        if ev and ev["result"]:
+            fin = ev["final"]
+            row.update({"checklist": ev["checklist_key"], "status": ev["status"], "total": fin["score"]["total"],
+                        "total_model": ev["result"]["score"]["total"], "critical": fin["score"]["critical"],
+                        "answers": fin["answers"], "answers_model": ev["result"]["answers"],
+                        "cost_usd": ev["result"].get("cost_usd"), "evaluated_at": ev["created_at"]})
+        else:
+            row.update({"status": ev["status"] if ev else "not_evaluated", "answers": {}})
+        rows.append(row)
+    if q.get("format") == "json":
+        return FileResponse(f"cqa-{m['ds']}.json", "application/json",
+                            json.dumps({"dataset": m["ds"], "checklist": key, "criteria": ids, "results": rows},
+                                       ensure_ascii=False, indent=1).encode())
+    out = io.StringIO()
+    w = csv.writer(out, delimiter=";")
+    w.writerow(["conversation_id", "channel", "language", "status", *ids, "total", "critical", "total_model",
+                *[f"{i}_model" for i in ids], "checklist", "cost_usd"])
+    for r in rows:
+        a, am = r.get("answers", {}), r.get("answers_model", {})
+        w.writerow([r["conversation_id"], r["channel"], r["language"], r["status"], *[a.get(i, "") for i in ids],
+                    r.get("total", ""), r.get("critical", ""), r.get("total_model", ""), *[am.get(i, "") for i in ids],
+                    r.get("checklist", ""), r.get("cost_usd", "")])
+    return FileResponse(f"cqa-{m['ds']}.csv", "text/csv; charset=utf-8", ("\ufeff" + out.getvalue()).encode())
+
+
 def _slug(s: str) -> str:
     s = re.sub(r"[^\w.-]+", "-", str(s).strip(), flags=re.UNICODE).strip("-")
     return s[:40] or "dataset"
@@ -405,7 +499,15 @@ def make_handler(app: App):
                 m = rx.match(url.path)
                 if m and meth == method:
                     try:
-                        return self._json(200, fn(app, {k: unquote(v) for k, v in m.groupdict().items()}, q, body))
+                        out = fn(app, {k: unquote(v) for k, v in m.groupdict().items()}, q, body)
+                        if isinstance(out, FileResponse):
+                            self.send_response(200)
+                            self.send_header("Content-Type", out.ctype)
+                            self.send_header("Content-Length", str(len(out.data)))
+                            self.send_header("Content-Disposition", f'attachment; filename="{out.name}"')
+                            self.end_headers()
+                            return self.wfile.write(out.data)
+                        return self._json(200, out)
                     except (StoreError, KeyError, ValueError) as exc:
                         msg = str(exc) if not isinstance(exc, KeyError) else f"не хватает поля {exc}"
                         return self._json(400, {"error": msg})

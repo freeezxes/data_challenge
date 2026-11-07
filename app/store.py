@@ -192,7 +192,10 @@ class Store:
         sql = "select * from jobs" + (" where status='running'" if active_only else "") + " order by id desc limit 20"
         return self.q(sql)
 
-    def job_progress(self, job_id, ok: bool, cost: float | None):
+    def job_progress(self, job_id, ok: bool | None, cost: float | None):
+        """ok=None — только стоимость (подготовка кэша), без счётчика диалогов."""
+        if ok is None:
+            return self.x("update jobs set cost_usd=cost_usd+? where id=?", (cost or 0, job_id))
         col = "done" if ok else "failed"
         self.x(f"update jobs set {col}={col}+1, cost_usd=cost_usd+? where id=?", (cost or 0, job_id))
 

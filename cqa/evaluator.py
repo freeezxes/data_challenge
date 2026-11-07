@@ -8,6 +8,7 @@ import time
 
 from jsonschema import validate
 from collections import Counter
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 
 from .checklist import criterion_map, normalize_answer, scale_values
@@ -186,6 +187,21 @@ class Evaluator:
         validate(raw, self.schema)
         return raw, _usage_dict(resp.usage), getattr(resp, "model", cfg.model)
 
+    def warm_cache(self) -> float | None:
+        """Записать кэш системного промпта одним коротким запросом до параллельных вызовов.
+
+        Без этого одновременные вызовы не находят кэш и каждый платит за его запись
+        (~20 тыс. токенов по цене записи). Возвращает стоимость запроса.
+        """
+        cfg = self.config
+        resp = self.client.messages.create(
+            model=cfg.model, max_tokens=64,
+            system=[{"type": "text", "text": self.system_prompt, "cache_control": {"type": "ephemeral"}}],
+            messages=[{"role": "user", "content": "Подготовка кэша, диалога нет. Ответ не нужен."}],
+            output_config={"effort": cfg.effort, "format": {"type": "json_schema", "schema": self.schema}},
+        )
+        return cost_usd(getattr(resp, "model", cfg.model), _usage_dict(resp.usage))
+
     def evaluate_once(self, conv: dict, facts: dict, calls: list) -> dict:
         user_text = build_user_message(conv, facts)
         usage: dict = {}
@@ -209,9 +225,24 @@ class Evaluator:
         started = time.monotonic()
         facts = extract_facts(conv)
         calls = []
-        try:
-            runs = [self.evaluate_once(conv, facts, calls) for _ in range(max(1, self.config.votes))]
-        except Exception as exc:
+        n = max(1, self.config.votes)
+        runs, failures = [], []
+        if n == 1:
+            try:
+                runs = [self.evaluate_once(conv, facts, calls)]
+            except Exception as exc:
+                failures.append(exc)
+        else:
+            # Прогоны независимы — запускаем одновременно: задержка как у одного прогона.
+            with ThreadPoolExecutor(max_workers=n) as pool:
+                futures = [pool.submit(self.evaluate_once, conv, facts, calls) for _ in range(n)]
+                for f in futures:
+                    try:
+                        runs.append(f.result())
+                    except Exception as exc:
+                        failures.append(exc)
+        if not runs:
+            exc = failures[0]
             error = EvaluationError(str(exc))
             error.calls = calls
             raise error from exc
@@ -229,6 +260,7 @@ class Evaluator:
             "language": conv.get("language"), "channel": conv.get("channel"),
             "effort": self.config.effort,
             "votes": len(runs),
+            "votes_failed": len(failures),
             "checklist_id": self.checklist.get("id"),
             "checklist_version": self.checklist.get("version"),
             "prompt_hash": self.prompt_hash,

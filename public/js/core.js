@@ -122,3 +122,24 @@ export const icon = {
   chev: raw('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>'),
   x: raw('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>'),
 };
+
+// метки фактов из ответа модели → по-русски (ступени из них выводит cqa/derive.py)
+export const FACT_LABEL = {
+  needed: "нужное уточнение", known_repeat: "переспросил известное",
+  essential_closed: "суть закрыта", essential_partial: "суть — общая подсказка", essential_ignored: "суть без ответа", essential_wrong: "ошибочный ответ",
+  minor_closed: "деталь закрыта", minor_open: "деталь не закрыта",
+  missed_question: "пропущен вопрос", repeat_known: "повтор известного", off_topic: "не по теме", unclear_wording: "неясная формулировка",
+  confusing_order: "путаный порядок", unwarned_wait: "ожидание без предупреждения", contradiction: "противоречие",
+};
+const FACT_FIELD = { operator_questions: "вопросы оператора", client_questions: "вопросы клиента", glitches: "сбои",
+  answered_by_guess: "ответил наугад", ignored_request: "проигнорировал запрос", client_confused: "клиент не понял ответ" };
+export function factsText(facts) {
+  return Object.entries(facts || {}).map(([k, v]) => {
+    if (Array.isArray(v)) {
+      if (!v.length) return `${FACT_FIELD[k] || k}: нет`;
+      const n = {}; v.forEach((x) => (n[x] = (n[x] || 0) + 1));
+      return `${FACT_FIELD[k] || k}: ` + Object.entries(n).map(([x, c]) => (FACT_LABEL[x] || x) + (c > 1 ? ` ×${c}` : "")).join(", ");
+    }
+    return v === true ? FACT_FIELD[k] || k : null;
+  }).filter(Boolean).join(" · ");
+}

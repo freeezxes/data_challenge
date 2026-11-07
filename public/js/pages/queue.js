@@ -1,4 +1,4 @@
-import { api, html, raw, hero, fmtTotal, scoreClass, CHANNEL, store, toast, onJobs, watchJobs, icon, money } from "../core.js";
+import { API, api, html, raw, hero, fmtTotal, scoreClass, CHANNEL, store, toast, onJobs, watchJobs, icon, money } from "../core.js";
 import { fetchDialog, uploadDialog } from "./home.js";
 
 const FILTERS = [
@@ -8,6 +8,7 @@ const FILTERS = [
   ["critical", "Грубые нарушения", (r) => r.evaluation?.critical],
   ["calls", "Звонки", (r) => r.channel === "voice call"],
   ["low", "Ниже 60", (r) => r.evaluation?.total != null && r.evaluation.total < 60],
+  ["unsure", "Модель сомневается", (r) => r.evaluation?.uncertain > 0],
   ["check", "Нужна проверка", (r) => ["needs_review", "error"].includes(r.evaluation?.status)],
 ];
 const VIOL = { insult: "Оскорбление", bypass: "Обход компании", disclosure: "Раскрытие данных" };
@@ -16,6 +17,7 @@ export default async function queue(root, params) {
   let st = await api("/state");
   if (!st.datasets.some((d) => d.id === store.dataset)) store.dataset = st.datasets[0]?.id || "DEV";
   let rows = [], filter = params.f || "all", q = "", selected = new Set();
+  let votes = Number(localStorage.getItem("cqa-votes") || st.votes || 3);
 
   async function load() { rows = await api(`/datasets/${encodeURIComponent(store.dataset)}/conversations`); }
   await load();
@@ -42,6 +44,10 @@ export default async function queue(root, params) {
       text: `${rows.length} диалогов, оценено ${done.length}` + (avg != null ? `, средний итог ${fmtTotal(Math.round(avg * 10) / 10)}` : "") + (open ? `. Апелляций ждут решения: ${open}.` : "."),
       actions: html`<select class="input" id="ds" aria-label="Набор" style="width:auto">${st.datasets.map((d) => html`<option value="${d.id}" ${raw(d.id === store.dataset ? "selected" : "")}>${d.name}</option>`)}</select>
         <button class="btn" id="load">Загрузить набор</button>
+        <a class="btn" href="${API}/api/datasets/${encodeURIComponent(store.dataset)}/export" download title="CSV: ответы по каждому критерию, итог, грубые нарушения">Скачать результаты</a>
+        <select class="input" id="votes" aria-label="Режим оценки" style="width:auto" title="Несколько прогонов модели одновременно; ответ — по большинству, у шкал — по медиане">
+          <option value="3" ${raw(votes === 3 ? "selected" : "")}>3 прогона · точнее · ≈ $0,12</option>
+          <option value="1" ${raw(votes === 1 ? "selected" : "")}>1 прогон · быстрее · ≈ $0,04</option></select>
         <button class="btn primary" id="eval">${selected.size ? `Оценить выбранные · ${selected.size}` : "Оценить неоценённые"}</button>`,
     }));
     const h = root.querySelector("#hero");
@@ -54,13 +60,14 @@ export default async function queue(root, params) {
       h.querySelector("#b2").onclick = () => uploadDialog();
     };
     h.querySelector("#eval").onclick = () => start();
+    h.querySelector("#votes").onchange = (e) => { votes = Number(e.target.value); localStorage.setItem("cqa-votes", votes); };
     void ds;
   }
 
   async function start() {
     const ids = [...selected];
     try {
-      await api("/jobs", { dataset_id: store.dataset, conversation_ids: ids.length ? ids : null, only_missing: !ids.length });
+      await api("/jobs", { dataset_id: store.dataset, conversation_ids: ids.length ? ids : null, only_missing: !ids.length, votes });
       selected.clear(); toast("Оценка запущена"); watchJobs();
     } catch (e) { toast(e.message, true); }
   }
@@ -81,6 +88,7 @@ export default async function queue(root, params) {
     if (ev.decided_appeals) return html`<span class="tag ok">Пересмотрен</span>`;
     if (ev.critical) return html`<span class="tag bad">Разобрать нарушение</span>`;
     if (ev.status === "needs_review") return html`<span class="tag warn" title="Доказательства не прошли проверку">Проверить</span>`;
+    if (ev.uncertain) return html`<span class="tag warn" title="Прогоны модели разошлись по ${ev.uncertain} критериям">Модель сомневается</span>`;
     return html`<span class="tag ok">Оценён</span>`;
   }
 
