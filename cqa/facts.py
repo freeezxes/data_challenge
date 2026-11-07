@@ -19,6 +19,9 @@ ESCALATION = re.compile(
 IDENTITY = re.compile(
     r"личность клиента подтверждена|жеке басы расталды|identity verified|"
     r"идентификаци\w* (успешно )?пройдена|идентификацию успешно", _I)
+IDENTITY_REQUEST = re.compile(
+    r"подтверд\w* личност|идентификац|проверк\w* личност|жеке бас\w* растау|растау қажет|"
+    r"verify your identity|identity verification|confirm your identity", _I)
 END_EVENTS = [
     ("client_left", re.compile(r"клиент покинул чат|клиент чаттан шықты|customer left|client left", _I)),
     ("connection_lost", re.compile(r"соединение с клиентом прервано|байланыс үзілді|connection to customer lost", _I)),
@@ -56,6 +59,7 @@ def extract_facts(conv: dict) -> dict:
     if conv.get("channel") == "voice call":
         identity += [m["id"] for m in operators if IDENTITY.search(m["text"])]
 
+    identity_requested = [m["id"] for m in operators if IDENTITY_REQUEST.search(m["text"])]
     end_events = []
     for m in systems:
         for kind, rx in END_EVENTS:
@@ -106,6 +110,7 @@ def extract_facts(conv: dict) -> dict:
         "operator_message_count": len(operators),
         "first_response_s": round(first_response_s) if first_response_s is not None else None,
         "identity_confirmed_ids": identity,
+        "identity_requested_ids": identity_requested,
         "end_events": end_events,
         "final_event": final_event,
         "messages_after_last_operator": [m["id"] for m in after_last_op],
@@ -145,6 +150,8 @@ def render_facts(facts: dict) -> str:
         lines.append("- Подтверждение личности: " + ", ".join(_fmt_t(facts, i) for i in facts["identity_confirmed_ids"]))
     else:
         lines.append("- Подтверждение личности: не найдено")
+    if facts.get("identity_requested_ids"):
+        lines.append("- Оператор сам говорит о проверке личности: " + ", ".join(_fmt_t(facts, i) for i in facts["identity_requested_ids"]))
     if facts["end_events"]:
         ev = ", ".join(f"{e['type']} {_fmt_t(facts, e['id'])}" for e in facts["end_events"])
         lines.append(f"- События завершения: {ev}")

@@ -94,6 +94,10 @@ def validate_run(checklist: dict, conv: dict, facts: dict, raw: dict) -> tuple[d
     if ident and conv.get("channel") != "voice call" and details[ident["id"]]["answer"] == "yes" \
             and not facts["identity_confirmed_ids"]:
         issues.append(f"{ident['id']}: «Да», но системного подтверждения личности в чате нет")
+    if ident and details[ident["id"]]["answer"] == "na" and facts.get("identity_requested_ids") \
+            and not facts["identity_confirmed_ids"] and conv.get("channel") != "voice call":
+        issues.append(f"{ident['id']}: N/A, но оператор сам говорил о проверке личности, а подтверждения нет — "
+                      "проверь: если работа шла с конкретным счётом или платежом клиента, по памятке это «Нет»")
     closing = _criterion_by_title(checklist, "Завершени")
     cut = {"client_left", "connection_lost", "client_ended_call"}
     if closing and details[closing["id"]]["answer"] == "na" and not any(
