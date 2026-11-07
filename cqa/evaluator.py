@@ -17,7 +17,7 @@ from .prompt import build_system_prompt, build_user_message
 from .schema import output_schema
 from .scoring import score
 from .verify import check_rationale
-from .derive import LABELS, derive, extra_schema, kind_of, labels, unknown_labels
+from .derive import derive, extra_schema, kind_of, parse_facts, unknown_labels
 
 
 def extra_fields(kind):
@@ -46,6 +46,7 @@ class EvalConfig:
     max_tokens: int = 16000
     use_fallback: bool = False
     repair: bool = True  # одна повторная попытка, если ответ противоречит фактам
+    extra_votes: int = 2  # добор прогонов, если основные разошлись хотя бы по одному критерию (только при votes ≥ 2)
 
 
 def cost_usd(model: str, usage: dict) -> float | None:
@@ -93,8 +94,8 @@ def validate_run(checklist: dict, conv: dict, facts: dict, raw: dict) -> tuple[d
         d = {"answer": answer, "evidence_ids": evidence, "checked_range": item.get("checked_range", ""),
              "quote": item.get("quote", ""), "reasoning": item.get("reasoning", "")}
         if kind:
-            d["facts"] = {k: (labels(item, k) if k in LABELS else item.get(k)) for k in extra_fields(kind)}
-            issues += [f"{cid}: неизвестная метка факта {b}" for b in unknown_labels(item)]
+            d["facts"] = parse_facts(kind, item)
+            issues += [f"{cid}: неизвестная метка факта «{b}»" for b in unknown_labels(kind, item)]
             d["model_answer"] = model_answer
         issues += [i for i in check_rationale(conv, facts, c, answer, d) if "несуществующие" not in i]
         if c["type"] == "critical":
@@ -234,6 +235,9 @@ class Evaluator:
         return {"details": details, "issues": issues, "summary": raw.get("summary", ""),
                 "usage": usage, "served_model": served, "repaired": repaired}
 
+    def _disagree(self, runs: list[dict]) -> bool:
+        return any(len({str(r["details"][c["id"]]["answer"]) for r in runs}) > 1 for c in self.checklist["criteria"])
+
     def evaluate(self, conv: dict, on_partial=None) -> dict:
         """on_partial(text) — частичный ответ первого прогона для показа в интерфейсе."""
         started = time.monotonic()
@@ -260,6 +264,16 @@ class Evaluator:
             error = EvaluationError(str(exc))
             error.calls = calls
             raise error from exc
+        extra = 0
+        if n >= 2 and self.config.extra_votes > 0 and len(runs) >= 2 and self._disagree(runs):
+            # Прогоны разошлись — модель сомневается. Добираем ещё: большинство из 5 надёжнее, чем из 3.
+            with ThreadPoolExecutor(max_workers=self.config.extra_votes) as pool:
+                futures = [pool.submit(self.evaluate_once, conv, facts, calls) for _ in range(self.config.extra_votes)]
+                for f in futures:
+                    try:
+                        runs.append(f.result()); extra += 1
+                    except Exception as exc:
+                        failures.append(exc)
         criteria = aggregate(self.checklist, runs)
         answers = {cid: d["answer"] for cid, d in criteria.items()}
         usage: dict = {}
@@ -275,6 +289,7 @@ class Evaluator:
             "effort": self.config.effort,
             "votes": len(runs),
             "votes_failed": len(failures),
+            "votes_extra": extra,
             "checklist_id": self.checklist.get("id"),
             "checklist_version": self.checklist.get("version"),
             "prompt_hash": self.prompt_hash,

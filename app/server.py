@@ -57,7 +57,8 @@ class App:
         self.store = Store(db_path)
         self.config = EvalConfig(model=os.environ.get("CQA_MODEL", "claude-opus-5-5"),
                                  effort=os.environ.get("CQA_EFFORT", "high"),
-                                 votes=int(os.environ.get("CQA_VOTES", "3")))
+                                 votes=int(os.environ.get("CQA_VOTES", "3")),
+                                 extra_votes=int(os.environ.get("CQA_EXTRA_VOTES", "2")))
         self.client_factory = client_factory
         self.pool = ThreadPoolExecutor(max_workers=workers or int(os.environ.get("CQA_WORKERS", "3")))
         self.live = LiveBoard()

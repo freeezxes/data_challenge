@@ -28,6 +28,7 @@ def main():
     ap.add_argument('--dataset', type=Path, default=ROOT / 'public/dataset.json')
     ap.add_argument('--checklist', type=Path, default=ROOT / 'config/checklist.default.json')
     ap.add_argument('--only', help='Только эти мутации, через запятую')
+    ap.add_argument('--extra-votes', type=int, default=0, help='Добор прогонов при расхождении основных')
     ap.add_argument('--bases', required=True, help='ID исходных диалогов через запятую')
     ap.add_argument('--model', default='claude-opus-5-5')
     ap.add_argument('--effort', default='high')
@@ -43,14 +44,14 @@ def main():
     print(f'{len(bases)} исходных диалогов, {len(cases)} мутаций, всего вызовов: {len(bases) + len(cases)} × {a.votes}')
     if a.dry_run:
         return
-    ev = Evaluator(checklist, config=EvalConfig(model=a.model, effort=a.effort, votes=a.votes, use_fallback=False))
+    ev = Evaluator(checklist, config=EvalConfig(model=a.model, effort=a.effort, votes=a.votes, use_fallback=False, extra_votes=a.extra_votes))
     jobs = [b for b in bases] + [c['record'] for c in cases]
     out = {}
 
     def run(rec):
         try:
             res = ev.evaluate(normalize(rec))
-            return rec['conversation_id'], {'answers': res['answers'], 'cost': res['cost_usd'], 'issues': res['issues']}
+            return rec['conversation_id'], {'answers': res['answers'], 'cost': res['cost_usd'], 'issues': res['issues'], 'votes': res.get('votes'), 'votes_extra': res.get('votes_extra')}
         except Exception as exc:  # noqa: BLE001
             return rec['conversation_id'], {'error': repr(exc)}
 

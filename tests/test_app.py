@@ -9,7 +9,7 @@ import pytest
 
 from app.server import App, make_handler
 from app.store import StoreError, checklist_problems
-from conftest import FakeAPI, all_answers, model_payload
+from conftest import ROOT as ROOT_PATH, FakeAPI, all_answers, model_payload
 
 
 def _wait(app, job_id, timeout=10):
@@ -311,3 +311,19 @@ def test_operator_names_and_skills_map(app):
     names = {o["name"]: o for o in d["operators"]}
     assert {"Алина", "Дидар"} <= set(names) and names["Алина"]["n"] == 1
     assert d["team"]["c01"] is not None and "c08" not in names["Алина"]["cells"] or names["Алина"]["cells"].get("c08") is None
+
+
+def test_extra_votes_only_when_runs_disagree(tmp_path, checklist):
+    from cqa.evaluator import EvalConfig, Evaluator
+    from cqa.dataset import normalize
+    agree = model_payload(checklist, all_answers(checklist))
+    disagree = model_payload(checklist, all_answers(checklist, c06=7))
+    rec = json.loads(json.dumps(next(r for r in json.loads((ROOT_PATH / "public/dataset.json").read_text())["data"]["records"] if r["conversation_id"] == "p1-ru-001")))
+    conv = normalize(rec)
+    fake = FakeAPI([agree, disagree, agree, agree, agree, agree, agree, agree, agree, agree])
+    ev = Evaluator(checklist, client=fake, config=EvalConfig(votes=3, extra_votes=2, repair=False))
+    res = ev.evaluate(conv)
+    assert res["votes"] == 5 and res["votes_extra"] == 2 and res["answers"]["c06"] == 10
+    fake2 = FakeAPI([agree])
+    res2 = Evaluator(checklist, client=fake2, config=EvalConfig(votes=3, extra_votes=2, repair=False)).evaluate(conv)
+    assert res2["votes"] == 3 and res2["votes_extra"] == 0 and len(fake2.calls) == 3

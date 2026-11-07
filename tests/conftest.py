@@ -81,17 +81,18 @@ def model_payload(checklist, answers, evidence=("m4", "m5", "m6", "m8"), violati
 
 
 def facts_for(criterion, answer):
-    """Факты, из которых cqa.derive выведет тот же ответ."""
+    """Факты (строка меток), из которых cqa.derive выведет тот же ответ."""
     from cqa.derive import kind_of
     k = kind_of(criterion); a = str(answer)
     if k == "needs":
-        qs = {"yes": ["needed"], "no": ["known_repeat"]}.get(a, [])
-        return {"operator_questions": ", ".join(qs), "answered_by_guess": False, "ignored_request": False}
+        return {"facts": {"yes": "needed", "no": "known_repeat"}.get(a, "")}
     if k == "consult":
-        st = {"20": ["essential_closed"], "15": ["essential_closed", "minor_open"], "10": ["essential_closed", "essential_ignored"],
-              "5": ["essential_partial"], "0": ["essential_wrong"], "na": []}[a]
-        return {"client_questions": ", ".join(st)}
+        return {"facts": {"20": "essential_closed", "15": "essential_closed, minor_open", "10": "essential_closed, essential_ignored",
+                          "5": "essential_partial", "0": "essential_wrong", "na": ""}[a]}
     if k == "flow":
-        gl = {"10": [], "7": ["missed_question"], "4": ["unclear_wording"], "0": ["contradiction"]}[a]
-        return {"glitches": ", ".join(gl), "client_confused": a == "4"}
+        return {"facts": {"10": "", "7": "missed_question", "4": "unclear_wording, client_confused", "0": "contradiction"}[a]}
+    if k == "empathy":
+        return {"facts": {"yes": "", "no": "client_upset, rude_or_dismissive"}[a]}
+    if k == "closing":
+        return {"facts": {"yes": "farewell, summary_or_next_step", "no": "farewell", "na": "cut_off"}[a]}
     return {}
