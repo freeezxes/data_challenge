@@ -1,5 +1,6 @@
 import { preferences, factsText, checklistPicker } from "../core.js";
 import { api, html, raw, hero, esc, fmtTotal, scoreClass, answerLabel, answerTone, role, toast, dialog, watchJobs, onJobs, money, CHANNEL } from "../core.js";
+const replies = (n) => `${n} ${n % 10 === 1 && n % 100 !== 11 ? "реплика" : n % 10 >= 2 && n % 10 <= 4 && !(n % 100 >= 12 && n % 100 <= 14) ? "реплики" : "реплик"}`;
 
 const ROLE = { client: "Клиент", operator: "Оператор", bot: "Бот", system: "Система" };
 const VIOL = { insult: "оскорбление клиента", bypass: "предложение услуги в обход компании", disclosure: "раскрытие конфиденциальной информации" };
@@ -36,7 +37,7 @@ export default async function card(root, params) {
   function paint() {
     const conv = data.conversation;
     const ev = data.evaluations[evIndex];
-    const ok = ev && ev.result;
+    const ok = ev && ev.final;
     const checklist = ev ? data.checklists[ev.checklist_key] : null;
     const fin = ok ? ev.final : null;
     const isCall = conv.channel === "voice call";
@@ -52,7 +53,7 @@ export default async function card(root, params) {
       ${hero({ back: { href: "#/queue", label: "Очередь" }, art: isCall ? "call" : "chat",
         title: `${CHANNEL[conv.channel] || "Диалог"} ${conv.conversation_id}`,
         tag: fin?.score.critical ? html`<span class="tag bad" style="vertical-align:middle;font-size:13px">Грубое нарушение</span>` : "",
-        text: ok ? ev.result.summary : `${conv.language} · ${conv.messages.length} реплик${opName ? ` · оператор ${opName}` : ""}`,
+        text: ok ? ev.result.summary : `${conv.language} · ${replies(conv.messages.length)}${opName ? ` · оператор ${opName}` : ""}`,
         aside: ok ? html`<div class="big"><b class="num ${scoreClass(total)}">${fmtTotal(total)}</b><small>${total == null ? "итог не рассчитывается: нет применимых критериев с весом" : "из 100"}${fin.changed && Object.keys(fin.changed).length ? html` · до апелляции ${fmtTotal(ev.result.score.total)}` : ""}</small></div>` : "",
         actions: html`${data.evaluations.length > 1 ? html`<select class="input" id="hist" aria-label="История оценок" style="width:auto">${data.evaluations.map((e, i) => html`<option value="${i}" ${raw(i === evIndex ? "selected" : "")}>#${e.id} · ${e.checklist_key} · ${new Date(e.created_at).toLocaleString("ru-RU", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}${e.status === "error" ? " · ошибка" : ""}</option>`)}</select>` : ""}
           ${checklistPicker(versions, pick)}
@@ -64,7 +65,7 @@ export default async function card(root, params) {
       <div id="run"></div>
       <div class="card">
         <section class="panel transcript" aria-label="Транскрипт">
-          <header><h2>${isCall ? "Расшифровка звонка" : "Переписка"}</h2><span class="meta">${conv.language} · ${conv.messages.length} реплик · бот и системные события — контекст</span></header>
+          <header><h2>${isCall ? "Расшифровка звонка" : "Переписка"}</h2><span class="meta">${conv.language} · ${replies(conv.messages.length)} · бот и системные события — контекст</span></header>
           ${isCall ? html`<div class="player">${data.audio ? html`<div class="player-row"><audio id="audio" controls preload="metadata" src="${data.audio}"></audio><small>Клик по волне или времени реплики — переход к месту записи</small></div>${variant ? "" : html`<div id="voice" class="voice"><div class="muted" style="font-size:12.5px">Разбираем запись…</div></div>`}` : html`<small>Записи нет</small>`}</div>
             ${data.audio && !variant ? html`<div id="voice-extra" class="voice-extra"></div>` : ""}` : ""}
           ${conv.messages.map((m) => {
@@ -87,7 +88,7 @@ export default async function card(root, params) {
 
   function scoresPanel(conv, ev, checklist) {
     if (!ev) return html`<header><h2>Оценка</h2></header><div class="empty"><b>Диалог ещё не оценён</b>Выберите версию чек-листа и нажмите «Оценить»: модель проверит диалог, обычно за 20–40 секунд.</div>`;
-    if (!ev.result) return html`<header><h2>Оценка</h2></header><div class="alert"><b>Оценка не удалась</b>${ev.error}</div><div class="empty">Повторите попытку кнопкой «Оценить заново». Ошибка одного диалога не мешает остальным.</div>`;
+    if (!ev.final) return html`<header><h2>Оценка</h2></header><div class="alert"><b>Оценка не удалась</b>${ev.error}</div><div class="empty">Повторите попытку кнопкой «Оценить заново». Ошибка одного диалога не мешает остальным.</div><button class="link" id="trace">Как получена оценка</button>`;
     const fin = ev.final, rows = Object.fromEntries(fin.score.criteria.map((r) => [r.id, r]));
     const secs = Object.fromEntries((fin.score.sections || []).map((s) => [s.id, s]));
     const titles = Object.fromEntries((checklist.sections || []).map((s) => [s.id, s.title]));
@@ -103,8 +104,11 @@ export default async function card(root, params) {
     const appeals = ev.appeals;
     const nv = ev.result.votes || 1;
     const agreed = Object.values(ev.result.criteria).filter((d) => (d.confidence ?? 1) === 1).length;
+    const extra = ev.result.votes_extra || 0;
+    const runs = (n) => `${n} ${n % 10 === 1 && n % 100 !== 11 ? "прогон" : n % 10 >= 2 && n % 10 <= 4 && !(n % 100 >= 12 && n % 100 <= 14) ? "прогона" : "прогонов"}`;
     const meta = ev.status === "needs_review" ? "часть доказательств требует проверки"
-      : nv > 1 ? `${nv} прогона модели совпали по ${agreed} из ${checklist.criteria.length} критериев` : "у каждого балла есть реплика-доказательство";
+      : extra ? `${runs(nv - extra)} разошлись — добавлено ещё ${extra}, ответ по большинству из ${nv}; единогласно ${agreed} из ${checklist.criteria.length} критериев`
+      : nv > 1 ? `${runs(nv)} модели совпали по ${agreed} из ${checklist.criteria.length} критериев` : "у каждого балла есть реплика-доказательство";
     return html`<header><h2>Баллы</h2><span class="meta ${nv > 1 && agreed < checklist.criteria.length ? "mid-c" : ""}">${meta}</span></header>
       <div class="list-c">${parts}
         ${ev.result.issues?.length ? html`<div class="alert warn"><b>Проверьте доказательства</b>${ev.result.issues.join("; ")}</div>` : ""}
@@ -204,7 +208,7 @@ export default async function card(root, params) {
         ${t.issues?.length ? html`<div class="alert warn" style="margin:8px 0 0"><b>Замечания проверки доказательств</b>${t.issues.join("; ")}</div>` : ""}
       </section>
       <section data-pane="1" hidden>${t.calls.length ? t.calls.map((c, i) => html`<details ${raw(i === 0 ? "open" : "")}><summary>Вызов ${i + 1} · ${c.model} · ${c.stop_reason} · вход ${c.usage?.input_tokens + (c.usage?.cache_read_input_tokens || 0)} / выход ${c.usage?.output_tokens} токенов</summary><pre class="code">${pretty(c.text)}</pre></details>`)
-        : html`<p class="muted">Сырые ответы не сохранены: оценка импортирована из прогона CLI, его полный журнал — в data/runs.</p>`}</section>
+        : html`<p class="muted">Сырые ответы не сохранены: оценка импортирована из прогона CLI, полный журнал — в его файле (data/runs или data/results).</p>`}</section>
       <section data-pane="2" hidden><details open><summary>Инструкция, собранная из чек-листа ${t.checklist_key}</summary><pre class="code">${t.system_prompt}</pre></details>
         <details><summary>Сообщение с диалогом и фактами</summary><pre class="code">${t.user_message}</pre></details></section>
       </div><footer><button class="btn" value="c">Закрыть</button></footer>`);

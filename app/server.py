@@ -54,6 +54,8 @@ class App:
 
     def __init__(self, db_path, client_factory=None, workers=None, pool=None):
         self.store = Store(db_path)
+        self.store.recover_jobs()
+        self.voice_cache = Path(db_path).parent / "voice" / Path(db_path).stem
         self.imports = ImportManager(self.store)
         self.config = EvalConfig(model=os.environ.get("CQA_MODEL", "claude-opus-5-5"),
                                  effort=os.environ.get("CQA_EFFORT", "high"),
@@ -192,7 +194,7 @@ class App:
     def conversation(self, ds_id, conv_id):
         record = self.store.record(ds_id, conv_id)
         conv = normalize(record)
-        audio = RECORDINGS.get(conv_id) or record.get("audio_url")
+        audio = record.get("audio_url") or (RECORDINGS.get(conv_id) if ds_id == "DEV" else None)
         evs = self.store.evaluations(ds_id, conv_id)
         checklists = {e["checklist_key"]: self.store.checklist(e["checklist_key"]) for e in evs}
         return {"conversation": conv, "audio": audio, "evaluations": evs, "checklists": checklists,
@@ -502,11 +504,11 @@ def _voice(app, m, q, body):
     record = app.store.record(m["ds"], m["cid"])
     if record.get("variant_of"):
         raise StoreError("у изменённой копии расшифровка не совпадает с записью — голос смотрите в исходном звонке")
-    src = RECORDINGS.get(m["cid"]) or record.get("audio_url")
+    src = record.get("audio_url") or (RECORDINGS.get(m["cid"]) if m["ds"] == "DEV" else None)
     if not src:
         raise StoreError("у диалога нет записи")
     try:
-        return voice_report(normalize(record), src, PUBLIC, ROOT / "data/voice")
+        return voice_report(normalize(record), src, PUBLIC, app.voice_cache)
     except VoiceUnavailable as exc:
         raise StoreError(str(exc)) from exc
 

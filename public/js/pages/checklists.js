@@ -2,6 +2,8 @@ import { api, html, raw, hero, toast, dialog, store, confirmDialog } from "../co
 
 const TYPES = [["binary", "Да или нет"], ["scale", "Шкала"], ["critical", "Грубая ошибка"]];
 const clone = (x) => JSON.parse(JSON.stringify(x));
+// Keep unsaved edits per version across SPA routes and role changes.
+const drafts = new Map();
 
 function problems(body) {
   const out = [];
@@ -16,6 +18,7 @@ function problems(body) {
       const v = c.scale.map((s) => s.value);
       if (v.length < 2) out.push(`${n}: у шкалы нужно минимум две ступени`);
       if (v.some((x) => !Number.isInteger(x))) out.push(`${n}: ступени шкалы — целые числа`);
+      if (v.some((x) => x < 0) || Math.max(...v) <= 0) out.push(`${n}: ступени ≥ 0, максимум больше нуля`);
       if (new Set(v).size !== v.length) out.push(`${n}: ступени шкалы повторяются`);
     }
     if (c.type === "binary" && !c.yes_when?.trim() && !c.guidance?.length) out.push(`${n}: опишите, когда ставить «Да»`);
@@ -29,8 +32,8 @@ export default async function checklists(root, params) {
   const active = versions.find((v) => v.active);
   let key = params.key || active.key;
   let saved = await api("/checklists/" + encodeURIComponent(key));
-  let body = clone(saved);
-  let sel = body.criteria[0]?.id;
+  let body = clone(drafts.get(key)?.body || saved);
+  let sel = drafts.get(key)?.sel || body.criteria[0]?.id;
   const dirty = () => JSON.stringify(body) !== JSON.stringify(saved);
 
   function paint() {
@@ -111,6 +114,7 @@ export default async function checklists(root, params) {
     try {
       const r = await api("/checklists", { body, note: root.querySelector("#note").value, activate: true });
       versions = await api("/checklists");
+      drafts.delete(key);
       key = r.key; saved = r.checklist; body = clone(saved);
       history.replaceState(null, "", "#/checklists/" + encodeURIComponent(key));
       paint();
@@ -216,5 +220,10 @@ export default async function checklists(root, params) {
   paint();
   const guard = (e) => { if (dirty()) { e.preventDefault(); e.returnValue = ""; } };
   window.addEventListener("beforeunload", guard);
-  return () => window.removeEventListener("beforeunload", guard);
+  if (dirty()) toast("Восстановлены несохранённые правки чек-листа");
+  return () => {
+    if (dirty()) drafts.set(key, { body: clone(body), sel });
+    else drafts.delete(key);
+    window.removeEventListener("beforeunload", guard);
+  };
 }

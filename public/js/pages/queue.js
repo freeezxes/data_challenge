@@ -54,7 +54,7 @@ export default async function queue(root, params) {
     root.querySelector("#evalbar").innerHTML = String(html`<b>Оценка</b>
       <label>Чек-лист ${checklistPicker(versions, pick)}</label>
       <label>Режим <select class="input" id="votes" aria-label="Режим оценки" style="width:auto" title="Несколько прогонов модели одновременно; ответ — по большинству, у шкал — по медиане">
-          <option value="3" ${raw(votes === 3 ? "selected" : "")}>3 прогона · точнее · ≈ $0,12 за диалог</option>
+          <option value="3" ${raw(votes === 3 ? "selected" : "")}>3 прогона · стабильнее · ≈ $0,12–0,19 за диалог</option>
           <option value="1" ${raw(votes === 1 ? "selected" : "")}>1 прогон · быстрее · ≈ $0,04 за диалог</option></select></label>
       <span class="muted">${selected.size ? `выбрано ${selected.size}` : `не оценено этой версией: ${todo}`}</span>
       <button class="btn primary" id="eval">${selected.size ? `Оценить выбранные · ${selected.size}` : "Оценить неоценённые"}</button>`);
@@ -109,7 +109,7 @@ export default async function queue(root, params) {
       const old = ev && ev.checklist_key !== pick;
       return html`<tr data-id="${r.conversation_id}">
         <td class="sel"><input type="checkbox" aria-label="Выбрать ${r.conversation_id}" ${raw(selected.has(r.conversation_id) ? "checked" : "")}></td>
-        <td class="id">${r.conversation_id}</td>
+        <td class="id"><a class="link" href="#/c/${encodeURIComponent(store.dataset)}/${encodeURIComponent(r.conversation_id)}">${r.conversation_id}</a></td>
         <td>${CHANNEL[r.channel] || r.channel}${r.channel === "voice call" ? raw('<span class="wave" aria-hidden="true"></span>') : ""}</td>
         <td class="hide-m muted">${r.language}</td>
         <td class="hide-m topic" title="${r.topic}">${r.topic}</td>
@@ -121,7 +121,9 @@ export default async function queue(root, params) {
     tb.querySelectorAll("tr[data-id]").forEach((tr) => {
       const cb = tr.querySelector("input");
       cb.onclick = (e) => { e.stopPropagation(); cb.checked ? selected.add(tr.dataset.id) : selected.delete(tr.dataset.id); paintHero(); };
-      tr.onclick = () => (location.hash = `#/c/${encodeURIComponent(store.dataset)}/${encodeURIComponent(tr.dataset.id)}`);
+      tr.onclick = (e) => {
+        if (!e.target.closest("a, input, button")) location.hash = `#/c/${encodeURIComponent(store.dataset)}/${encodeURIComponent(tr.dataset.id)}`;
+      };
     });
     const all = root.querySelector("#all");
     all.checked = list.every((r) => selected.has(r.conversation_id));

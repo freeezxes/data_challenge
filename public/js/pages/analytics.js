@@ -23,7 +23,7 @@ export default async function analytics(root) {
         <div class="kpi"><small>Апелляции</small><b class="num">${a.appeals.open + a.appeals.confirmed + a.appeals.changed}</b><span>ждут ${a.appeals.open} · подтверждено ${a.appeals.confirmed} · изменено ${a.appeals.changed}</span></div>
         <div class="kpi"><small>Стоимость оценки</small><b class="num">${money(a.cost_per_dialog)}</b><span>за диалог, всего ${money(a.cost_usd)} · ${st.model}</span></div>
       </div>
-      <div class="grid" style="grid-template-columns:minmax(0,1.4fr) minmax(0,1fr)">
+      <div class="grid analytics-charts">
         <section class="panel"><header><h2>Выполнение критериев</h2><span class="meta">доля от максимума среди применимых</span></header><div class="body bars">
           ${a.criteria.filter((c) => c.type !== "critical").map((c) => html`<div class="hbar"><span class="t" title="${c.title}">${c.title}</span><span class="track"><i class="${tone(c.rate)}" style="width:${Math.round((c.rate || 0) * 100)}%"></i></span><span class="v">${pct(c.rate)}</span></div>
             ${c.na ? html`<div class="muted" style="font-size:12px;margin:-8px 0 0">не применялся в ${c.na} из ${c.n}</div>` : ""}`)}

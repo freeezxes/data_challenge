@@ -166,7 +166,7 @@ def test_imports_preview_tokens_keys_and_ids_are_account_scoped(service):
 
 
 def test_logout_relogin_and_process_restart_keep_all_saved_state(tmp_path):
-    with site(tmp_path) as (_, app, base):
+    with site(tmp_path) as (accounts, app, base):
         alice = Browser(base)
         alice.register("alice")
         assert alice.call("/api/auth/key", {"key": KEY_A})[0] == 200
@@ -177,6 +177,8 @@ def test_logout_relogin_and_process_restart_keep_all_saved_state(tmp_path):
         assert alice.call("/api/auth/logout", {})[0] == 200
         assert alice.call("/api/state")[0] == 401
         assert alice.call("/api/auth/login", {"username": "alice", "password": PASSWORD})[0] == 200
+        tenant = accounts.workspace(accounts.user(alice.user_id))
+        unfinished = tenant.store.create_job("DEV", tenant.store.get_setting("active_checklist"), 1)
     with site(tmp_path) as (_, _, new_base):
         alice.base = new_base
         # Existing browser cookie survives a server restart.
@@ -184,6 +186,8 @@ def test_logout_relogin_and_process_restart_keep_all_saved_state(tmp_path):
         assert status == 200 and session["has_key"]
         assert session["preferences"]["cqa-role"] == "reviewer"
         assert imported["id"] in {d["id"] for d in alice.call("/api/state")[1]["datasets"]}
+        recovered = alice.call(f"/api/jobs/{unfinished}")[1]
+        assert recovered["status"] == "interrupted" and recovered["finished_at"]
         fresh_device = Browser(new_base)
         assert fresh_device.call("/api/auth/login", {"username": "alice", "password": PASSWORD})[1]["has_key"]
         assert fresh_device.call("/api/auth/session")[1]["preferences"]["cqa-dataset"] == "my-import"

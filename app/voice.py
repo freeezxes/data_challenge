@@ -10,11 +10,17 @@ Claude звук не принимает, поэтому запись разби�
 from __future__ import annotations
 
 import hashlib
+import http.client
+import ipaddress
 import json
+import os
 import re
+import secrets
 import shutil
+import socket
+import ssl
 import subprocess
-import urllib.request
+from urllib.parse import urlsplit, urljoin
 from pathlib import Path
 
 from cqa.facts import WAIT_WARNING
@@ -55,21 +61,100 @@ def decode(path: Path):
     raise VoiceUnavailable("для анализа голоса нужен пакет miniaudio (pip install -r requirements.txt) или ffmpeg")
 
 
+MAX_AUDIO_BYTES = 25 * 1024 * 1024
+
+
+def _public_audio_target(src):
+    """Resolve once and pin the TLS socket to a public address; recheck redirects."""
+    try:
+        if re.search(r"[\x00-\x20\x7f]", src):
+            raise ValueError
+        url = urlsplit(src)
+        if url.scheme != "https" or not url.hostname or url.username is not None or url.password is not None or url.port not in (None, 443):
+            raise ValueError
+        hostname = url.hostname.rstrip(".").encode("idna").decode()
+        addresses = list(dict.fromkeys(item[4][0] for item in socket.getaddrinfo(hostname, 443, type=socket.SOCK_STREAM)))
+        if not addresses or any(not ipaddress.ip_address(ip).is_global for ip in addresses):
+            raise ValueError
+        own_host = urlsplit(os.environ.get("CQA_PUBLIC_ORIGIN", "")).hostname
+        if own_host:
+            own = {item[4][0] for item in socket.getaddrinfo(own_host, 443, type=socket.SOCK_STREAM)}
+            if own.intersection(addresses):
+                raise ValueError
+        return url, hostname, addresses[0]
+    except (ValueError, UnicodeError, OSError):
+        raise VoiceUnavailable("Запись должна быть по публичному HTTPS-адресу; локальные файлы и внутренние адреса запрещены") from None
+
+
+class _PinnedHTTPS(http.client.HTTPSConnection):
+    def __init__(self, hostname, address):
+        super().__init__(hostname, timeout=20, context=ssl.create_default_context())
+        self.address = address
+
+    def connect(self):
+        sock = socket.create_connection((self.address, 443), self.timeout)
+        try:
+            self.sock = self._context.wrap_socket(sock, server_hostname=self.host)
+        except Exception:
+            sock.close()
+            raise
+
+
+def _download_audio(src, destination):
+    for _ in range(4):
+        url, hostname, address = _public_audio_target(src)
+        connection = _PinnedHTTPS(hostname, address)
+        try:
+            target = url.path or "/"
+            if url.query:
+                target += "?" + url.query
+            connection.request("GET", target, headers={"Host": hostname, "Accept": "audio/*"})
+            response = connection.getresponse()
+            if response.status in (301, 302, 303, 307, 308):
+                location = response.getheader("Location")
+                if not location:
+                    raise VoiceUnavailable("Сервер записи вернул пустое перенаправление")
+                src = urljoin(src, location)
+                continue
+            if response.status != 200:
+                raise VoiceUnavailable("Сервер записи не отдал аудиофайл")
+            size = response.getheader("Content-Length")
+            if size and (not size.isdigit() or int(size) > MAX_AUDIO_BYTES):
+                raise VoiceUnavailable("Запись больше 25 МБ")
+            total = 0
+            with destination.open("xb") as out:
+                while chunk := response.read(65536):
+                    total += len(chunk)
+                    if total > MAX_AUDIO_BYTES:
+                        raise VoiceUnavailable("Запись больше 25 МБ")
+                    out.write(chunk)
+            return
+        finally:
+            connection.close()
+    raise VoiceUnavailable("Слишком много перенаправлений записи")
+
+
 def fetch_audio(src: str, public: Path, cache: Path) -> Path:
     """Локальная запись из public/ или скачанная по audio_url (кэшируется на диске)."""
     if src.startswith("/"):
         p = (public / src.lstrip("/")).resolve()
-        if public.resolve() not in p.parents or not p.is_file():
+        if not src.startswith("/recordings/") or public.resolve() not in p.parents or (public / "recordings").resolve() not in p.parents or not p.is_file():
             raise VoiceUnavailable("файл записи не найден")
         return p
+    _public_audio_target(src)  # Validate even before using a previously downloaded file.
     cache.mkdir(parents=True, exist_ok=True)
-    p = cache / (hashlib.sha1(src.encode()).hexdigest()[:16] + ".audio")
+    p = cache / (hashlib.sha256(src.encode()).hexdigest() + ".audio")
     if not p.exists():
+        temporary = cache / (p.name + "." + secrets.token_hex(8) + ".tmp")
         try:
-            with urllib.request.urlopen(src, timeout=60) as r:
-                p.write_bytes(r.read())
+            _download_audio(src, temporary)
+            temporary.replace(p)
+        except VoiceUnavailable:
+            raise
         except Exception as exc:
-            raise VoiceUnavailable(f"запись не скачалась: {exc}") from exc
+            raise VoiceUnavailable("Запись не скачалась. Проверьте публичную HTTPS-ссылку.") from exc
+        finally:
+            temporary.unlink(missing_ok=True)
     return p
 
 
@@ -263,12 +348,18 @@ def analyze(conv: dict, audio_path: Path) -> dict:
 
 def voice_report(conv: dict, src: str, public: Path, cache_dir: Path) -> dict:
     path = fetch_audio(src, public, cache_dir / "audio")
-    key = hashlib.sha1((conv["conversation_id"] + str(path.stat().st_size) +
-                        json.dumps([m["t"] for m in conv["messages"]])).encode()).hexdigest()[:16]
+    fingerprint = {"version": 2, "source": src, "path": str(path.resolve()),
+                   "audio_sha256": hashlib.sha256(path.read_bytes()).hexdigest(), "messages": conv["messages"]}
+    key = hashlib.sha256(json.dumps(fingerprint, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
     cache_dir.mkdir(parents=True, exist_ok=True)
     cached = cache_dir / f"{key}.json"
     if cached.exists():
         return json.loads(cached.read_text(encoding="utf-8"))
     rep = analyze(conv, path)
-    cached.write_text(json.dumps(rep, ensure_ascii=False), encoding="utf-8")
+    temporary = cached.with_suffix("." + secrets.token_hex(8) + ".tmp")
+    try:
+        temporary.write_text(json.dumps(rep, ensure_ascii=False), encoding="utf-8")
+        temporary.replace(cached)
+    finally:
+        temporary.unlink(missing_ok=True)
     return rep

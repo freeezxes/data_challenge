@@ -186,6 +186,11 @@ class Store:
         return json.loads(rows[0]["record"])
 
     # --- задания и оценки ---
+    def recover_jobs(self):
+        """This server is the sole owner of a workspace; previous work cannot resume."""
+        self.x("update jobs set status='interrupted', error=?, finished_at=? where status='running'",
+               ("Оценка прервана перезапуском сервера. Запустите оставшиеся диалоги заново.", now()))
+
     def create_job(self, ds_id, checklist_key, total):
         return self.x("insert into jobs(dataset_id,checklist_key,total,status,created_at) values(?,?,?,?,?)",
                       (ds_id, checklist_key, total, "running", now()))
