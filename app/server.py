@@ -617,7 +617,7 @@ def _slug(s: str) -> str:
     return s[:40] or "dataset"
 
 
-def make_handler(app: App, accounts=None):
+def make_handler(app: App, accounts=None, guest_app=None):
     class Handler(BaseHTTPRequestHandler):
         server_version = "CQA/1.0"
 
@@ -656,7 +656,30 @@ def make_handler(app: App, accounts=None):
             path = urlsplit(self.path).path
             try:
                 if method == "GET" and path == "/api/health":
-                    return self._json(200, {"status": "ok", "auth_required": True, "credential_mode": "account"})
+                    return self._json(200, {"status": "ok", "auth_required": guest_app is None, "credential_mode": "account", "guest_available": guest_app is not None})
+                # Guest requests never use the legacy administrator database or
+                # decrypt an account key. Authentication endpoints stay separate.
+                try:
+                    accounts.session(self.headers)
+                    anonymous = False
+                except AuthError:
+                    anonymous = True
+                if guest_app is not None and anonymous:
+                    if method == "GET" and path == "/api/auth/session":
+                        return self._json(200, {"guest": True, "user": {"id": "guest", "username": "Гость"}, "csrf": "", "has_key": False, "preferences": {}})
+                    if not path.startswith("/api/auth/"):
+                        if method == "POST":
+                            accounts.validate_write(self.headers)
+                        if self.headers.get("X-CQA-Account") not in (None, "guest"):
+                            raise AuthError("Войдите в аккаунт.")
+                        credential = validate_key(self.headers.get("X-CQA-API-Key", ""))
+                        context = request_key.set(credential)
+                        try:
+                            if method == "POST" and MODEL_ROUTES.fullmatch(path) and not guest_app.has_key():
+                                return self._json(400, {"error": MISSING_KEY})
+                            return self._dispatch_api(method, guest_app, {"id": "guest", "username": "Гость"})
+                        finally:
+                            request_key.reset(context)
                 body = {}
                 if method == "POST":
                     accounts.validate_write(self.headers)
@@ -783,7 +806,7 @@ def make_handler(app: App, accounts=None):
                     accounts.session(self.headers)
                     authenticated = True
                 except AuthError:
-                    authenticated = False
+                    authenticated = guest_app is not None
                 if path == "/login":
                     path = "/login.html"
                 public_asset = Path(path).suffix.lower() in {".css", ".js", ".woff2", ".ttf", ".png", ".jpg", ".svg"}
@@ -835,7 +858,8 @@ def main():
     from .auth import Accounts
     accounts = Accounts(os.environ.get("CQA_AUTH_DIR", Path(app.store.path).parent / "auth"), app,
                         lambda path: App(path, pool=app.pool), os.environ.get("CQA_PUBLIC_ORIGIN"))
-    srv = ThreadingHTTPServer((host, port), make_handler(app, accounts))
+    guest_app = App(Path(app.store.path).parent / "guest/cqa.db", pool=app.pool) if os.environ.get("CQA_GUEST_MODE") == "1" else None
+    srv = ThreadingHTTPServer((host, port), make_handler(app, accounts, guest_app))
     key = "свой ключ перед запуском, серверный ключ отключён"
     print(f"CQA: http://{host}:{port}  ·  модель {app.config.model}  ·  ключ API: {key}")
     try:

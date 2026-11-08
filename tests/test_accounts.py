@@ -54,12 +54,13 @@ class Browser:
 
 
 @contextmanager
-def site(directory):
+def site(directory, guest=False):
     app = App(directory / "legacy.db", workers=2)
     # Existing anonymous imports must be retained for the administrator.
     app.store.save_dataset("existing-import", "Existing private import", [app.store.record("DEV", "p1-ru-001")], "test")
     accounts = Accounts(directory / "auth", app, lambda path: App(path, pool=app.pool))
-    server = ThreadingHTTPServer(("127.0.0.1", 0), make_handler(app, accounts))
+    guest_app = App(directory / "guest/cqa.db", pool=app.pool) if guest else None
+    server = ThreadingHTTPServer(("127.0.0.1", 0), make_handler(app, accounts, guest_app))
     threading.Thread(target=server.serve_forever, daemon=True).start()
     base = f"http://127.0.0.1:{server.server_port}"
     try:
@@ -72,6 +73,23 @@ def site(directory):
             tenant.store.db.close()
         app.store.db.close()
         accounts.db.close()
+
+
+def test_guest_access_never_exposes_account_data_or_keys(tmp_path):
+    with site(tmp_path, guest=True) as (accounts, app, base):
+        visitor = Browser(base)
+        session = visitor.call("/api/auth/session")[1]
+        assert session['guest'] and not session['has_key']
+        assert visitor.call("/", raw=True)[0] == 200
+        assert visitor.call("/api/health")[1]['auth_required'] is False
+        assert 'existing-import' not in {d['id'] for d in visitor.call('/api/state')[1]['datasets']}
+        assert visitor.call('/api/conversations/existing-import/p1-ru-001')[0] == 400
+        assert visitor.call('/api/auth/key', {'key': KEY_A})[0] == 401
+        assert visitor.call('/api/jobs', {'dataset_id':'DEV','conversation_ids':['p1-ru-001'],'votes':1})[0] == 400
+        assert visitor.call('/api/state', headers={'X-CQA-Account':'old-private-account'})[0] == 401
+        credentials = dict(line.split(': ', 1) for line in (accounts.directory / 'admin-login.txt').read_text().splitlines())
+        assert visitor.call('/api/auth/login', {'username':'admin','password':credentials['Password']})[0] == 200
+        assert 'existing-import' in {d['id'] for d in visitor.call('/api/state')[1]['datasets']}
 
 
 @pytest.fixture

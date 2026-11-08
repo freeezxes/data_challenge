@@ -37,4 +37,4 @@ form.onsubmit = async (event) => {
   finally { submit.disabled = false; toggle.disabled = false; submit.textContent = label; }
 };
 fetch("/api/auth/session", { credentials: "same-origin" })
-  .then((response) => { if (response.ok) location.replace("/"); }).catch(() => {});
+  .then(async (response) => { if (response.ok && !(await response.json()).guest) location.replace("/"); }).catch(() => {});

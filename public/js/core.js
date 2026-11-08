@@ -3,6 +3,8 @@
 
 export const API = (document.body.dataset.api || "").replace(/\/$/, "");
 let account = null;
+let guest = false;
+let guestKey = "";
 let csrf = "";
 let savedKey = false;
 let keyPrompt = null;
@@ -15,12 +17,15 @@ export function hasApiKey() { return savedKey; }
 export function currentAccount() { return account; }
 export async function initializeSession() {
   const session = await api("/auth/session");
+  guest = Boolean(session.guest);
   account = session.user; csrf = session.csrf; savedKey = session.has_key;
   prefValues = session.preferences || {};
+  if (guest) { try { prefValues = JSON.parse(localStorage.getItem("cqa-guest-preferences") || "{}"); } catch {} }
   window.dispatchEvent(new Event("cqa:keychange"));
   return session;
 }
 export async function refreshSession() {
+  if (guest) return;
   const session = await api("/auth/session");
   csrf = session.csrf; savedKey = session.has_key;
   window.dispatchEvent(new Event("cqa:keychange"));
@@ -30,6 +35,7 @@ export const preferences = {
   getItem: (key) => prefValues[key] ?? null,
   setItem(key, value) {
     prefValues[key] = String(value);
+    if (guest) { localStorage.setItem("cqa-guest-preferences", JSON.stringify(prefValues)); return; }
     const values = { ...prefValues };
     preferenceSave = preferenceSave.then(() => api("/auth/preferences", { values }))
       .then(() => { preferenceError = null; })
@@ -45,7 +51,7 @@ export function apiKeyDialog() {
       <form><div class="content">
         <p class="muted">Ключ используется для оценки, суфлёра и подсказок. Стоимость вызовов оплачивается с вашего аккаунта Anthropic.</p>
         <label class="field" for="api-key-input">API-ключ<input class="input" id="api-key-input" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="sk-ant-…" aria-describedby="api-key-help api-key-error" required></label>
-        <p class="muted" id="api-key-help">Ключ сохраняется в вашем аккаунте в зашифрованном виде. Он будет доступен после повторного входа и на другом устройстве. Полный ключ обратно в браузер не передаётся.</p>
+        <p class="muted" id="api-key-help">${guest ? "Ключ действует в этой вкладке до перезагрузки и передаётся только с вашими запросами. Гостевые импорты и результаты общие для всех посетителей." : "Ключ сохраняется в вашем аккаунте в зашифрованном виде. Он будет доступен после повторного входа и на другом устройстве. Полный ключ обратно в браузер не передаётся."}</p>
         ${savedKey ? html`<p class="muted">Ключ уже сохранён. Введите новый для замены или удалите сохранённый ключ. Уже запущенные оценки продолжатся.</p>` : ""}
         <p class="err-text" id="api-key-error" role="alert"></p>
       </div><footer>${savedKey ? html`<button class="btn ghost" type="button" data-clear>Удалить ключ</button>` : ""}
@@ -57,10 +63,10 @@ export function apiKeyDialog() {
     const save = async (value) => {
       busy = true; d.querySelectorAll("button").forEach((button) => { button.disabled = true; });
       try {
-        const session = await api("/auth/key", { key: value });
+        const session = guest ? (guestKey = value, {has_key: Boolean(value)}) : await api("/auth/key", { key: value });
         savedKey = session.has_key; accepted = Boolean(value);
         window.dispatchEvent(new Event("cqa:keychange"));
-        d.close(); toast(value ? "Ключ сохранён в аккаунте" : "Ключ удалён из аккаунта");
+        d.close(); toast(guest ? (value ? "Ключ добавлен для этой вкладки" : "Ключ удалён") : (value ? "Ключ сохранён в аккаунте" : "Ключ удалён из аккаунта"));
       } catch (error) { d.querySelector(".err-text").textContent = error.message; }
       finally { busy = false; d.querySelectorAll("button").forEach((button) => { button.disabled = false; }); }
     };
@@ -90,6 +96,7 @@ export async function api(path, body) {
   }
   const opt = { credentials: "same-origin", headers: {} };
   if (account) opt.headers["X-CQA-Account"] = account.id;
+  if (guest && guestKey) opt.headers["X-CQA-API-Key"] = guestKey;
   if (body !== undefined) {
     const target = new URL(API || location.origin, location.href);
     if (target.protocol !== "https:" && !["localhost", "127.0.0.1", "[::1]"].includes(target.hostname))

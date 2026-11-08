@@ -13,6 +13,7 @@ Environment=CQA_DB=/srv/cqa/shared/cqa.db
 Environment=CQA_QUIET=1
 Environment=CQA_AUTH_DIR=/srv/cqa/shared/auth
 Environment=CQA_PUBLIC_ORIGIN=https://ortaresearch.com
+Environment=CQA_GUEST_MODE=1
 UnsetEnvironment=ANTHROPIC_API_KEY ANTHROPIC_AUTH_TOKEN ANTHROPIC_BASE_URL
 ExecStart=/srv/cqa/current/.venv/bin/python -m app.server
 Restart=on-failure

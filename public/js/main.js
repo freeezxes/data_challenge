@@ -76,5 +76,10 @@ document.getElementById("account-logout").onclick = async (event) => {
 initializeSession().then((session) => {
   ready = true;
   document.getElementById("account-name").textContent = session.user.username;
+  if (session.guest) {
+    const button = document.getElementById("account-logout");
+    button.textContent = "Войти";
+    button.onclick = () => location.assign("/login");
+  }
   paintRole(); render();
 }).catch((error) => { view.textContent = error.message; });
