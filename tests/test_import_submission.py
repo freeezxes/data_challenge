@@ -130,6 +130,8 @@ def test_submission_matches_official_types_ids_and_score(app):
 def test_submission_includes_errors_and_requires_explicit_acknowledgement(app):
     completed_set(app)
     key = app.store.get_setting("active_checklist")
+    # у control-0 нет готовой оценки: единственная попытка упала
+    app.store.x("delete from evaluations where conversation_id='control-0'")
     app.store.add_evaluation("CONTROL", "control-0", key, "error", error="API недоступен")
     result = app.store.latest("CONTROL")["control-1"]["result"]
     app.store.add_evaluation("CONTROL", "control-1", key, "needs_review", result)
@@ -162,10 +164,11 @@ def test_submission_uses_appeal_reason_and_rejects_invalid_evidence(app):
     assert payload["results"][1]["status"] == "error" and report["errors"] == 1
 
 
-def test_submission_blocks_wrong_count_calls_and_replaced_checklist(app):
+def test_submission_warns_on_set_shape_and_blocks_replaced_checklist(app):
     completed_set(app)
+    # состав набора не блокирует выгрузку на финале, но предупреждает
     _, report = build_submission(app, "CONTROL", "Команда", "dev")
-    assert report["blockers"]
+    assert not report["blockers"] and any("65" in n for n in report["notices"])
     ck = deepcopy(app.store.checklist())
     ck["criteria"][0]["id"] = "new-contact"
     app.store.save_checklist(ck)
@@ -201,3 +204,25 @@ def test_http_preview_commit_and_submission_download(app):
         assert error.value.code == 400
     finally:
         srv.shutdown()
+
+
+def test_submission_keeps_ready_result_after_new_checklist_or_failed_retry(app):
+    # Финал: контроль оценён по v8, затем организаторы просят заменить критерий и применить новую версию,
+    # а переоценка одного диалога падает с ошибкой API. Выгрузка по v8 должна остаться полной.
+    completed_set(app)
+    key = app.store.get_setting("active_checklist")
+    new = deepcopy(app.store.checklist(key))
+    new["criteria"][0]["title"] = new["criteria"][0]["title"] + " (замена)"
+    other = app.store.save_checklist(new, "замена критерия", activate=True)
+    assert other != key
+    for i in range(10):
+        ready = app.store.latest_ready("CONTROL", key)[f"control-{i}"]["result"]
+        app.store.add_evaluation("CONTROL", f"control-{i}", other, "ok", ready)
+    app.store.add_evaluation("CONTROL", "control-3", key, "error", error="API недоступен")
+    payload, report = build_submission(app, "CONTROL", "Команда", "prod", key)
+    assert report["ready"] == 10 and report["errors"] == 0
+    # без готовой оценки нужной версии причина остаётся понятной
+    app.store.x("delete from evaluations where conversation_id='control-5' and checklist_key=?", (key,))
+    payload, report = build_submission(app, "CONTROL", "Команда", "prod", key)
+    row = next(r for r in report["rows"] if r["id"] == "control-5")
+    assert report["ready"] == 9 and "другой версии" in row["error"]

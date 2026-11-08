@@ -204,7 +204,7 @@ export default async function card(root, params) {
         ${t.issues?.length ? html`<div class="alert warn" style="margin:8px 0 0"><b>Замечания проверки доказательств</b>${t.issues.join("; ")}</div>` : ""}
       </section>
       <section data-pane="1" hidden>${t.calls.length ? t.calls.map((c, i) => html`<details ${raw(i === 0 ? "open" : "")}><summary>Вызов ${i + 1} · ${c.model} · ${c.stop_reason} · вход ${c.usage?.input_tokens + (c.usage?.cache_read_input_tokens || 0)} / выход ${c.usage?.output_tokens} токенов</summary><pre class="code">${pretty(c.text)}</pre></details>`)
-        : html`<p class="muted">Сырые ответы не сохранены: оценка импортирована из прогона CLI, его полный журнал — в data/runs.</p>`}</section>
+        : html`<p class="muted">Сырые ответы не сохранены: оценка импортирована из прогона CLI, полный журнал — в его файле (data/runs или data/results).</p>`}</section>
       <section data-pane="2" hidden><details open><summary>Инструкция, собранная из чек-листа ${t.checklist_key}</summary><pre class="code">${t.system_prompt}</pre></details>
         <details><summary>Сообщение с диалогом и фактами</summary><pre class="code">${t.user_message}</pre></details></section>
       </div><footer><button class="btn" value="c">Закрыть</button></footer>`);

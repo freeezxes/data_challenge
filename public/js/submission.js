@@ -29,6 +29,7 @@ export async function submissionDialog(checklistKey) {
       localStorage.setItem("cqa-team", team.value.trim());
       report.innerHTML = String(html`<div class="transfer-summary"><b>Готово ${r.ready} из ${r.total}</b><span>${r.name}</span></div>
         ${r.blockers.length ? html`<div class="alert"><b>Выгрузка заблокирована</b><ul>${r.blockers.map(x => html`<li>${x}</li>`)}</ul></div>` : html`<p>Сохраните файл в репозитории: <strong>${r.path}</strong></p>`}
+        ${r.notices?.length ? html`<div class="alert warn"><b>Проверьте набор</b><ul>${r.notices.map(x => html`<li>${x}</li>`)}</ul></div>` : ""}
         ${r.errors ? html`<div class="alert warn"><b>Диалогов с ошибкой: ${r.errors}</b>Они останутся в файле с status=error, пустыми критериями и score=null.</div>
           <ul class="submission-errors">${r.rows.filter(x => x.error).map(x => html`<li><b>${x.id}</b><span>${x.error}</span></li>`)}</ul>
           ${!r.blockers.length ? html`<label class="transfer-check"><input type="checkbox" data-errors>Выгрузить также ${r.errors} диалогов с ошибками</label>` : ""}` : r.warnings ? "" : html`<p class="ok-c">Все оценки, значения, обоснования и ссылки на реплики проверены.</p>`}

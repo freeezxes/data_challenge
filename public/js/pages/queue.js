@@ -54,7 +54,7 @@ export default async function queue(root, params) {
     root.querySelector("#evalbar").innerHTML = String(html`<b>Оценка</b>
       <label>Чек-лист ${checklistPicker(versions, pick)}</label>
       <label>Режим <select class="input" id="votes" aria-label="Режим оценки" style="width:auto" title="Несколько прогонов модели одновременно; ответ — по большинству, у шкал — по медиане">
-          <option value="3" ${raw(votes === 3 ? "selected" : "")}>3 прогона · точнее · ≈ $0,12 за диалог</option>
+          <option value="3" ${raw(votes === 3 ? "selected" : "")}>3 прогона · стабильнее · ≈ $0,12–0,19 за диалог</option>
           <option value="1" ${raw(votes === 1 ? "selected" : "")}>1 прогон · быстрее · ≈ $0,04 за диалог</option></select></label>
       <span class="muted">${selected.size ? `выбрано ${selected.size}` : `не оценено этой версией: ${todo}`}</span>
       <button class="btn primary" id="eval">${selected.size ? `Оценить выбранные · ${selected.size}` : "Оценить неоценённые"}</button>`);

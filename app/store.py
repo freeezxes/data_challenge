@@ -238,6 +238,16 @@ class Store:
                       "where dataset_id=? group by conversation_id) m on e.id=m.mid", (ds_id,))
         return {r["conversation_id"]: self._expand(r) for r in rows}
 
+    def latest_ready(self, ds_id, checklist_key) -> dict[str, dict]:
+        """Последняя готовая оценка (ok или «Проверить») каждого диалога по конкретной версии чек-листа.
+
+        Для выгрузки: оценка по другой версии или неудачная переоценка не закрывают собой готовый результат.
+        """
+        rows = self.q("select e.* from evaluations e join (select conversation_id, max(id) mid from evaluations "
+                      "where dataset_id=? and checklist_key=? and status in ('ok','needs_review') and result is not null "
+                      "group by conversation_id) m on e.id=m.mid", (ds_id, checklist_key))
+        return {r["conversation_id"]: self._expand(r) for r in rows}
+
     # --- апелляции ---
     def final_result(self, ev: dict) -> dict:
         """Ответы после решений проверяющего и пересчитанный итог по снимку чек-листа."""

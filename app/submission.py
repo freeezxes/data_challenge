@@ -51,18 +51,21 @@ def build_submission(app, ds_id, team_name, kind, checklist_key=None):
         if ds_id not in datasets:
             raise StoreError("Набор не найден.")
         records = app.store.records(ds_id)
-        latest = app.store.latest(ds_id)
         key = checklist_key or app.store.get_setting("active_checklist")
         checklist = app.store.checklist(key)
-    blockers = []
+        # Последняя оценка любой версии — только чтобы объяснить, почему готовой нет.
+        latest = {**app.store.latest(ds_id), **app.store.latest_ready(ds_id, key)}
+    blockers, notices = [], []
+    # Состав набора — предупреждение, а не блок: если организаторы выдадут иной контроль,
+    # выгрузка не должна становиться невозможной на финале.
     expected = 65 if kind == "dev" else 10
     if len(records) != expected:
-        blockers.append(f"Для {kind.upper()} нужно ровно {expected} диалогов; в наборе {len(records)}.")
+        notices.append(f"Ожидалось {expected} диалогов для {kind.upper()}; в наборе {len(records)}. Проверьте, что выбран нужный набор.")
     calls = sum(r.get("channel") == "voice call" for r in records)
     if kind == "prod" and calls:
-        blockers.append("Контрольный набор должен содержать только чаты.")
+        notices.append(f"В контрольном наборе есть звонки: {calls}. Проверьте, что выбран нужный набор.")
     if kind == "dev" and (calls != 5 or len(records) - calls != 60):
-        blockers.append("DEV должен содержать 60 чатов и 5 звонков.")
+        notices.append("В DEV ожидалось 60 чатов и 5 звонков.")
     cmap = {c["id"]: c for c in checklist["criteria"]}
     if set(cmap) != {c[0] for c in CRITERIA}:
         blockers.append("Для сдачи выберите версию с восемью исходными критериями организаторов.")
@@ -138,4 +141,4 @@ def build_submission(app, ds_id, team_name, kind, checklist_key=None):
     return payload, {"dataset": ds_id, "name": datasets[ds_id]["name"], "kind": kind, "checklist": key,
                      "path": f"results/{kind}/results.json", "total": len(records), "ready": ready,
                      "errors": len(records) - ready, "warnings": sum(bool(r["warning"]) for r in check_rows),
-                     "blockers": blockers, "rows": check_rows, "model": payload["model"]}
+                     "blockers": blockers, "notices": notices, "rows": check_rows, "model": payload["model"]}

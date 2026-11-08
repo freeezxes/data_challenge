@@ -25,7 +25,7 @@ export default async function home(root) {
       </div></section>
       <section class="panel"><header><h2>Модель</h2></header><div class="body">
         <div class="stat" style="font-size:20px">${st.model}</div>
-        <p class="muted" style="margin:0">Усилие ${st.effort}, ${st.votes} ${st.votes === 1 ? "прогон" : "прогона"} на диалог, ответ по большинству, ${perDialog}. Ступени потребности, консультации и ведения диалога считает код по фактам из ответа модели, итог — по весам чек-листа.</p>
+        <p class="muted" style="margin:0">Усилие ${st.effort}, ${st.votes} ${st.votes === 1 ? "прогон" : "прогона"} на диалог, ответ по большинству, ${perDialog}. Ответы по выявлению потребности, консультации, ведению диалога, эмпатии и завершению выводит код по фактам из ответа модели, итог — по весам чек-листа.</p>
         <div><a class="btn small" href="#/analytics">Точность и стоимость</a></div>
       </div></section>
     </div>
