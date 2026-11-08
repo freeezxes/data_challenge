@@ -1,5 +1,6 @@
 import { API, api, html, raw, hero, checklistPicker, fmtTotal, scoreClass, CHANNEL, store, toast, onJobs, watchJobs, icon, money } from "../core.js";
-import { fetchDialog, uploadDialog } from "./home.js";
+import { importDialog } from "../imports.js";
+import { submissionDialog } from "../submission.js";
 
 const FILTERS = [
   ["all", "Все", () => true],
@@ -45,7 +46,8 @@ export default async function queue(root, params) {
       title: "Очередь", art: "queue",
       text: `${rows.length} диалогов, оценено ${done.length}` + (avg != null ? `, средний итог ${fmtTotal(Math.round(avg * 10) / 10)}` : "") + (open ? `. Апелляций ждут решения: ${open}.` : "."),
       actions: html`<select class="input" id="ds" aria-label="Набор" style="width:auto">${st.datasets.map((d) => html`<option value="${d.id}" ${raw(d.id === store.dataset ? "selected" : "")}>${d.name}</option>`)}</select>
-        <button class="btn" id="load">Загрузить набор</button>
+        <button class="btn" id="load">Добавить диалоги</button>
+        <button class="btn" id="submission">Выгрузить для сдачи</button>
         <a class="btn" href="${API}/api/datasets/${encodeURIComponent(store.dataset)}/export" download title="CSV: ответы по каждому критерию, итог, грубые нарушения">Скачать результаты</a>`,
     }));
     const todo = rows.filter((r) => !r.evaluation || r.evaluation.status === "error" || r.evaluation.checklist_key !== pick).length;
@@ -62,13 +64,8 @@ export default async function queue(root, params) {
     eb.querySelector("#ck").onchange = (e) => { pick = e.target.value; paint(); };
     const h = root.querySelector("#hero");
     h.querySelector("#ds").onchange = async (e) => { store.dataset = e.target.value; selected.clear(); await load(); paint(); };
-    h.querySelector("#load").onclick = (e) => {
-      const m = document.createElement("div");
-      m.style.cssText = "display:flex;gap:8px";
-      e.target.replaceWith(Object.assign(document.createElement("span"), { innerHTML: '<button class="btn" id="b1">По group_id</button> <button class="btn" id="b2">Файлом</button>' }));
-      h.querySelector("#b1").onclick = () => fetchDialog(st);
-      h.querySelector("#b2").onclick = () => uploadDialog();
-    };
+    h.querySelector("#load").onclick = () => importDialog();
+    h.querySelector("#submission").onclick = () => submissionDialog(pick);
     void ds;
   }
 

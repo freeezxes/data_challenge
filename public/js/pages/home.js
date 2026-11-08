@@ -1,4 +1,6 @@
-import { api, html, raw, hero, money, store, toast, dialog } from "../core.js";
+import { api, html, hero, money, store } from "../core.js";
+import { importDialog } from "../imports.js";
+export { fetchDialog, uploadDialog } from "../imports.js";
 
 export default async function home(root) {
   const st = await api("/state");
@@ -13,8 +15,7 @@ export default async function home(root) {
         ${st.datasets.map((d) => html`<div class="dsrow"><div class="t"><b>${d.name}</b><small>оценено ${d.evaluated} из ${d.count}</small></div>
           <a class="btn small" href="#/queue" data-ds="${d.id}">Открыть</a></div>`)}
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
-          <button class="btn small" id="fetch">Загрузить по group_id</button>
-          <button class="btn small" id="upload">Загрузить файл JSON</button>
+          <button class="btn small primary" id="upload">Добавить диалоги</button>
         </div>
       </div></section>
       <section class="panel"><header><h2>Активный чек-лист</h2><span class="meta">${st.active_checklist}</span></header><div class="body">
@@ -38,59 +39,7 @@ export default async function home(root) {
       </ol></div></section>`);
 
   root.querySelectorAll("[data-ds]").forEach((a) => (a.onclick = () => { store.dataset = a.dataset.ds; }));
-  root.querySelector("#fetch").onclick = () => fetchDialog(st);
-  root.querySelector("#upload").onclick = () => uploadDialog();
-}
-
-export function fetchDialog(st) {
-  const d = dialog(html`<header><h2>Набор из API организаторов</h2></header><div class="content">
-    <p class="muted" style="margin:0">Запрос идёт через сервер: адрес с подписью хранится в .env (CQA_API_URL), браузер его не видит.</p>
-    ${!st.has_api_url ? html`<div class="alert warn" style="margin:0"><b>CQA_API_URL не задан</b>Вставьте адрес кнопки «Открыть GET для DEV» в .env или загрузите набор файлом.</div>` : ""}
-    <label class="field">group_id<input class="input" name="g" placeholder="например, CONTROL" autofocus></label>
-    <div class="err-text"></div></div>
-    <footer><button class="btn ghost" value="c">Отмена</button><button class="btn primary" value="ok">Загрузить</button></footer>`);
-  const err = d.querySelector(".err-text");
-  d.querySelector('[value="c"]').onclick = () => d.close();
-  d.querySelector('[value="ok"]').onclick = async (e) => {
-    e.target.disabled = true; err.textContent = "";
-    try {
-      const r = await api("/datasets/fetch", { group_id: d.querySelector("[name=g]").value });
-      store.dataset = r.id; d.close(); toast(`Загружено ${r.count} диалогов`); location.hash = "#/queue";
-    } catch (x) { err.textContent = x.message; e.target.disabled = false; }
-  };
-}
-
-export async function uploadDialog() {
-  const st = await api("/state");
-  const d = dialog(html`<header><h2>Загрузить диалоги</h2></header><div class="content">
-    <p class="muted" style="margin:0">Формат API организаторов: целиком ответ, объект data, массив records или одна запись с conversation_id и transcript. Метки времени и роли сохраняются как есть.</p>
-    <label class="field">Куда<select class="input" name="to"><option value="">Новый набор</option>${st.datasets.map((x) => html`<option value="${x.id}" ${raw(x.id === store.dataset ? "selected" : "")}>Добавить в «${x.name}»</option>`)}</select></label>
-    <label class="field" data-newname>Название нового набора<input class="input" name="n" placeholder="Контрольный набор"></label>
-    <label class="field">Файл JSON<input class="input" type="file" name="f" accept=".json,application/json"></label>
-    <label class="field">или вставьте JSON<textarea class="input" name="j" placeholder='{"conversation_id": "…", "channel": "agent chat", "language": "RU", "transcript": [{"timestamp": "00:02", "speaker": "operator", "text": "…"}]}'></textarea></label>
-    <div class="err-text"></div></div>
-    <footer><button class="btn ghost" value="c">Отмена</button><button class="btn primary" value="ok">Загрузить</button></footer>`);
-  const err = d.querySelector(".err-text");
-  const to = d.querySelector("[name=to]"), nameField = d.querySelector("[data-newname]");
-  const sync = () => (nameField.hidden = !!to.value);
-  to.onchange = sync; sync();
-  d.querySelector('[value="c"]').onclick = () => d.close();
-  d.querySelector('[value="ok"]').onclick = async (e) => {
-    const file = d.querySelector("[name=f]").files[0];
-    const pasted = d.querySelector("[name=j]").value.trim();
-    if (!file && !pasted) { err.textContent = "Выберите файл или вставьте JSON"; return; }
-    e.target.disabled = true; err.textContent = "";
-    try {
-      const name = d.querySelector("[name=n]").value.trim();
-      const payload = file ? await file.text() : pasted;
-      const body = to.value ? { append_to: to.value, payload }
-        : { name: name || (file ? file.name.replace(/\.json$/i, "") : "Загруженные диалоги"), id: name || undefined, payload };
-      const r = await api("/datasets", body);
-      store.dataset = r.id; d.close();
-      toast(r.count === 1 ? `Диалог ${r.ids[0]} загружен` : `Загружено ${r.count} диалогов`);
-      location.hash = r.count === 1 ? `#/c/${encodeURIComponent(r.id)}/${encodeURIComponent(r.ids[0])}` : "#/queue";
-    } catch (x) { err.textContent = x.message; e.target.disabled = false; }
-  };
+  root.querySelector("#upload").onclick = () => importDialog();
 }
 
 export { money };

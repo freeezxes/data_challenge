@@ -36,6 +36,8 @@ from cqa.metrics import compare  # noqa: E402
 from .assist import coach, make_variant, second_opinion  # noqa: E402
 from .live import LiveBoard  # noqa: E402
 from .store import Store, StoreError  # noqa: E402
+from .imports import ImportManager  # noqa: E402
+from .submission import build_submission  # noqa: E402
 
 PUBLIC = ROOT / "public"
 RECORDINGS = json.loads((PUBLIC / "recordings.json").read_text(encoding="utf-8")) if (PUBLIC / "recordings.json").exists() else {}
@@ -55,6 +57,7 @@ class App:
 
     def __init__(self, db_path, client_factory=None, workers=None):
         self.store = Store(db_path)
+        self.imports = ImportManager(self.store)
         self.config = EvalConfig(model=os.environ.get("CQA_MODEL", "claude-opus-5-5"),
                                  effort=os.environ.get("CQA_EFFORT", "high"),
                                  votes=int(os.environ.get("CQA_VOTES", "3")),
@@ -324,39 +327,39 @@ def _queue(app, m, q, body):
 
 @route("POST", r"/api/datasets")
 def _upload(app, m, q, body):
-    payload = body.get("payload")
-    if isinstance(payload, str):
-        try:
-            payload = json.loads(payload)
-        except json.JSONDecodeError as exc:
-            raise StoreError(f"файл не похож на JSON: {exc.msg}, строка {exc.lineno}") from exc
-    if isinstance(payload, dict) and "data" in payload:
-        if payload.get("isSuccess") is False:
-            raise StoreError(f"в файле ответ API с ошибкой: {payload.get('error')}")
-        payload = payload["data"]
-    if isinstance(payload, dict) and "records" in payload:
-        records = payload["records"]
-    elif isinstance(payload, dict) and "conversation_id" in payload:
-        records = [payload]  # один транскрипт
-    elif isinstance(payload, list):
-        records = payload
-    else:
-        raise StoreError("ожидается ответ API, объект data, массив records или одна запись с conversation_id и transcript")
-    if body.get("append_to"):
-        existing = {d["id"]: d for d in app.store.datasets()}
-        if body["append_to"] not in existing:
-            raise StoreError(f"набор {body['append_to']} не найден")
-        ds_id, name = body["append_to"], existing[body["append_to"]]["name"]
-    else:
-        ds_id = _slug(body.get("id") or (payload.get("dataset_group_id") if isinstance(payload, dict) else None)
-                      or body.get("name") or "upload")
-        name = body.get("name") or ds_id
-    n = app.store.save_dataset(ds_id, name, records, "upload")
-    return {"id": ds_id, "count": n, "ids": [r["conversation_id"] for r in records]}
+    # Совместимость старого API: одинаковые записи можно повторно добавить,
+    # изменённые транскрипты нельзя перезаписать ни через один маршрут импорта.
+    preview = _preview_import(app, m, q, body)
+    if preview["errors"]:
+        raise StoreError("; ".join(preview["errors"][:10]))
+    if preview["changed"]:
+        raise StoreError("Совпадающие ID содержат другой текст. Используйте предпросмотр и новый набор.")
+    result = app.imports.commit(preview["token"], skip_existing=True)
+    return {k: result[k] for k in ("id", "count", "ids")}
+
+
+@route("POST", r"/api/imports/preview")
+def _preview_import(app, m, q, body):
+    return app.imports.preview(body.get("payload"), body.get("name") or body.get("id") or "",
+                               body.get("append_to"))
+
+
+@route("POST", r"/api/imports/commit")
+def _commit_import(app, m, q, body):
+    return app.imports.commit(body.get("token"), body.get("skip_existing") is True)
 
 
 @route("POST", r"/api/datasets/fetch")
 def _fetch(app, m, q, body):
+    preview = _fetch_preview(app, m, q, body)
+    if preview["errors"]:
+        raise StoreError("; ".join(preview["errors"][:10]))
+    result = app.imports.commit(preview["token"])
+    return {k: result[k] for k in ("id", "count")}
+
+
+@route("POST", r"/api/imports/fetch-preview")
+def _fetch_preview(app, m, q, body):
     base = os.environ.get("CQA_API_URL")
     if not base:
         raise StoreError("Не задан CQA_API_URL — адрес GET из гайда организаторов (в .env)")
@@ -367,10 +370,7 @@ def _fetch(app, m, q, body):
         payload = fetch_dataset(base, group)
     except Exception as exc:
         raise StoreError(f"API организаторов: {_short(exc)}") from exc
-    data = payload["data"]
-    n = app.store.save_dataset(_slug(group), f"{group} · {data.get('total_records', len(data['records']))} диалогов",
-                               data["records"], "organizer API")
-    return {"id": _slug(group), "count": n}
+    return app.imports.preview(payload, body.get("name") or group, body.get("append_to"), "organizer API")
 
 
 @route("GET", r"/api/conversations/(?P<ds>[^/]+)/(?P<cid>[^/]+)")
@@ -554,6 +554,19 @@ def _trace(app, m, q, body):
             "user_message": build_user_message(conv)}
 
 
+@route("GET", r"/api/datasets/(?P<ds>[^/]+)/submission")
+def _submission(app, m, q, body):
+    payload, report = build_submission(app, m["ds"], q.get("team_name"), q.get("kind"), q.get("checklist"))
+    if q.get("download") != "1":
+        return report
+    if report["blockers"]:
+        raise StoreError("; ".join(report["blockers"]))
+    if report["errors"] and q.get("allow_errors") != "1":
+        raise StoreError("В выгрузке есть ошибки. Проверьте список и явно разрешите выгрузку с status=error.")
+    return FileResponse("results.json", "application/json; charset=utf-8",
+                        json.dumps(payload, ensure_ascii=False, indent=2, allow_nan=False).encode("utf-8"))
+
+
 @route("GET", r"/api/datasets/(?P<ds>[^/]+)/export")
 def _export(app, m, q, body):
     """Результаты набора для сверки с эталоном: финальные ответы (после апелляций) и исходные."""
@@ -626,6 +639,8 @@ def make_handler(app: App):
                     body = json.loads(self.rfile.read(n) or b"{}")
                 except json.JSONDecodeError:
                     return self._json(400, {"error": "тело запроса — не JSON"})
+                if not isinstance(body, dict):
+                    return self._json(400, {"error": "тело запроса должно быть объектом JSON"})
             for meth, rx, fn in ROUTES:
                 m = rx.match(url.path)
                 if m and meth == method:

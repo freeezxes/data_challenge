@@ -268,6 +268,47 @@ dialog footer{display:flex;gap:10px;justify-content:flex-end;padding:16px 24px 2
 .steps-demo li::before{content:counter(s);flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--raise);color:var(--ink);font-size:12px;font-weight:700}
 
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:50;padding:12px 18px;border-radius:12px;background:var(--ink);color:#05100a;font-weight:600;box-shadow:0 12px 40px rgba(0,0,0,.5)}
+
+/* Импорт и проверка сдачи: сохраняем оформление рабочих панелей. */
+dialog.transfer-dialog{width:min(820px,calc(100vw - 24px));max-height:90dvh;padding:0}
+.transfer-dialog header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.transfer-dialog header p{margin:6px 0 0;font-size:13px}
+.transfer-dialog .content{display:grid;gap:16px;max-height:65dvh;overflow:auto}
+.transfer-dialog p{margin:0}
+.transfer-dialog footer{flex-wrap:wrap;border-top:1px solid var(--line)}
+.transfer-dialog [hidden]{display:none!important}
+.transfer-tabs{display:flex;gap:8px;flex-wrap:wrap}
+.transfer-tabs [aria-pressed=true]{border-color:var(--green-line);background:var(--panel2);color:var(--green)}
+.import-file{display:grid;gap:12px;padding:20px;border:1px dashed var(--line2);border-radius:12px;background:var(--panel2)}
+.import-file.dragging{border-color:var(--green);background:var(--raise)}
+.import-file input{max-width:100%}
+.import-json{min-height:170px;resize:vertical;font-family:ui-monospace,monospace;font-size:14px;white-space:pre}
+.transfer-destination{display:grid;gap:14px;padding-top:16px;border-top:1px solid var(--line)}
+.transfer-destination>p{font-size:13px}
+.transfer-summary{display:flex;align-items:baseline;gap:8px 18px;flex-wrap:wrap}
+.transfer-summary b{font-size:20px}.transfer-summary span{color:var(--ink2);font-size:13px}
+.transfer-check{display:flex;align-items:flex-start;gap:10px;line-height:1.5;cursor:pointer;padding-block:4px}
+.transfer-check input{width:20px;height:20px;flex:none;margin-top:2px;accent-color:var(--green)}
+.import-records{border-block:1px solid var(--line)}
+.import-records details+details{border-top:1px solid var(--line)}
+.import-records summary{display:flex;align-items:baseline;gap:6px 14px;flex-wrap:wrap;padding:13px 4px;cursor:pointer;list-style-position:inside}
+.import-records summary::before{content:"+";color:var(--muted)}
+.import-records details[open] summary::before{content:"−"}
+.import-records summary>b{overflow-wrap:anywhere}.import-records summary>span{font-size:12px;color:var(--ink2)}
+.import-messages{display:grid;gap:14px;padding:4px 18px 18px}
+.import-messages p{display:grid;gap:4px}.import-messages small{color:var(--muted)}
+.import-messages span{white-space:pre-wrap;overflow-wrap:anywhere;font-family:var(--serif)}
+.submission-errors{max-height:200px;overflow:auto;margin:0;padding-inline-start:22px}
+.submission-errors li{padding:4px}.submission-errors li span{display:block;color:var(--ink2);font-size:13px}
+.transfer-two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:600px){
+  .transfer-dialog .content{padding:16px;max-height:60dvh}
+  .transfer-dialog header,.transfer-dialog footer{padding:16px}
+  .transfer-dialog header h2{font-size:20px}
+  .transfer-two{grid-template-columns:1fr}
+  .transfer-dialog .input{font-size:16px}
+  .transfer-dialog footer .btn{min-height:44px}
+}
 .toast.err{background:var(--red);color:#1a0505}
 
 @media (max-width:1100px){
