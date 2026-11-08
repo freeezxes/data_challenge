@@ -31,7 +31,9 @@ export async function submissionDialog(checklistKey) {
         ${r.blockers.length ? html`<div class="alert"><b>Выгрузка заблокирована</b><ul>${r.blockers.map(x => html`<li>${x}</li>`)}</ul></div>` : html`<p>Сохраните файл в репозитории: <strong>${r.path}</strong></p>`}
         ${r.errors ? html`<div class="alert warn"><b>Диалогов с ошибкой: ${r.errors}</b>Они останутся в файле с status=error, пустыми критериями и score=null.</div>
           <ul class="submission-errors">${r.rows.filter(x => x.error).map(x => html`<li><b>${x.id}</b><span>${x.error}</span></li>`)}</ul>
-          ${!r.blockers.length ? html`<label class="transfer-check"><input type="checkbox" data-errors>Выгрузить также ${r.errors} диалогов с ошибками</label>` : ""}` : html`<p class="ok-c">Все оценки, значения, обоснования и ссылки на реплики проверены.</p>`}
+          ${!r.blockers.length ? html`<label class="transfer-check"><input type="checkbox" data-errors>Выгрузить также ${r.errors} диалогов с ошибками</label>` : ""}` : r.warnings ? "" : html`<p class="ok-c">Все оценки, значения, обоснования и ссылки на реплики проверены.</p>`}
+        ${r.warnings ? html`<div class="alert warn"><b>С замечаниями к цитатам: ${r.warnings}</b>Ответы модели выгружены. Если есть время, переоцените их: фильтр «Нужна проверка» в очереди.</div>
+          <ul class="submission-errors">${r.rows.filter(x => x.warning).map(x => html`<li><b>${x.id}</b><span>${x.warning}</span></li>`)}</ul>` : ""}
         <p class="muted">После скачивания нужны commit и push. Приложение не отправляет результаты организаторам автоматически.</p>`);
       const sync = () => {
         const allowed = !r.blockers.length && (!r.errors || !!d.querySelector("[data-errors]")?.checked);

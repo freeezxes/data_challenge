@@ -84,8 +84,10 @@ def build_submission(app, ds_id, team_name, kind, checklist_key=None):
             reason = "Диалог ещё не оценён."
         elif ev["checklist_key"] != key:
             reason = "Оценка относится к другой версии чек-листа."
-        elif ev["status"] != "ok" or not ev.get("result"):
-            reason = ev.get("error") or ("Доказательства оценки требуют проверки." if ev["status"] == "needs_review" else "Не удалось получить оценку.")
+        elif ev["status"] not in ("ok", "needs_review") or not ev.get("result"):
+            # «Проверить» — замечание к цитате хотя бы в одном прогоне; ответы по голосованию есть,
+            # поэтому они выгружаются с предупреждением, а не теряются как error.
+            reason = ev.get("error") or "Не удалось получить оценку."
         if ev and ev.get("result"):
             served = ev["result"].get("served_models") or [ev["result"].get("model")]
             models.update(m for m in served if isinstance(m, str) and m)
@@ -123,10 +125,17 @@ def build_submission(app, ds_id, team_name, kind, checklist_key=None):
         else:
             results.append({"conversation_id": cid, "status": "ok", "criteria": criteria,
                             "score": {"final_score": round(total, 2), "critical_flag": criteria[-1]["value"]}})
-        check_rows.append({"id": cid, "status": results[-1]["status"], "error": reason})
+        warning = None
+        if reason is None and ev["status"] == "needs_review":
+            issues = [str(i) for i in (ev["result"].get("issues") or []) if not str(i).startswith("совет:")]
+            warning = "Часть цитат не совпала дословно хотя бы в одном прогоне; выгружены ответы модели по голосованию."
+            if issues:
+                warning += " " + "; ".join(issues[:2])
+        check_rows.append({"id": cid, "status": results[-1]["status"], "error": reason, "warning": warning})
     payload = {"schema_version": "1.0", "team_name": team_name,
                "model": {"mode": "external_api", "name": ", ".join(sorted(models)) or "Не определена: нет сохранённых ответов модели"}, "results": results}
     ready = sum(r["status"] == "ok" for r in results)
     return payload, {"dataset": ds_id, "name": datasets[ds_id]["name"], "kind": kind, "checklist": key,
                      "path": f"results/{kind}/results.json", "total": len(records), "ready": ready,
-                     "errors": len(records) - ready, "blockers": blockers, "rows": check_rows, "model": payload["model"]}
+                     "errors": len(records) - ready, "warnings": sum(bool(r["warning"]) for r in check_rows),
+                     "blockers": blockers, "rows": check_rows, "model": payload["model"]}

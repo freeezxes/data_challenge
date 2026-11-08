@@ -134,8 +134,12 @@ def test_submission_includes_errors_and_requires_explicit_acknowledgement(app):
     result = app.store.latest("CONTROL")["control-1"]["result"]
     app.store.add_evaluation("CONTROL", "control-1", key, "needs_review", result)
     payload, report = build_submission(app, "CONTROL", "Команда", "prod")
-    assert report["errors"] == 2 and report["ready"] == 8
+    assert report["errors"] == 1 and report["ready"] == 9 and report["warnings"] == 1
     assert payload["results"][0] == {"conversation_id": "control-0", "status": "error", "criteria": [], "score": None, "error": "API недоступен"}
+    # «Проверить» не теряет оценку: ответы модели уходят в файл, в отчёте — предупреждение
+    assert payload["results"][1]["status"] == "ok" and len(payload["results"][1]["criteria"]) == 8
+    row = next(r for r in report["rows"] if r["id"] == "control-1")
+    assert row["error"] is None and "цитат" in row["warning"]
     params = {"team_name": "Команда", "kind": "prod", "download": "1"}
     with pytest.raises(StoreError, match="явно разрешите"):
         _submission(app, {"ds": "CONTROL"}, params, {})
