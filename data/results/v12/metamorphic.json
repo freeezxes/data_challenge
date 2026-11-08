@@ -1,0 +1,709 @@
+{
+ "model": "claude-opus-5-5",
+ "effort": "high",
+ "votes": 3,
+ "checklist_version": 8,
+ "by_mutation": {
+  "sys-paraphrase": {
+   "pass": 3
+  },
+  "brush-off": {
+   "pass": 3
+  },
+  "no-intro": {
+   "pass": 3
+  },
+  "insult": {
+   "pass": 3
+  },
+  "bypass": {
+   "pass": 3
+  },
+  "no-farewell": {
+   "pass": 3
+  },
+  "client-left": {
+   "pass": 3
+  },
+  "no-identity": {
+   "pass": 3
+  }
+ },
+ "unstable_criteria": {
+  "c06": 1,
+  "c02": 3
+ },
+ "cost_usd": 5.2339,
+ "verdicts": [
+  {
+   "case": "p1-ru-006~sys-paraphrase",
+   "mutation": "sys-paraphrase",
+   "status": "pass",
+   "target": {},
+   "unstable": [],
+   "got": {}
+  },
+  {
+   "case": "p1-ru-006~brush-off",
+   "mutation": "brush-off",
+   "status": "pass",
+   "target": {
+    "c05": true
+   },
+   "unstable": [],
+   "got": {
+    "c05": "no"
+   }
+  },
+  {
+   "case": "p1-ru-006~no-intro",
+   "mutation": "no-intro",
+   "status": "pass",
+   "target": {
+    "c01": true
+   },
+   "unstable": [],
+   "got": {
+    "c01": "no"
+   }
+  },
+  {
+   "case": "p1-ru-006~insult",
+   "mutation": "insult",
+   "status": "pass",
+   "target": {
+    "c08": true,
+    "c05": true
+   },
+   "unstable": [],
+   "got": {
+    "c08": "yes",
+    "c05": "no"
+   }
+  },
+  {
+   "case": "p1-ru-006~bypass",
+   "mutation": "bypass",
+   "status": "pass",
+   "target": {
+    "c08": true
+   },
+   "unstable": [],
+   "got": {
+    "c08": "yes"
+   }
+  },
+  {
+   "case": "p1-ru-006~no-farewell",
+   "mutation": "no-farewell",
+   "status": "pass",
+   "target": {
+    "c07": true
+   },
+   "unstable": [],
+   "got": {
+    "c07": "no"
+   }
+  },
+  {
+   "case": "p1-ru-006~client-left",
+   "mutation": "client-left",
+   "status": "pass",
+   "target": {
+    "c07": true
+   },
+   "unstable": [],
+   "got": {
+    "c07": "na"
+   }
+  },
+  {
+   "case": "p1-ru-006~no-identity",
+   "mutation": "no-identity",
+   "status": "pass",
+   "target": {
+    "c03": true
+   },
+   "unstable": [
+    "c06"
+   ],
+   "got": {
+    "c03": "no"
+   }
+  },
+  {
+   "case": "p1-kz-003~sys-paraphrase",
+   "mutation": "sys-paraphrase",
+   "status": "pass",
+   "target": {},
+   "unstable": [],
+   "got": {}
+  },
+  {
+   "case": "p1-kz-003~brush-off",
+   "mutation": "brush-off",
+   "status": "pass",
+   "target": {
+    "c05": true
+   },
+   "unstable": [
+    "c02"
+   ],
+   "got": {
+    "c05": "no"
+   }
+  },
+  {
+   "case": "p1-kz-003~no-intro",
+   "mutation": "no-intro",
+   "status": "pass",
+   "target": {
+    "c01": true
+   },
+   "unstable": [],
+   "got": {
+    "c01": "no"
+   }
+  },
+  {
+   "case": "p1-kz-003~insult",
+   "mutation": "insult",
+   "status": "pass",
+   "target": {
+    "c08": true,
+    "c05": true
+   },
+   "unstable": [
+    "c02"
+   ],
+   "got": {
+    "c08": "yes",
+    "c05": "no"
+   }
+  },
+  {
+   "case": "p1-kz-003~bypass",
+   "mutation": "bypass",
+   "status": "pass",
+   "target": {
+    "c08": true
+   },
+   "unstable": [
+    "c02"
+   ],
+   "got": {
+    "c08": "yes"
+   }
+  },
+  {
+   "case": "p1-kz-003~no-farewell",
+   "mutation": "no-farewell",
+   "status": "pass",
+   "target": {
+    "c07": true
+   },
+   "unstable": [],
+   "got": {
+    "c07": "no"
+   }
+  },
+  {
+   "case": "p1-kz-003~client-left",
+   "mutation": "client-left",
+   "status": "pass",
+   "target": {
+    "c07": true
+   },
+   "unstable": [],
+   "got": {
+    "c07": "na"
+   }
+  },
+  {
+   "case": "p1-kz-003~no-identity",
+   "mutation": "no-identity",
+   "status": "pass",
+   "target": {
+    "c03": true
+   },
+   "unstable": [],
+   "got": {
+    "c03": "no"
+   }
+  },
+  {
+   "case": "p1-en-006~sys-paraphrase",
+   "mutation": "sys-paraphrase",
+   "status": "pass",
+   "target": {},
+   "unstable": [],
+   "got": {}
+  },
+  {
+   "case": "p1-en-006~brush-off",
+   "mutation": "brush-off",
+   "status": "pass",
+   "target": {
+    "c05": true
+   },
+   "unstable": [],
+   "got": {
+    "c05": "no"
+   }
+  },
+  {
+   "case": "p1-en-006~no-intro",
+   "mutation": "no-intro",
+   "status": "pass",
+   "target": {
+    "c01": true
+   },
+   "unstable": [],
+   "got": {
+    "c01": "no"
+   }
+  },
+  {
+   "case": "p1-en-006~insult",
+   "mutation": "insult",
+   "status": "pass",
+   "target": {
+    "c08": true,
+    "c05": true
+   },
+   "unstable": [],
+   "got": {
+    "c08": "yes",
+    "c05": "no"
+   }
+  },
+  {
+   "case": "p1-en-006~bypass",
+   "mutation": "bypass",
+   "status": "pass",
+   "target": {
+    "c08": true
+   },
+   "unstable": [],
+   "got": {
+    "c08": "yes"
+   }
+  },
+  {
+   "case": "p1-en-006~no-farewell",
+   "mutation": "no-farewell",
+   "status": "pass",
+   "target": {
+    "c07": true
+   },
+   "unstable": [],
+   "got": {
+    "c07": "no"
+   }
+  },
+  {
+   "case": "p1-en-006~client-left",
+   "mutation": "client-left",
+   "status": "pass",
+   "target": {
+    "c07": true
+   },
+   "unstable": [],
+   "got": {
+    "c07": "na"
+   }
+  },
+  {
+   "case": "p1-en-006~no-identity",
+   "mutation": "no-identity",
+   "status": "pass",
+   "target": {
+    "c03": true
+   },
+   "unstable": [],
+   "got": {
+    "c03": "no"
+   }
+  }
+ ],
+ "answers": {
+  "p1-ru-006": {
+   "answers": {
+    "c01": "yes",
+    "c02": "yes",
+    "c03": "yes",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07": "yes",
+    "c08": "no"
+   },
+   "cost": 0.45445,
+   "issues": []
+  },
+  "p1-kz-003": {
+   "answers": {
+    "c01": "yes",
+    "c02": "no",
+    "c03": "yes",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07": "yes",
+    "c08": "no"
+   },
+   "cost": 0.47751,
+   "issues": []
+  },
+  "p1-en-006": {
+   "answers": {
+    "c01": "yes",
+    "c02": "yes",
+    "c03": "yes",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07": "yes",
+    "c08": "no"
+   },
+   "cost": 0.458062,
+   "issues": []
+  },
+  "p1-ru-006~sys-paraphrase": {
+   "answers": {
+    "c01": "yes",
+    "c02": "yes",
+    "c03": "yes",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07": "yes",
+    "c08": "no"
+   },
+   "cost": 0.117485,
+   "issues": []
+  },
+  "p1-ru-006~brush-off": {
+   "answers": {
+    "c01": "yes",
+    "c02": "yes",
+    "c03": "yes",
+    "c04": 20,
+    "c05": "no",
+    "c06": 7,
+    "c07": "yes",
+    "c08": "no"
+   },
+   "cost": 0.127393,
+   "issues": []
+  },
+  "p1-ru-006~no-intro": {
+   "answers": {
+    "c01": "no",
+    "c02": "yes",
+    "c03": "yes",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07": "yes",
+    "c08": "no"
+   },
+   "cost": 0.113721,
+   "issues": []
+  },
+  "p1-ru-006~insult": {
+   "answers": {
+    "c01": "yes",
+    "c02": "yes",
+    "c03": "yes",
+    "c04": 20,
+    "c05": "no",
+    "c06": 7,
+    "c07": "yes",
+    "c08": "yes"
+   },
+   "cost": 0.116461,
+   "issues": []
+  },
+  "p1-ru-006~bypass": {
+   "answers": {
+    "c01": "yes",
+    "c02": "yes",
+    "c03": "yes",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 7,
+    "c07": "yes",
+    "c08": "yes"
+   },
+   "cost": 0.119557,
+   "issues": []
+  },
+  "p1-ru-006~no-farewell": {
+   "answers": {
+    "c01": "yes",
+    "c02": "yes",
+    "c03": "yes",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07": "no",
+    "c08": "no"
+   },
+   "cost": 0.222375,
+   "issues": []
+  },
+  "p1-ru-006~client-left": {
+   "answers": {
+    "c01": "yes",
+    "c02": "yes",
+    "c03": "yes",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07": "na",
+    "c08": "no"
+   },
+   "cost": 0.126445,
+   "issues": []
+  },
+  "p1-ru-006~no-identity": {
+   "answers": {
+    "c01": "yes",
+    "c02": "yes",
+    "c03": "no",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 7,
+    "c07": "yes",
+    "c08": "no"
+   },
+   "cost": 0.12840100000000002,
+   "issues": []
+  },
+  "p1-kz-003~sys-paraphrase": {
+   "answers": {
+    "c01": "yes",
+    "c02": "no",
+    "c03": "yes",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07": "yes",
+    "c08": "no"
+   },
+   "cost": 0.231795,
+   "issues": []
+  },
+  "p1-kz-003~brush-off": {
+   "answers": {
+    "c01": "yes",
+    "c02": "yes",
+    "c03": "yes",
+    "c04": 20,
+    "c05": "no",
+    "c06": 10,
+    "c07": "yes",
+    "c08": "no"
+   },
+   "cost": 0.311738,
+   "issues": []
+  },
+  "p1-kz-003~no-intro": {
+   "answers": {
+    "c01": "no",
+    "c02": "no",
+    "c03": "yes",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07": "yes",
+    "c08": "no"
+   },
+   "cost": 0.135597,
+   "issues": []
+  },
+  "p1-kz-003~insult": {
+   "answers": {
+    "c01": "yes",
+    "c02": "yes",
+    "c03": "yes",
+    "c04": 20,
+    "c05": "no",
+    "c06": 7,
+    "c07": "yes",
+    "c08": "yes"
+   },
+   "cost": 0.246375,
+   "issues": []
+  },
+  "p1-kz-003~bypass": {
+   "answers": {
+    "c01": "yes",
+    "c02": "yes",
+    "c03": "yes",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 7,
+    "c07": "yes",
+    "c08": "yes"
+   },
+   "cost": 0.24727500000000002,
+   "issues": []
+  },
+  "p1-kz-003~no-farewell": {
+   "answers": {
+    "c01": "yes",
+    "c02": "no",
+    "c03": "yes",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07": "no",
+    "c08": "no"
+   },
+   "cost": 0.232795,
+   "issues": []
+  },
+  "p1-kz-003~client-left": {
+   "answers": {
+    "c01": "yes",
+    "c02": "no",
+    "c03": "yes",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07": "na",
+    "c08": "no"
+   },
+   "cost": 0.141817,
+   "issues": []
+  },
+  "p1-kz-003~no-identity": {
+   "answers": {
+    "c01": "yes",
+    "c02": "no",
+    "c03": "no",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07": "yes",
+    "c08": "no"
+   },
+   "cost": 0.150225,
+   "issues": []
+  },
+  "p1-en-006~sys-paraphrase": {
+   "answers": {
+    "c01": "yes",
+    "c02": "yes",
+    "c03": "yes",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07": "yes",
+    "c08": "no"
+   },
+   "cost": 0.120521,
+   "issues": []
+  },
+  "p1-en-006~brush-off": {
+   "answers": {
+    "c01": "yes",
+    "c02": "yes",
+    "c03": "yes",
+    "c04": 20,
+    "c05": "no",
+    "c06": 7,
+    "c07": "yes",
+    "c08": "no"
+   },
+   "cost": 0.12953699999999999,
+   "issues": []
+  },
+  "p1-en-006~no-intro": {
+   "answers": {
+    "c01": "no",
+    "c02": "yes",
+    "c03": "yes",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07": "yes",
+    "c08": "no"
+   },
+   "cost": 0.116177,
+   "issues": []
+  },
+  "p1-en-006~insult": {
+   "answers": {
+    "c01": "yes",
+    "c02": "yes",
+    "c03": "yes",
+    "c04": 20,
+    "c05": "no",
+    "c06": 7,
+    "c07": "yes",
+    "c08": "yes"
+   },
+   "cost": 0.117133,
+   "issues": []
+  },
+  "p1-en-006~bypass": {
+   "answers": {
+    "c01": "yes",
+    "c02": "yes",
+    "c03": "yes",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07": "yes",
+    "c08": "yes"
+   },
+   "cost": 0.218695,
+   "issues": []
+  },
+  "p1-en-006~no-farewell": {
+   "answers": {
+    "c01": "yes",
+    "c02": "yes",
+    "c03": "yes",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07": "no",
+    "c08": "no"
+   },
+   "cost": 0.115013,
+   "issues": []
+  },
+  "p1-en-006~client-left": {
+   "answers": {
+    "c01": "yes",
+    "c02": "yes",
+    "c03": "yes",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07": "na",
+    "c08": "no"
+   },
+   "cost": 0.118701,
+   "issues": []
+  },
+  "p1-en-006~no-identity": {
+   "answers": {
+    "c01": "yes",
+    "c02": "yes",
+    "c03": "no",
+    "c04": 20,
+    "c05": "yes",
+    "c06": 10,
+    "c07": "yes",
+    "c08": "no"
+   },
+   "cost": 0.138641,
+   "issues": []
+  }
+ }
+}

@@ -1,0 +1,1241 @@
+{
+  "reference": "team_draft_not_official_ground_truth",
+  "n_requested": 65,
+  "n_completed": 65,
+  "n_valid": 65,
+  "n_needs_review": 0,
+  "n_errors": 0,
+  "n_pending": 0,
+  "valid_coverage": 1.0,
+  "n_api_responses": 231,
+  "known_cost_usd": 10.952673,
+  "cost_complete": true,
+  "cost_note": "По полученным usage; транспортные ошибки могут иметь неизвестную стоимость.",
+  "comparison": {
+    "n_conversations": 65,
+    "criteria": {
+      "c01": {
+        "accuracy": 1.0,
+        "n": 65,
+        "accuracy_unambiguous": 1.0,
+        "confusion": {
+          "no→no": 5,
+          "yes→yes": 60
+        },
+        "misses": []
+      },
+      "c02": {
+        "accuracy": 0.8923,
+        "n": 65,
+        "accuracy_unambiguous": 0.9167,
+        "confusion": {
+          "na→na": 39,
+          "na→no": 3,
+          "no→no": 8,
+          "yes→na": 1,
+          "yes→no": 3,
+          "yes→yes": 11
+        },
+        "misses": [
+          {
+            "conversation_id": "p1-ru-003",
+            "gold": "yes",
+            "pred": "no",
+            "ambiguous": false
+          },
+          {
+            "conversation_id": "p1-ru-007",
+            "gold": "na",
+            "pred": "no",
+            "ambiguous": false
+          },
+          {
+            "conversation_id": "p1-ru-017",
+            "gold": "yes",
+            "pred": "no",
+            "ambiguous": true
+          },
+          {
+            "conversation_id": "p1-ru-029",
+            "gold": "na",
+            "pred": "no",
+            "ambiguous": false
+          },
+          {
+            "conversation_id": "p1-kz-003",
+            "gold": "yes",
+            "pred": "no",
+            "ambiguous": false
+          },
+          {
+            "conversation_id": "p1-kz-015",
+            "gold": "na",
+            "pred": "no",
+            "ambiguous": true
+          },
+          {
+            "conversation_id": "p4-ru-002",
+            "gold": "yes",
+            "pred": "na",
+            "ambiguous": false
+          }
+        ]
+      },
+      "c03": {
+        "accuracy": 1.0,
+        "n": 65,
+        "accuracy_unambiguous": 1.0,
+        "confusion": {
+          "na→na": 54,
+          "no→no": 4,
+          "yes→yes": 7
+        },
+        "misses": []
+      },
+      "c04": {
+        "accuracy": 0.8769,
+        "n": 65,
+        "accuracy_unambiguous": 0.9298,
+        "confusion": {
+          "0→0": 3,
+          "10→10": 3,
+          "10→20": 2,
+          "10→5": 3,
+          "15→20": 1,
+          "20→15": 2,
+          "20→20": 50,
+          "na→na": 1
+        },
+        "misses": [
+          {
+            "conversation_id": "p1-ru-005",
+            "gold": 10,
+            "pred": 20,
+            "ambiguous": false
+          },
+          {
+            "conversation_id": "p1-ru-009",
+            "gold": 10,
+            "pred": 5,
+            "ambiguous": true
+          },
+          {
+            "conversation_id": "p1-ru-024",
+            "gold": 20,
+            "pred": 15,
+            "ambiguous": true
+          },
+          {
+            "conversation_id": "p1-kz-015",
+            "gold": 10,
+            "pred": 5,
+            "ambiguous": true
+          },
+          {
+            "conversation_id": "p1-en-008",
+            "gold": 20,
+            "pred": 15,
+            "ambiguous": false
+          },
+          {
+            "conversation_id": "p4-ru-002",
+            "gold": 15,
+            "pred": 20,
+            "ambiguous": false
+          },
+          {
+            "conversation_id": "p1-en-014",
+            "gold": 10,
+            "pred": 5,
+            "ambiguous": true
+          },
+          {
+            "conversation_id": "p4-ru-004",
+            "gold": 10,
+            "pred": 20,
+            "ambiguous": false
+          }
+        ]
+      },
+      "c05": {
+        "accuracy": 0.9538,
+        "n": 65,
+        "accuracy_unambiguous": 0.9661,
+        "confusion": {
+          "no→no": 12,
+          "no→yes": 1,
+          "yes→no": 2,
+          "yes→yes": 50
+        },
+        "misses": [
+          {
+            "conversation_id": "p1-kz-008",
+            "gold": "yes",
+            "pred": "no",
+            "ambiguous": true
+          },
+          {
+            "conversation_id": "p1-en-015",
+            "gold": "no",
+            "pred": "yes",
+            "ambiguous": false
+          },
+          {
+            "conversation_id": "p4-ru-001",
+            "gold": "yes",
+            "pred": "no",
+            "ambiguous": false
+          }
+        ]
+      },
+      "c06": {
+        "accuracy": 0.8615,
+        "n": 65,
+        "accuracy_unambiguous": 0.8833,
+        "confusion": {
+          "0→0": 1,
+          "10→10": 41,
+          "10→7": 2,
+          "4→4": 8,
+          "7→10": 3,
+          "7→4": 4,
+          "7→7": 6
+        },
+        "misses": [
+          {
+            "conversation_id": "p1-ru-003",
+            "gold": 7,
+            "pred": 4,
+            "ambiguous": true
+          },
+          {
+            "conversation_id": "p1-ru-014",
+            "gold": 7,
+            "pred": 10,
+            "ambiguous": false
+          },
+          {
+            "conversation_id": "p1-ru-022",
+            "gold": 7,
+            "pred": 4,
+            "ambiguous": false
+          },
+          {
+            "conversation_id": "p1-kz-008",
+            "gold": 7,
+            "pred": 10,
+            "ambiguous": false
+          },
+          {
+            "conversation_id": "p1-kz-013",
+            "gold": 7,
+            "pred": 10,
+            "ambiguous": false
+          },
+          {
+            "conversation_id": "p1-kz-015",
+            "gold": 7,
+            "pred": 4,
+            "ambiguous": false
+          },
+          {
+            "conversation_id": "p1-en-008",
+            "gold": 10,
+            "pred": 7,
+            "ambiguous": true
+          },
+          {
+            "conversation_id": "p4-ru-005",
+            "gold": 10,
+            "pred": 7,
+            "ambiguous": false
+          },
+          {
+            "conversation_id": "p4-ru-001",
+            "gold": 7,
+            "pred": 4,
+            "ambiguous": false
+          }
+        ]
+      },
+      "c07": {
+        "accuracy": 0.9846,
+        "n": 65,
+        "accuracy_unambiguous": 0.9836,
+        "confusion": {
+          "na→na": 7,
+          "na→no": 1,
+          "no→no": 46,
+          "yes→yes": 11
+        },
+        "misses": [
+          {
+            "conversation_id": "p4-ru-005",
+            "gold": "na",
+            "pred": "no",
+            "ambiguous": false
+          }
+        ]
+      },
+      "c08": {
+        "accuracy": 1.0,
+        "n": 65,
+        "accuracy_unambiguous": 1.0,
+        "confusion": {
+          "no→no": 57,
+          "yes→yes": 8
+        },
+        "misses": []
+      }
+    },
+    "macro_accuracy": 0.9461,
+    "all_criteria_exact": 45,
+    "total_mae": 3.79,
+    "total_within_5": 47,
+    "total_mae_by_language": {
+      "EN": 2.62,
+      "KZ": 3.39,
+      "RU": 4.46
+    }
+  },
+  "slices": {
+    "language": {
+      "EN": {
+        "n_requested": 15,
+        "n_valid": 15,
+        "comparison": {
+          "n_conversations": 15,
+          "criteria": {
+            "c01": {
+              "accuracy": 1.0,
+              "n": 15,
+              "accuracy_unambiguous": 1.0,
+              "confusion": {
+                "no→no": 1,
+                "yes→yes": 14
+              },
+              "misses": []
+            },
+            "c02": {
+              "accuracy": 1.0,
+              "n": 15,
+              "accuracy_unambiguous": 1.0,
+              "confusion": {
+                "na→na": 13,
+                "no→no": 1,
+                "yes→yes": 1
+              },
+              "misses": []
+            },
+            "c03": {
+              "accuracy": 1.0,
+              "n": 15,
+              "accuracy_unambiguous": 1.0,
+              "confusion": {
+                "na→na": 13,
+                "no→no": 1,
+                "yes→yes": 1
+              },
+              "misses": []
+            },
+            "c04": {
+              "accuracy": 0.8667,
+              "n": 15,
+              "accuracy_unambiguous": 0.9231,
+              "confusion": {
+                "10→10": 1,
+                "10→5": 1,
+                "20→15": 1,
+                "20→20": 12
+              },
+              "misses": [
+                {
+                  "conversation_id": "p1-en-008",
+                  "gold": 20,
+                  "pred": 15,
+                  "ambiguous": false
+                },
+                {
+                  "conversation_id": "p1-en-014",
+                  "gold": 10,
+                  "pred": 5,
+                  "ambiguous": true
+                }
+              ]
+            },
+            "c05": {
+              "accuracy": 0.9333,
+              "n": 15,
+              "accuracy_unambiguous": 0.9333,
+              "confusion": {
+                "no→no": 3,
+                "no→yes": 1,
+                "yes→yes": 11
+              },
+              "misses": [
+                {
+                  "conversation_id": "p1-en-015",
+                  "gold": "no",
+                  "pred": "yes",
+                  "ambiguous": false
+                }
+              ]
+            },
+            "c06": {
+              "accuracy": 0.9333,
+              "n": 15,
+              "accuracy_unambiguous": 1.0,
+              "confusion": {
+                "10→10": 10,
+                "10→7": 1,
+                "4→4": 1,
+                "7→7": 3
+              },
+              "misses": [
+                {
+                  "conversation_id": "p1-en-008",
+                  "gold": 10,
+                  "pred": 7,
+                  "ambiguous": true
+                }
+              ]
+            },
+            "c07": {
+              "accuracy": 1.0,
+              "n": 15,
+              "accuracy_unambiguous": 1.0,
+              "confusion": {
+                "na→na": 1,
+                "no→no": 13,
+                "yes→yes": 1
+              },
+              "misses": []
+            },
+            "c08": {
+              "accuracy": 1.0,
+              "n": 15,
+              "accuracy_unambiguous": 1.0,
+              "confusion": {
+                "no→no": 13,
+                "yes→yes": 2
+              },
+              "misses": []
+            }
+          },
+          "macro_accuracy": 0.9667,
+          "all_criteria_exact": 12,
+          "total_mae": 2.62,
+          "total_within_5": 12,
+          "total_mae_by_language": {
+            "EN": 2.62
+          }
+        }
+      },
+      "KZ": {
+        "n_requested": 15,
+        "n_valid": 15,
+        "comparison": {
+          "n_conversations": 15,
+          "criteria": {
+            "c01": {
+              "accuracy": 1.0,
+              "n": 15,
+              "accuracy_unambiguous": 1.0,
+              "confusion": {
+                "no→no": 1,
+                "yes→yes": 14
+              },
+              "misses": []
+            },
+            "c02": {
+              "accuracy": 0.8667,
+              "n": 15,
+              "accuracy_unambiguous": 0.9286,
+              "confusion": {
+                "na→na": 11,
+                "na→no": 1,
+                "no→no": 1,
+                "yes→no": 1,
+                "yes→yes": 1
+              },
+              "misses": [
+                {
+                  "conversation_id": "p1-kz-003",
+                  "gold": "yes",
+                  "pred": "no",
+                  "ambiguous": false
+                },
+                {
+                  "conversation_id": "p1-kz-015",
+                  "gold": "na",
+                  "pred": "no",
+                  "ambiguous": true
+                }
+              ]
+            },
+            "c03": {
+              "accuracy": 1.0,
+              "n": 15,
+              "accuracy_unambiguous": 1.0,
+              "confusion": {
+                "na→na": 13,
+                "no→no": 1,
+                "yes→yes": 1
+              },
+              "misses": []
+            },
+            "c04": {
+              "accuracy": 0.9333,
+              "n": 15,
+              "accuracy_unambiguous": 1.0,
+              "confusion": {
+                "10→5": 1,
+                "20→20": 14
+              },
+              "misses": [
+                {
+                  "conversation_id": "p1-kz-015",
+                  "gold": 10,
+                  "pred": 5,
+                  "ambiguous": true
+                }
+              ]
+            },
+            "c05": {
+              "accuracy": 0.9333,
+              "n": 15,
+              "accuracy_unambiguous": 1.0,
+              "confusion": {
+                "no→no": 1,
+                "yes→no": 1,
+                "yes→yes": 13
+              },
+              "misses": [
+                {
+                  "conversation_id": "p1-kz-008",
+                  "gold": "yes",
+                  "pred": "no",
+                  "ambiguous": true
+                }
+              ]
+            },
+            "c06": {
+              "accuracy": 0.8,
+              "n": 15,
+              "accuracy_unambiguous": 0.8,
+              "confusion": {
+                "10→10": 11,
+                "4→4": 1,
+                "7→10": 2,
+                "7→4": 1
+              },
+              "misses": [
+                {
+                  "conversation_id": "p1-kz-008",
+                  "gold": 7,
+                  "pred": 10,
+                  "ambiguous": false
+                },
+                {
+                  "conversation_id": "p1-kz-013",
+                  "gold": 7,
+                  "pred": 10,
+                  "ambiguous": false
+                },
+                {
+                  "conversation_id": "p1-kz-015",
+                  "gold": 7,
+                  "pred": 4,
+                  "ambiguous": false
+                }
+              ]
+            },
+            "c07": {
+              "accuracy": 1.0,
+              "n": 15,
+              "accuracy_unambiguous": 1.0,
+              "confusion": {
+                "na→na": 1,
+                "no→no": 11,
+                "yes→yes": 3
+              },
+              "misses": []
+            },
+            "c08": {
+              "accuracy": 1.0,
+              "n": 15,
+              "accuracy_unambiguous": 1.0,
+              "confusion": {
+                "no→no": 13,
+                "yes→yes": 2
+              },
+              "misses": []
+            }
+          },
+          "macro_accuracy": 0.9417,
+          "all_criteria_exact": 11,
+          "total_mae": 3.39,
+          "total_within_5": 11,
+          "total_mae_by_language": {
+            "KZ": 3.39
+          }
+        }
+      },
+      "RU": {
+        "n_requested": 35,
+        "n_valid": 35,
+        "comparison": {
+          "n_conversations": 35,
+          "criteria": {
+            "c01": {
+              "accuracy": 1.0,
+              "n": 35,
+              "accuracy_unambiguous": 1.0,
+              "confusion": {
+                "no→no": 3,
+                "yes→yes": 32
+              },
+              "misses": []
+            },
+            "c02": {
+              "accuracy": 0.8571,
+              "n": 35,
+              "accuracy_unambiguous": 0.875,
+              "confusion": {
+                "na→na": 15,
+                "na→no": 2,
+                "no→no": 6,
+                "yes→na": 1,
+                "yes→no": 2,
+                "yes→yes": 9
+              },
+              "misses": [
+                {
+                  "conversation_id": "p1-ru-003",
+                  "gold": "yes",
+                  "pred": "no",
+                  "ambiguous": false
+                },
+                {
+                  "conversation_id": "p1-ru-007",
+                  "gold": "na",
+                  "pred": "no",
+                  "ambiguous": false
+                },
+                {
+                  "conversation_id": "p1-ru-017",
+                  "gold": "yes",
+                  "pred": "no",
+                  "ambiguous": true
+                },
+                {
+                  "conversation_id": "p1-ru-029",
+                  "gold": "na",
+                  "pred": "no",
+                  "ambiguous": false
+                },
+                {
+                  "conversation_id": "p4-ru-002",
+                  "gold": "yes",
+                  "pred": "na",
+                  "ambiguous": false
+                }
+              ]
+            },
+            "c03": {
+              "accuracy": 1.0,
+              "n": 35,
+              "accuracy_unambiguous": 1.0,
+              "confusion": {
+                "na→na": 28,
+                "no→no": 2,
+                "yes→yes": 5
+              },
+              "misses": []
+            },
+            "c04": {
+              "accuracy": 0.8571,
+              "n": 35,
+              "accuracy_unambiguous": 0.9032,
+              "confusion": {
+                "0→0": 3,
+                "10→10": 2,
+                "10→20": 2,
+                "10→5": 1,
+                "15→20": 1,
+                "20→15": 1,
+                "20→20": 24,
+                "na→na": 1
+              },
+              "misses": [
+                {
+                  "conversation_id": "p1-ru-005",
+                  "gold": 10,
+                  "pred": 20,
+                  "ambiguous": false
+                },
+                {
+                  "conversation_id": "p1-ru-009",
+                  "gold": 10,
+                  "pred": 5,
+                  "ambiguous": true
+                },
+                {
+                  "conversation_id": "p1-ru-024",
+                  "gold": 20,
+                  "pred": 15,
+                  "ambiguous": true
+                },
+                {
+                  "conversation_id": "p4-ru-002",
+                  "gold": 15,
+                  "pred": 20,
+                  "ambiguous": false
+                },
+                {
+                  "conversation_id": "p4-ru-004",
+                  "gold": 10,
+                  "pred": 20,
+                  "ambiguous": false
+                }
+              ]
+            },
+            "c05": {
+              "accuracy": 0.9714,
+              "n": 35,
+              "accuracy_unambiguous": 0.9688,
+              "confusion": {
+                "no→no": 8,
+                "yes→no": 1,
+                "yes→yes": 26
+              },
+              "misses": [
+                {
+                  "conversation_id": "p4-ru-001",
+                  "gold": "yes",
+                  "pred": "no",
+                  "ambiguous": false
+                }
+              ]
+            },
+            "c06": {
+              "accuracy": 0.8571,
+              "n": 35,
+              "accuracy_unambiguous": 0.871,
+              "confusion": {
+                "0→0": 1,
+                "10→10": 20,
+                "10→7": 1,
+                "4→4": 6,
+                "7→10": 1,
+                "7→4": 3,
+                "7→7": 3
+              },
+              "misses": [
+                {
+                  "conversation_id": "p1-ru-003",
+                  "gold": 7,
+                  "pred": 4,
+                  "ambiguous": true
+                },
+                {
+                  "conversation_id": "p1-ru-014",
+                  "gold": 7,
+                  "pred": 10,
+                  "ambiguous": false
+                },
+                {
+                  "conversation_id": "p1-ru-022",
+                  "gold": 7,
+                  "pred": 4,
+                  "ambiguous": false
+                },
+                {
+                  "conversation_id": "p4-ru-005",
+                  "gold": 10,
+                  "pred": 7,
+                  "ambiguous": false
+                },
+                {
+                  "conversation_id": "p4-ru-001",
+                  "gold": 7,
+                  "pred": 4,
+                  "ambiguous": false
+                }
+              ]
+            },
+            "c07": {
+              "accuracy": 0.9714,
+              "n": 35,
+              "accuracy_unambiguous": 0.9677,
+              "confusion": {
+                "na→na": 5,
+                "na→no": 1,
+                "no→no": 22,
+                "yes→yes": 7
+              },
+              "misses": [
+                {
+                  "conversation_id": "p4-ru-005",
+                  "gold": "na",
+                  "pred": "no",
+                  "ambiguous": false
+                }
+              ]
+            },
+            "c08": {
+              "accuracy": 1.0,
+              "n": 35,
+              "accuracy_unambiguous": 1.0,
+              "confusion": {
+                "no→no": 31,
+                "yes→yes": 4
+              },
+              "misses": []
+            }
+          },
+          "macro_accuracy": 0.9393,
+          "all_criteria_exact": 22,
+          "total_mae": 4.46,
+          "total_within_5": 24,
+          "total_mae_by_language": {
+            "RU": 4.46
+          }
+        }
+      }
+    },
+    "channel": {
+      "agent chat": {
+        "n_requested": 60,
+        "n_valid": 60,
+        "comparison": {
+          "n_conversations": 60,
+          "criteria": {
+            "c01": {
+              "accuracy": 1.0,
+              "n": 60,
+              "accuracy_unambiguous": 1.0,
+              "confusion": {
+                "no→no": 3,
+                "yes→yes": 57
+              },
+              "misses": []
+            },
+            "c02": {
+              "accuracy": 0.9,
+              "n": 60,
+              "accuracy_unambiguous": 0.9273,
+              "confusion": {
+                "na→na": 38,
+                "na→no": 3,
+                "no→no": 7,
+                "yes→no": 3,
+                "yes→yes": 9
+              },
+              "misses": [
+                {
+                  "conversation_id": "p1-ru-003",
+                  "gold": "yes",
+                  "pred": "no",
+                  "ambiguous": false
+                },
+                {
+                  "conversation_id": "p1-ru-007",
+                  "gold": "na",
+                  "pred": "no",
+                  "ambiguous": false
+                },
+                {
+                  "conversation_id": "p1-ru-017",
+                  "gold": "yes",
+                  "pred": "no",
+                  "ambiguous": true
+                },
+                {
+                  "conversation_id": "p1-ru-029",
+                  "gold": "na",
+                  "pred": "no",
+                  "ambiguous": false
+                },
+                {
+                  "conversation_id": "p1-kz-003",
+                  "gold": "yes",
+                  "pred": "no",
+                  "ambiguous": false
+                },
+                {
+                  "conversation_id": "p1-kz-015",
+                  "gold": "na",
+                  "pred": "no",
+                  "ambiguous": true
+                }
+              ]
+            },
+            "c03": {
+              "accuracy": 1.0,
+              "n": 60,
+              "accuracy_unambiguous": 1.0,
+              "confusion": {
+                "na→na": 53,
+                "no→no": 3,
+                "yes→yes": 4
+              },
+              "misses": []
+            },
+            "c04": {
+              "accuracy": 0.9,
+              "n": 60,
+              "accuracy_unambiguous": 0.9615,
+              "confusion": {
+                "0→0": 3,
+                "10→10": 3,
+                "10→20": 1,
+                "10→5": 3,
+                "20→15": 2,
+                "20→20": 47,
+                "na→na": 1
+              },
+              "misses": [
+                {
+                  "conversation_id": "p1-ru-005",
+                  "gold": 10,
+                  "pred": 20,
+                  "ambiguous": false
+                },
+                {
+                  "conversation_id": "p1-ru-009",
+                  "gold": 10,
+                  "pred": 5,
+                  "ambiguous": true
+                },
+                {
+                  "conversation_id": "p1-ru-024",
+                  "gold": 20,
+                  "pred": 15,
+                  "ambiguous": true
+                },
+                {
+                  "conversation_id": "p1-kz-015",
+                  "gold": 10,
+                  "pred": 5,
+                  "ambiguous": true
+                },
+                {
+                  "conversation_id": "p1-en-008",
+                  "gold": 20,
+                  "pred": 15,
+                  "ambiguous": false
+                },
+                {
+                  "conversation_id": "p1-en-014",
+                  "gold": 10,
+                  "pred": 5,
+                  "ambiguous": true
+                }
+              ]
+            },
+            "c05": {
+              "accuracy": 0.9667,
+              "n": 60,
+              "accuracy_unambiguous": 0.9818,
+              "confusion": {
+                "no→no": 12,
+                "no→yes": 1,
+                "yes→no": 1,
+                "yes→yes": 46
+              },
+              "misses": [
+                {
+                  "conversation_id": "p1-kz-008",
+                  "gold": "yes",
+                  "pred": "no",
+                  "ambiguous": true
+                },
+                {
+                  "conversation_id": "p1-en-015",
+                  "gold": "no",
+                  "pred": "yes",
+                  "ambiguous": false
+                }
+              ]
+            },
+            "c06": {
+              "accuracy": 0.8833,
+              "n": 60,
+              "accuracy_unambiguous": 0.9107,
+              "confusion": {
+                "0→0": 1,
+                "10→10": 40,
+                "10→7": 1,
+                "4→4": 6,
+                "7→10": 3,
+                "7→4": 3,
+                "7→7": 6
+              },
+              "misses": [
+                {
+                  "conversation_id": "p1-ru-003",
+                  "gold": 7,
+                  "pred": 4,
+                  "ambiguous": true
+                },
+                {
+                  "conversation_id": "p1-ru-014",
+                  "gold": 7,
+                  "pred": 10,
+                  "ambiguous": false
+                },
+                {
+                  "conversation_id": "p1-ru-022",
+                  "gold": 7,
+                  "pred": 4,
+                  "ambiguous": false
+                },
+                {
+                  "conversation_id": "p1-kz-008",
+                  "gold": 7,
+                  "pred": 10,
+                  "ambiguous": false
+                },
+                {
+                  "conversation_id": "p1-kz-013",
+                  "gold": 7,
+                  "pred": 10,
+                  "ambiguous": false
+                },
+                {
+                  "conversation_id": "p1-kz-015",
+                  "gold": 7,
+                  "pred": 4,
+                  "ambiguous": false
+                },
+                {
+                  "conversation_id": "p1-en-008",
+                  "gold": 10,
+                  "pred": 7,
+                  "ambiguous": true
+                }
+              ]
+            },
+            "c07": {
+              "accuracy": 1.0,
+              "n": 60,
+              "accuracy_unambiguous": 1.0,
+              "confusion": {
+                "na→na": 4,
+                "no→no": 45,
+                "yes→yes": 11
+              },
+              "misses": []
+            },
+            "c08": {
+              "accuracy": 1.0,
+              "n": 60,
+              "accuracy_unambiguous": 1.0,
+              "confusion": {
+                "no→no": 52,
+                "yes→yes": 8
+              },
+              "misses": []
+            }
+          },
+          "macro_accuracy": 0.9563,
+          "all_criteria_exact": 44,
+          "total_mae": 3.22,
+          "total_within_5": 45,
+          "total_mae_by_language": {
+            "EN": 2.62,
+            "KZ": 3.39,
+            "RU": 3.43
+          }
+        }
+      },
+      "voice call": {
+        "n_requested": 5,
+        "n_valid": 5,
+        "comparison": {
+          "n_conversations": 5,
+          "criteria": {
+            "c01": {
+              "accuracy": 1.0,
+              "n": 5,
+              "accuracy_unambiguous": 1.0,
+              "confusion": {
+                "no→no": 2,
+                "yes→yes": 3
+              },
+              "misses": []
+            },
+            "c02": {
+              "accuracy": 0.8,
+              "n": 5,
+              "accuracy_unambiguous": 0.8,
+              "confusion": {
+                "na→na": 1,
+                "no→no": 1,
+                "yes→na": 1,
+                "yes→yes": 2
+              },
+              "misses": [
+                {
+                  "conversation_id": "p4-ru-002",
+                  "gold": "yes",
+                  "pred": "na",
+                  "ambiguous": false
+                }
+              ]
+            },
+            "c03": {
+              "accuracy": 1.0,
+              "n": 5,
+              "accuracy_unambiguous": 1.0,
+              "confusion": {
+                "na→na": 1,
+                "no→no": 1,
+                "yes→yes": 3
+              },
+              "misses": []
+            },
+            "c04": {
+              "accuracy": 0.6,
+              "n": 5,
+              "accuracy_unambiguous": 0.6,
+              "confusion": {
+                "10→20": 1,
+                "15→20": 1,
+                "20→20": 3
+              },
+              "misses": [
+                {
+                  "conversation_id": "p4-ru-002",
+                  "gold": 15,
+                  "pred": 20,
+                  "ambiguous": false
+                },
+                {
+                  "conversation_id": "p4-ru-004",
+                  "gold": 10,
+                  "pred": 20,
+                  "ambiguous": false
+                }
+              ]
+            },
+            "c05": {
+              "accuracy": 0.8,
+              "n": 5,
+              "accuracy_unambiguous": 0.75,
+              "confusion": {
+                "yes→no": 1,
+                "yes→yes": 4
+              },
+              "misses": [
+                {
+                  "conversation_id": "p4-ru-001",
+                  "gold": "yes",
+                  "pred": "no",
+                  "ambiguous": false
+                }
+              ]
+            },
+            "c06": {
+              "accuracy": 0.6,
+              "n": 5,
+              "accuracy_unambiguous": 0.5,
+              "confusion": {
+                "10→10": 1,
+                "10→7": 1,
+                "4→4": 2,
+                "7→4": 1
+              },
+              "misses": [
+                {
+                  "conversation_id": "p4-ru-005",
+                  "gold": 10,
+                  "pred": 7,
+                  "ambiguous": false
+                },
+                {
+                  "conversation_id": "p4-ru-001",
+                  "gold": 7,
+                  "pred": 4,
+                  "ambiguous": false
+                }
+              ]
+            },
+            "c07": {
+              "accuracy": 0.8,
+              "n": 5,
+              "accuracy_unambiguous": 0.5,
+              "confusion": {
+                "na→na": 3,
+                "na→no": 1,
+                "no→no": 1
+              },
+              "misses": [
+                {
+                  "conversation_id": "p4-ru-005",
+                  "gold": "na",
+                  "pred": "no",
+                  "ambiguous": false
+                }
+              ]
+            },
+            "c08": {
+              "accuracy": 1.0,
+              "n": 5,
+              "accuracy_unambiguous": 1.0,
+              "confusion": {
+                "no→no": 5
+              },
+              "misses": []
+            }
+          },
+          "macro_accuracy": 0.825,
+          "all_criteria_exact": 1,
+          "total_mae": 10.66,
+          "total_within_5": 2,
+          "total_mae_by_language": {
+            "RU": 10.66
+          }
+        }
+      }
+    }
+  },
+  "detection": {
+    "c02:na": {
+      "tp": 39,
+      "fp": 1,
+      "fn": 3,
+      "precision": 0.975,
+      "recall": 0.9285714285714286
+    },
+    "c03:na": {
+      "tp": 54,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "c04:na": {
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0
+    },
+    "c07:na": {
+      "tp": 7,
+      "fp": 0,
+      "fn": 1,
+      "precision": 1.0,
+      "recall": 0.875
+    },
+    "c08:yes": {
+      "tp": 8,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0
+    }
+  }
+}
