@@ -42,6 +42,21 @@ button,input,select,textarea{font:inherit;color:inherit}
 .tab .count{margin-left:6px;padding:1px 6px;border-radius:10px;background:var(--amber-soft);color:var(--amber);font-size:12px;font-weight:600}
 .role{margin-left:auto;display:flex;padding:4px;border-radius:10px;background:var(--panel2);border:1px solid var(--line)}
 .top-controls{display:flex;align-items:center;gap:10px;margin-left:auto;flex-shrink:0}
+.account-label{color:var(--ink2);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.auth-main{width:min(100%,480px);margin:0 auto;padding:56px 20px}
+.auth-main>.brand{margin-bottom:28px}
+.auth-panel{padding:28px;border:1px solid var(--line2);border-radius:var(--r);background:var(--panel)}
+.auth-panel h1{font-size:28px;line-height:1.2;margin:0 0 12px;letter-spacing:-.02em}
+.auth-panel>p{margin:0 0 24px;color:var(--ink2)}
+.auth-panel form{display:grid;gap:16px}
+.auth-panel .input{font-size:16px;min-height:44px}
+.auth-panel .btn{min-height:44px}
+.auth-panel .err-text{margin:0}
+.auth-panel .auth-switch{margin:22px 0 0;color:var(--ink2)}
+.auth-help,.auth-note{font-size:13px;color:var(--ink2)}
+.auth-help{margin:0}
+.auth-note{margin:20px 0 0;line-height:1.6}
+@media(max-width:720px){.top-controls{width:100%;flex-wrap:wrap;flex-shrink:1;justify-content:flex-end}.account-label{margin-right:auto}.auth-main{padding-top:32px}.auth-panel{padding:22px}}
 .key-notice{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 20px}
 .key-notice[hidden],[data-key-notice][hidden]{display:none}
 .api-key-dialog p{margin:0}

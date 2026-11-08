@@ -52,7 +52,7 @@ def load_env():
 class App:
     """Состояние сервера: хранилище, пул оценки, настройки модели."""
 
-    def __init__(self, db_path, client_factory=None, workers=None):
+    def __init__(self, db_path, client_factory=None, workers=None, pool=None):
         self.store = Store(db_path)
         self.imports = ImportManager(self.store)
         self.config = EvalConfig(model=os.environ.get("CQA_MODEL", "claude-opus-5-5"),
@@ -60,7 +60,7 @@ class App:
                                  votes=int(os.environ.get("CQA_VOTES", "3")),
                                  extra_votes=int(os.environ.get("CQA_EXTRA_VOTES", "2")))
         self.client_factory = client_factory
-        self.pool = ThreadPoolExecutor(max_workers=workers or int(os.environ.get("CQA_WORKERS", "3")))
+        self.pool = pool or ThreadPoolExecutor(max_workers=workers or int(os.environ.get("CQA_WORKERS", "3")))
         self.live = LiveBoard()
         self.seed()
 
@@ -81,7 +81,7 @@ class App:
         if not self.has_key():
             raise StoreError(MISSING_KEY)
         import anthropic
-        return anthropic.Anthropic(api_key=request_key.get(), auth_token="", base_url="https://api.anthropic.com",
+        return anthropic.Anthropic(api_key=request_key.get(), base_url="https://api.anthropic.com",
                                    timeout=180.0, max_retries=4)
 
     # --- оценка ---
@@ -615,7 +615,7 @@ def _slug(s: str) -> str:
     return s[:40] or "dataset"
 
 
-def make_handler(app: App):
+def make_handler(app: App, accounts=None):
     class Handler(BaseHTTPRequestHandler):
         server_version = "CQA/1.0"
 
@@ -623,16 +623,20 @@ def make_handler(app: App):
             if os.environ.get("CQA_QUIET") != "1":
                 sys.stderr.write("%s %s\n" % (self.command, self.path.split("?")[0]))
 
-        def _json(self, status, data):
+        def _json(self, status, data, cookie=None):
             raw = json.dumps(data, ensure_ascii=False, default=str).encode("utf-8")
             self.send_response(status)
             self.send_header("Content-Type", "application/json; charset=utf-8")
             self.send_header("Content-Length", str(len(raw)))
             self.send_header("Cache-Control", "no-store")
+            if cookie:
+                self.send_header("Set-Cookie", cookie)
             self.end_headers()
             self.wfile.write(raw)
 
         def _api(self, method):
+            if accounts:
+                return self._account_api(method)
             try:
                 credential = validate_key(self.headers.get("X-CQA-API-Key", ""))
             except StoreError as exc:
@@ -641,11 +645,80 @@ def make_handler(app: App):
             try:
                 if method == "POST" and MODEL_ROUTES.fullmatch(urlsplit(self.path).path) and not app.has_key():
                     return self._json(400, {"error": MISSING_KEY})
-                return self._dispatch_api(method)
+                return self._dispatch_api(method, app)
             finally:
                 request_key.reset(token)
 
-        def _dispatch_api(self, method):
+        def _account_api(self, method):
+            from .auth import AuthError
+            path = urlsplit(self.path).path
+            try:
+                if method == "GET" and path == "/api/health":
+                    return self._json(200, {"status": "ok", "auth_required": True, "credential_mode": "account"})
+                body = {}
+                if method == "POST":
+                    accounts.validate_write(self.headers)
+                    if path.startswith("/api/auth/"):
+                        n = int(self.headers.get("Content-Length") or 0)
+                        if not 0 < n <= 8192:
+                            raise AuthError("Запрос слишком большой или пустой.", 413)
+                        try:
+                            body = json.loads(self.rfile.read(n))
+                        except (json.JSONDecodeError, UnicodeDecodeError):
+                            raise StoreError("Неверный JSON") from None
+                        if not isinstance(body, dict):
+                            raise StoreError("Ожидается объект JSON")
+                address = self.headers.get("X-Real-IP") or self.client_address[0]
+                if method == "POST" and path in ("/api/auth/login", "/api/auth/register"):
+                    if path.endswith("register"):
+                        accounts._limit(("register", address), 5, 3600)
+                        user = accounts.register(body.get("username"), body.get("password"))
+                    else:
+                        user = accounts.login(body.get("username"), body.get("password"), address)
+                    # A new login invalidates this browser's previous session.
+                    try:
+                        _, old_token = accounts.session(self.headers)
+                        accounts.logout(old_token)
+                    except AuthError:
+                        pass
+                    token = accounts.new_session(user["id"])
+                    return self._json(200, accounts.public_user(user, token), accounts.cookie(token))
+                user, session_token = accounts.session(self.headers)
+                if method == "POST":
+                    accounts.validate_csrf(self.headers, session_token)
+                expected_user = self.headers.get("X-CQA-Account")
+                if expected_user and expected_user != user["id"]:
+                    raise AuthError("Аккаунт изменился в другой вкладке. Обновите страницу.", 409)
+                if path == "/api/auth/session" and method == "GET":
+                    return self._json(200, accounts.public_user(user, session_token))
+                if path == "/api/auth/logout" and method == "POST":
+                    accounts.logout(session_token)
+                    return self._json(200, {"ok": True}, accounts.cookie())
+                if path == "/api/auth/key" and method == "POST":
+                    accounts.save_key(user, body.get("key"))
+                    return self._json(200, accounts.public_user(accounts.user(user["id"]), session_token))
+                if path == "/api/auth/preferences" and method == "POST":
+                    return self._json(200, {"preferences": accounts.preferences(user, body.get("values"))})
+                if path.startswith("/api/auth/"):
+                    return self._json(404, {"error": "Нет такого действия аккаунта"})
+                target = accounts.workspace(user)
+                key = accounts.key(user)
+                context = request_key.set(key)
+                try:
+                    if method == "POST" and MODEL_ROUTES.fullmatch(path) and not target.has_key():
+                        return self._json(400, {"error": MISSING_KEY})
+                    return self._dispatch_api(method, target, user)
+                finally:
+                    request_key.reset(context)
+            except AuthError as exc:
+                return self._json(exc.status, {"error": str(exc)})
+            except (StoreError, ValueError) as exc:
+                return self._json(400, {"error": _short(exc)})
+            except Exception as exc:
+                print(f"CQA account request failed: {type(exc).__name__}", file=sys.stderr)
+                return self._json(500, {"error": "Не удалось выполнить действие аккаунта. Попробуйте ещё раз."})
+
+        def _dispatch_api(self, method, target, user=None):
             url = urlsplit(self.path)
             q = {k: v[0] for k, v in parse_qs(url.query).items()}
             body = {}
@@ -663,12 +736,19 @@ def make_handler(app: App):
                 m = rx.match(url.path)
                 if m and meth == method:
                     try:
-                        out = fn(app, {k: unquote(v) for k, v in m.groupdict().items()}, q, body)
+                        params = {k: unquote(v) for k, v in m.groupdict().items()}
+                        if user and "ds" in params and not target.store.q("select 1 from datasets where id=?", (params["ds"],)):
+                            raise StoreError("Набор не найден в вашем аккаунте")
+                        out = fn(target, params, q, body)
+                        if user and url.path == "/api/state":
+                            out.update(credential_mode="account", user={"id": user["id"], "username": user["username"]})
                         if isinstance(out, FileResponse):
                             self.send_response(200)
                             self.send_header("Content-Type", out.ctype)
                             self.send_header("Content-Length", str(len(out.data)))
                             self.send_header("Content-Disposition", f'attachment; filename="{out.name}"')
+                            if accounts:
+                                self.send_header("Cache-Control", "no-store")
                             self.end_headers()
                             return self.wfile.write(out.data)
                         return self._json(200, out)
@@ -695,6 +775,24 @@ def make_handler(app: App):
 
         def _static(self, head=False):
             path = urlsplit(self.path).path
+            if accounts:
+                from .auth import AuthError
+                try:
+                    accounts.session(self.headers)
+                    authenticated = True
+                except AuthError:
+                    authenticated = False
+                if path == "/login":
+                    path = "/login.html"
+                public_asset = Path(path).suffix.lower() in {".css", ".js", ".woff2", ".ttf", ".png", ".jpg", ".svg"}
+                if not authenticated and path not in ("/login.html",) and not public_asset:
+                    if path in ("/", "/index.html"):
+                        self.send_response(302)
+                        self.send_header("Location", "/login")
+                        self.send_header("Cache-Control", "no-store")
+                        self.end_headers()
+                        return
+                    return self._json(401, {"error": "Войдите в аккаунт."})
             path = "/index.html" if path == "/" else path
             file = (PUBLIC / path.lstrip("/")).resolve()
             if PUBLIC.resolve() not in file.parents or not file.is_file():
@@ -719,7 +817,7 @@ def make_handler(app: App):
             self.send_header("Content-Type", ctype)
             self.send_header("Content-Length", str(len(data)))
             self.send_header("Accept-Ranges", "bytes")
-            self.send_header("Cache-Control", "no-cache")
+            self.send_header("Cache-Control", "no-store" if accounts and file.suffix == ".html" else "no-cache")
             self.end_headers()
             if not head:
                 self.wfile.write(data)
@@ -732,7 +830,10 @@ def main():
     port = int(os.environ.get("PORT", "8000"))
     host = os.environ.get("HOST", "127.0.0.1")
     app = App(os.environ.get("CQA_DB", ROOT / "data/cqa.db"))
-    srv = ThreadingHTTPServer((host, port), make_handler(app))
+    from .auth import Accounts
+    accounts = Accounts(os.environ.get("CQA_AUTH_DIR", Path(app.store.path).parent / "auth"), app,
+                        lambda path: App(path, pool=app.pool), os.environ.get("CQA_PUBLIC_ORIGIN"))
+    srv = ThreadingHTTPServer((host, port), make_handler(app, accounts))
     key = "свой ключ перед запуском, серверный ключ отключён"
     print(f"CQA: http://{host}:{port}  ·  модель {app.config.model}  ·  ключ API: {key}")
     try:

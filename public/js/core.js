@@ -2,11 +2,41 @@
 // как веб-ресурс Dynamics 365 — адрес API задаётся атрибутом data-api у <body>.
 
 export const API = (document.body.dataset.api || "").replace(/\/$/, "");
-let apiKey = ""; // Memory only: never localStorage, sessionStorage, cookies or URL.
+let account = null;
+let csrf = "";
+let savedKey = false;
 let keyPrompt = null;
+let prefValues = {};
+let preferenceSave = Promise.resolve();
+let preferenceError = null;
 const modelRoute = /^\/(jobs|operators\/plan|copilot\/(hint|client|finish)|evaluations\/\d+\/(coach|variant)|appeals\/\d+\/assist)$/;
 
-export function hasApiKey() { return Boolean(apiKey); }
+export function hasApiKey() { return savedKey; }
+export function currentAccount() { return account; }
+export async function initializeSession() {
+  const session = await api("/auth/session");
+  account = session.user; csrf = session.csrf; savedKey = session.has_key;
+  prefValues = session.preferences || {};
+  window.dispatchEvent(new Event("cqa:keychange"));
+  return session;
+}
+export async function refreshSession() {
+  const session = await api("/auth/session");
+  csrf = session.csrf; savedKey = session.has_key;
+  window.dispatchEvent(new Event("cqa:keychange"));
+}
+
+export const preferences = {
+  getItem: (key) => prefValues[key] ?? null,
+  setItem(key, value) {
+    prefValues[key] = String(value);
+    const values = { ...prefValues };
+    preferenceSave = preferenceSave.then(() => api("/auth/preferences", { values }))
+      .then(() => { preferenceError = null; })
+      .catch((error) => { preferenceError = error; toast("Не удалось сохранить настройки: " + error.message, true); });
+  },
+  async flush() { await preferenceSave; if (preferenceError) throw preferenceError; },
+};
 
 export function apiKeyDialog() {
   if (keyPrompt) return keyPrompt;
@@ -15,19 +45,28 @@ export function apiKeyDialog() {
       <form><div class="content">
         <p class="muted">Ключ используется для оценки, суфлёра и подсказок. Стоимость вызовов оплачивается с вашего аккаунта Anthropic.</p>
         <label class="field" for="api-key-input">API-ключ<input class="input" id="api-key-input" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="sk-ant-…" aria-describedby="api-key-help api-key-error" required></label>
-        <p class="muted" id="api-key-help">Ключ остаётся в памяти этой вкладки и передаётся серверу для запросов к Claude. В базу и файлы он не записывается. После обновления страницы введите его заново.</p>
-        ${apiKey ? html`<p class="muted">Ключ уже добавлен. Можно заменить его или удалить из этой вкладки. Уже запущенные оценки продолжатся.</p>` : ""}
+        <p class="muted" id="api-key-help">Ключ сохраняется в вашем аккаунте в зашифрованном виде. Он будет доступен после повторного входа и на другом устройстве. Полный ключ обратно в браузер не передаётся.</p>
+        ${savedKey ? html`<p class="muted">Ключ уже сохранён. Введите новый для замены или удалите сохранённый ключ. Уже запущенные оценки продолжатся.</p>` : ""}
         <p class="err-text" id="api-key-error" role="alert"></p>
-      </div><footer>${apiKey ? html`<button class="btn ghost" type="button" data-clear>Удалить ключ</button>` : ""}
-        <button class="btn ghost" type="button" data-cancel>Отмена</button><button class="btn primary" type="submit">${apiKey ? "Заменить ключ" : "Использовать ключ"}</button>
+      </div><footer>${savedKey ? html`<button class="btn ghost" type="button" data-clear>Удалить ключ</button>` : ""}
+        <button class="btn ghost" type="button" data-cancel>Отмена</button><button class="btn primary" type="submit">${savedKey ? "Заменить ключ" : "Сохранить ключ"}</button>
       </footer></form>`);
-    d.classList.add("api-key-dialog");
-    d.setAttribute("aria-labelledby", "api-key-title");
+    d.classList.add("api-key-dialog"); d.setAttribute("aria-labelledby", "api-key-title");
     const input = d.querySelector("input");
-    let accepted = false;
-    const changed = () => window.dispatchEvent(new Event("cqa:keychange"));
+    let accepted = false, busy = false;
+    const save = async (value) => {
+      busy = true; d.querySelectorAll("button").forEach((button) => { button.disabled = true; });
+      try {
+        const session = await api("/auth/key", { key: value });
+        savedKey = session.has_key; accepted = Boolean(value);
+        window.dispatchEvent(new Event("cqa:keychange"));
+        d.close(); toast(value ? "Ключ сохранён в аккаунте" : "Ключ удалён из аккаунта");
+      } catch (error) { d.querySelector(".err-text").textContent = error.message; }
+      finally { busy = false; d.querySelectorAll("button").forEach((button) => { button.disabled = false; }); }
+    };
+    d.addEventListener("cancel", (event) => { if (busy) event.preventDefault(); });
     d.querySelector("[data-cancel]").onclick = () => d.close();
-    d.querySelector("[data-clear]")?.addEventListener("click", () => { apiKey = ""; changed(); d.close(); toast("Ключ удалён из вкладки"); });
+    d.querySelector("[data-clear]")?.addEventListener("click", () => save(""));
     d.querySelector("form").onsubmit = (event) => {
       event.preventDefault();
       const value = input.value.trim();
@@ -35,8 +74,7 @@ export function apiKeyDialog() {
         d.querySelector(".err-text").textContent = "Проверьте ключ: он должен начинаться с sk-ant- и не содержать пробелов.";
         input.setAttribute("aria-invalid", "true"); input.focus(); return;
       }
-      apiKey = value; accepted = true; changed(); d.close();
-      toast("Ключ добавлен для этой вкладки");
+      save(value);
     };
     d.addEventListener("close", () => { input.value = ""; resolve(accepted); });
     input.focus();
@@ -46,21 +84,24 @@ export function apiKeyDialog() {
 
 export async function api(path, body) {
   const paid = body !== undefined && modelRoute.test(path);
-  if (paid && !apiKey) {
-    if (path === "/copilot/hint") throw new Error("Для подсказок добавьте свой ключ кнопкой «API-ключ».");
+  if (paid && !savedKey) {
+    if (path === "/copilot/hint") throw new Error("Для подсказок сохраните свой ключ кнопкой «API-ключ».");
     if (!await apiKeyDialog()) throw new Error("Запуск отменён: добавьте свой ключ Claude API.");
   }
-  const opt = body === undefined ? {} : { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) };
-  if (apiKey && (paid || path === "/state")) {
+  const opt = { credentials: "same-origin", headers: {} };
+  if (account) opt.headers["X-CQA-Account"] = account.id;
+  if (body !== undefined) {
     const target = new URL(API || location.origin, location.href);
     if (target.protocol !== "https:" && !["localhost", "127.0.0.1", "[::1]"].includes(target.hostname))
-      throw new Error("Откройте сайт по HTTPS для передачи API-ключа.");
-    opt.headers = { ...opt.headers, "X-CQA-API-Key": apiKey };
+      throw new Error("Откройте сайт по HTTPS.");
+    opt.method = "POST"; opt.body = JSON.stringify(body);
+    Object.assign(opt.headers, { "Content-Type": "application/json", "X-CQA-Request": "1", "X-CQA-CSRF": csrf });
   }
   let res;
   try { res = await fetch(API + "/api" + path, opt); }
-  catch { throw new Error("Сервер не отвечает. Проверьте, что он запущен: python -m app.server"); }
+  catch { throw new Error("Сервер не отвечает. Проверьте соединение и повторите действие."); }
   const data = await res.json().catch(() => ({}));
+  if (res.status === 401 || res.status === 409) location.replace("/login");
   if (!res.ok) throw new Error(data.error || `Ошибка сервера ${res.status}`);
   return data;
 }
@@ -116,13 +157,13 @@ export function allowedAnswers(c) {
 
 // роль: оператор подаёт апелляцию, проверяющий решает
 export const role = {
-  get: () => localStorage.getItem("cqa-role") || "operator",
-  set: (r) => { localStorage.setItem("cqa-role", r); window.dispatchEvent(new Event("rolechange")); },
+  get: () => preferences.getItem("cqa-role") || "operator",
+  set: (r) => { preferences.setItem("cqa-role", r); window.dispatchEvent(new Event("rolechange")); },
 };
 
 export const store = {
-  get dataset() { return localStorage.getItem("cqa-dataset") || "DEV"; },
-  set dataset(v) { localStorage.setItem("cqa-dataset", v); },
+  get dataset() { return preferences.getItem("cqa-dataset") || "DEV"; },
+  set dataset(v) { preferences.setItem("cqa-dataset", v); },
 };
 
 export function hero({ title, text = "", art, back, actions = "", tag = "", aside = "" }) {

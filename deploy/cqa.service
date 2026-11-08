@@ -11,6 +11,8 @@ Environment=HOST=127.0.0.1
 Environment=PORT=8100
 Environment=CQA_DB=/srv/cqa/shared/cqa.db
 Environment=CQA_QUIET=1
+Environment=CQA_AUTH_DIR=/srv/cqa/shared/auth
+Environment=CQA_PUBLIC_ORIGIN=https://ortaresearch.com
 UnsetEnvironment=ANTHROPIC_API_KEY ANTHROPIC_AUTH_TOKEN ANTHROPIC_BASE_URL
 ExecStart=/srv/cqa/current/.venv/bin/python -m app.server
 Restart=on-failure

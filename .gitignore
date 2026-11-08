@@ -20,3 +20,4 @@ annotations/task-guide.pdf
 *.db-wal
 *.db-shm
 data/voice/
+data/auth/

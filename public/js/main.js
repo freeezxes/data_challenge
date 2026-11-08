@@ -1,4 +1,4 @@
-import { api, role, esc, apiKeyDialog, hasApiKey } from "./core.js";
+import { api, role, esc, apiKeyDialog, hasApiKey, initializeSession, refreshSession, preferences, toast } from "./core.js";
 import home from "./pages/home.js";
 import queue from "./pages/queue.js";
 import card from "./pages/card.js";
@@ -11,6 +11,7 @@ import operators from "./pages/operators.js";
 const PAGES = { home, queue, card, appeals, checklists, analytics, copilot, operators };
 const view = document.getElementById("view");
 let cleanup = null;
+let ready = false;
 
 function parse() {
   const [path, query = ""] = location.hash.replace(/^#/, "").split("?");
@@ -47,8 +48,13 @@ function paintRole() {
   document.querySelectorAll(".role button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.role === role.get())));
 }
 document.querySelectorAll(".role button").forEach((b) => (b.onclick = () => role.set(b.dataset.role)));
-window.addEventListener("rolechange", () => { paintRole(); render(); });
-window.addEventListener("hashchange", render);
+window.addEventListener("rolechange", () => { if (ready) { paintRole(); render(); } });
+window.addEventListener("hashchange", () => { if (ready) render(); });
+window.addEventListener("focus", () => { if (ready) refreshSession().catch(() => {}); });
+document.addEventListener("visibilitychange", () => {
+  if (ready && document.visibilityState === "visible") refreshSession().catch(() => {});
+});
+window.addEventListener("pageshow", (event) => { if (event.persisted) location.reload(); });
 window.addEventListener("cqa:changed", refreshBadge);
 document.getElementById("api-key-settings").onclick = apiKeyDialog;
 document.addEventListener("click", (event) => {
@@ -59,5 +65,16 @@ window.addEventListener("cqa:keychange", () => {
   button.textContent = hasApiKey() ? "API-ключ добавлен" : "API-ключ";
   document.querySelectorAll("[data-key-notice]").forEach((notice) => { notice.hidden = hasApiKey(); });
 });
-paintRole();
-render();
+document.getElementById("account-logout").onclick = async (event) => {
+  event.target.disabled = true;
+  try {
+    await preferences.flush();
+    await api("/auth/logout", {});
+    location.replace("/login");
+  } catch (error) { toast(error.message, true); event.target.disabled = false; }
+};
+initializeSession().then((session) => {
+  ready = true;
+  document.getElementById("account-name").textContent = session.user.username;
+  paintRole(); render();
+}).catch((error) => { view.textContent = error.message; });

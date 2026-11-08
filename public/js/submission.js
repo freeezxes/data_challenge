@@ -1,4 +1,4 @@
-import { API, api, html, raw, dialog, store, checklistPicker } from "./core.js";
+import { preferences, API, api, html, raw, dialog, store, checklistPicker } from "./core.js";
 
 export async function submissionDialog(checklistKey) {
   const dataset = store.dataset;
@@ -7,7 +7,7 @@ export async function submissionDialog(checklistKey) {
   const d = dialog(html`<header><div><h2>Выгрузить для сдачи</h2><p class="muted">JSON 1.0 по формату организаторов. Проверим каждый диалог.</p></div><button class="btn ghost" data-close aria-label="Закрыть выгрузку">Закрыть</button></header>
     <div class="content">
       <p><b>Набор: ${selected?.name || dataset}</b>${selected ? ` · диалогов: ${selected.count}` : ""}</p>
-      <label class="field">Название команды<input class="input" name="team" maxlength="160" value="${localStorage.getItem("cqa-team") || ""}" placeholder="Название из заявки" autocomplete="organization"></label>
+      <label class="field">Название команды<input class="input" name="team" maxlength="160" value="${preferences.getItem("cqa-team") || ""}" placeholder="Название из заявки" autocomplete="organization"></label>
       <div class="transfer-two"><label class="field">Набор для сдачи<select class="input" name="kind"><option value="prod" ${raw(dataset === "DEV" ? "" : "selected")}>Контроль · 10 чатов</option><option value="dev" ${raw(dataset === "DEV" ? "selected" : "")}>DEV · 65 диалогов</option></select></label>
         <label class="field">Версия чек-листа ${checklistPicker(versions, checklistKey || versions.find(v => v.active)?.key, "submission-checklist")}</label></div>
       <p class="muted">Скачивается текущий набор из очереди. Решения по апелляциям включаются в итог; исходные оценки сохраняются в приложении.</p>
@@ -26,7 +26,7 @@ export async function submissionDialog(checklistKey) {
     try {
       const r = await api(`/datasets/${encodeURIComponent(dataset)}/submission?${params}`);
       if (!d.open) return;
-      localStorage.setItem("cqa-team", team.value.trim());
+      preferences.setItem("cqa-team", team.value.trim());
       report.innerHTML = String(html`<div class="transfer-summary"><b>Готово ${r.ready} из ${r.total}</b><span>${r.name}</span></div>
         ${r.blockers.length ? html`<div class="alert"><b>Выгрузка заблокирована</b><ul>${r.blockers.map(x => html`<li>${x}</li>`)}</ul></div>` : html`<p>Сохраните файл в репозитории: <strong>${r.path}</strong></p>`}
         ${r.errors ? html`<div class="alert warn"><b>Диалогов с ошибкой: ${r.errors}</b>Они останутся в файле с status=error, пустыми критериями и score=null.</div>

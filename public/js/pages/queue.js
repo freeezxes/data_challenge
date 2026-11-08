@@ -1,4 +1,4 @@
-import { API, api, html, raw, hero, checklistPicker, fmtTotal, scoreClass, CHANNEL, store, toast, onJobs, watchJobs, icon, money } from "../core.js";
+import { preferences, API, api, html, raw, hero, checklistPicker, fmtTotal, scoreClass, CHANNEL, store, toast, onJobs, watchJobs, icon, money } from "../core.js";
 import { importDialog } from "../imports.js";
 import { submissionDialog } from "../submission.js";
 
@@ -18,7 +18,7 @@ export default async function queue(root, params) {
   let st = await api("/state");
   if (!st.datasets.some((d) => d.id === store.dataset)) store.dataset = st.datasets[0]?.id || "DEV";
   let rows = [], filter = params.f || "all", q = "", selected = new Set();
-  let votes = Number(localStorage.getItem("cqa-votes") || st.votes || 3);
+  let votes = Number(preferences.getItem("cqa-votes") || st.votes || 3);
   const versions = await api("/checklists");
   let pick = st.active_checklist;
 
@@ -60,7 +60,7 @@ export default async function queue(root, params) {
       <button class="btn primary" id="eval">${selected.size ? `Оценить выбранные · ${selected.size}` : "Оценить неоценённые"}</button>`);
     const eb = root.querySelector("#evalbar");
     eb.querySelector("#eval").onclick = () => start();
-    eb.querySelector("#votes").onchange = (e) => { votes = Number(e.target.value); localStorage.setItem("cqa-votes", votes); };
+    eb.querySelector("#votes").onchange = (e) => { votes = Number(e.target.value); preferences.setItem("cqa-votes", votes); };
     eb.querySelector("#ck").onchange = (e) => { pick = e.target.value; paint(); };
     const h = root.querySelector("#hero");
     h.querySelector("#ds").onchange = async (e) => { store.dataset = e.target.value; selected.clear(); await load(); paint(); };

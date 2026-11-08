@@ -46,6 +46,27 @@ fi
 if [[ -e /etc/systemd/system/cqa.service ]]; then
     cp -a /etc/systemd/system/cqa.service "$BACKUP/cqa.service"
 fi
+python3 - "$BACKUP" <<'PY'
+import pathlib, sqlite3, shutil, sys
+shared = pathlib.Path('/srv/cqa/shared')
+backup = pathlib.Path(sys.argv[1]) / 'persistent-data'
+backup.mkdir(mode=0o700)
+paths = [shared / 'cqa.db', shared / 'auth/accounts.db', *list((shared / 'auth/workspaces').glob('*.db'))]
+for source in paths:
+    if source.is_file():
+        destination = backup / source.relative_to(shared)
+        destination.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+        with sqlite3.connect(f'file:{source}?mode=ro', uri=True) as src, sqlite3.connect(destination) as dst:
+            src.backup(dst)
+        destination.chmod(0o600)
+for relative in ['auth/master.key', 'auth/admin-login.txt']:
+    source = shared / relative
+    if source.is_file():
+        destination = backup / relative
+        destination.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+        shutil.copyfile(source, destination)
+        destination.chmod(0o600)
+PY
 restore() {
     if [[ -f "$BACKUP/ortaresearch.conf" ]]; then
         install -m 644 "$BACKUP/ortaresearch.conf" /etc/nginx/sites-available/ortaresearch.conf
@@ -72,14 +93,13 @@ systemctl daemon-reload
 systemctl enable cqa.service
 systemctl restart cqa.service
 for attempt in {1..30}; do
-    if curl --fail --silent http://127.0.0.1:8100/api/state > "$BACKUP/health.json"; then break; fi
+    if curl --fail --silent http://127.0.0.1:8100/api/health > "$BACKUP/health.json"; then break; fi
     sleep 1
 done
 python3 - "$BACKUP/health.json" <<'PY'
 import json, sys
 state = json.load(open(sys.argv[1]))
-assert state['credential_mode'] == 'per_request' and state['has_key'] is False
-assert state['datasets'] and state['active_checklist']
+assert state['credential_mode'] == 'account' and state['auth_required'] is True and state['status'] == 'ok'
 PY
 if [[ "$TLS_READY" -eq 1 ]]; then
     install -m 644 "$RELEASE/deploy/ortaresearch.conf" /etc/nginx/sites-available/ortaresearch.conf
@@ -90,7 +110,7 @@ ln -sfn /etc/nginx/sites-available/ortaresearch.conf /etc/nginx/sites-enabled/or
 nginx -t
 systemctl reload nginx
 if [[ "$TLS_READY" -eq 1 ]]; then
-    curl --fail --silent --resolve ortaresearch.com:443:127.0.0.1 https://ortaresearch.com/api/state | python3 -c 'import json,sys; s=json.load(sys.stdin); assert s["credential_mode"] == "per_request" and not s["has_key"]'
+    curl --fail --silent --resolve ortaresearch.com:443:127.0.0.1 https://ortaresearch.com/api/health | python3 -c 'import json,sys; s=json.load(sys.stdin); assert s["credential_mode"] == "account" and s["auth_required"]'
 else
     echo 'Backend ready; HTTP serves only ACME and a maintenance response until TLS is configured.'
 fi

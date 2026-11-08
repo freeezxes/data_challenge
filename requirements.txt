@@ -4,3 +4,4 @@ python-dotenv>=1.0,<2
 jsonschema>=4.23,<5
 numpy>=1.26
 miniaudio>=1.59  # разбор записей звонков без ffmpeg, колёса для Windows/macOS/Linux
+cryptography>=46,<49  # шифрование пользовательских API-ключей

@@ -1,4 +1,4 @@
-import { api, html, raw, hero, toast, money, store } from "../core.js";
+import { preferences, api, html, raw, hero, toast, money, store } from "../core.js";
 
 const SYS = {
   identity: { RU: "Личность клиента подтверждена.", KZ: "Клиенттің жеке басы расталды.", EN: "Customer identity verified." },
@@ -10,8 +10,8 @@ const SEV = { stop: "Стоп", warn: "Важно", info: "Совет" };
 export default async function copilot(root, params = {}) {
   const scenarios = await api("/copilot/scenarios");
   const s = {
-    mode: localStorage.getItem("cqa-cp-mode") || "sim", base: null, language: "RU", messages: [], beats: [],
-    name: localStorage.getItem("cqa-cp-name") || "Алина", started: 0, ended: false, busy: false, cost: 0,
+    mode: preferences.getItem("cqa-cp-mode") || "sim", base: null, language: "RU", messages: [], beats: [],
+    name: preferences.getItem("cqa-cp-name") || "Алина", started: 0, ended: false, busy: false, cost: 0,
     hints: null, instant: [], typing: false, armed: false, draftTimer: null,
   };
   const fromLink = params.sc && scenarios.find((x) => `${x.dataset_id}|${x.conversation_id}` === params.sc);
@@ -152,12 +152,12 @@ export default async function copilot(root, params = {}) {
   }
 
   root.querySelectorAll("[data-mode]").forEach((b) => (b.onclick = () => {
-    s.mode = b.dataset.mode; localStorage.setItem("cqa-cp-mode", s.mode);
+    s.mode = b.dataset.mode; preferences.setItem("cqa-cp-mode", s.mode);
     root.querySelectorAll("[data-mode]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
   }));
   $("#go").onclick = async () => {
     const [ds, cid] = $("#sc").value.split("|");
-    s.name = $("#nm").value.trim() || "Алина"; localStorage.setItem("cqa-cp-name", s.name);
+    s.name = $("#nm").value.trim() || "Алина"; preferences.setItem("cqa-cp-name", s.name);
     const r = await api("/copilot/start", { dataset_id: ds, conversation_id: cid });
     Object.assign(s, { base: { dataset_id: ds, conversation_id: cid }, language: r.language || "RU", beats: r.beats, started: Date.now(),
       ended: false, hints: null, instant: [], cost: 0, messages: r.opening.map((m) => ({ ...m, timestamp: "00:00" })) });

@@ -24,7 +24,7 @@ def deployment(tmp_path, monkeypatch, checklist):
 
     def factory(**kwargs):
         assert kwargs["base_url"] == "https://api.anthropic.com"
-        assert kwargs["auth_token"] == ""
+        assert "auth_token" not in kwargs
         key = kwargs["api_key"]
         fake = FakeAPI([model_payload(checklist, all_answers(checklist))])
         clients[key] = fake
@@ -128,3 +128,37 @@ def test_model_error_redacts_key_in_database_and_http(deployment, monkeypatch, c
     for file in tmp_path.iterdir():
         assert KEY_A.encode() not in file.read_bytes()
     assert KEY_A not in capsys.readouterr().err
+
+
+def test_real_sdk_uses_only_the_request_credential_without_network(tmp_path, monkeypatch):
+    import anthropic
+    import httpx2
+    from app.credentials import request_key
+
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "environment-api-key-must-not-be-used")
+    monkeypatch.setenv("ANTHROPIC_AUTH_TOKEN", "environment-token-must-not-be-used")
+    constructor = anthropic.Anthropic
+    observed = []
+
+    def handler(request):
+        # SDK versions use either x-api-key or a bearer credential.
+        assert (request.headers.get("x-api-key") == KEY_A
+                or request.headers.get("authorization") == "Bearer " + KEY_A)
+        assert all("environment-" not in value for value in request.headers.values())
+        observed.append(request.url.path)
+        return httpx2.Response(200, json={"data": [], "has_more": False, "first_id": None, "last_id": None})
+
+    def offline_client(**kwargs):
+        return constructor(**kwargs, http_client=httpx2.Client(transport=httpx2.MockTransport(handler)))
+
+    monkeypatch.setattr(anthropic, "Anthropic", offline_client)
+    app = App(tmp_path / "sdk.db")
+    context = request_key.set(KEY_A)
+    try:
+        with app.client() as client:
+            client.models.list()
+    finally:
+        request_key.reset(context)
+        app.pool.shutdown()
+        app.store.db.close()
+    assert observed == ["/v1/models"]

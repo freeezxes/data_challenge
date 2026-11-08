@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Вход · CQA</title>
+<link rel="icon" href="/art/logo.png">
+<link rel="stylesheet" href="/cqa.css">
+</head>
+<body class="auth-page">
+<main class="auth-main">
+  <a class="brand" href="/login"><img src="/art/logo.png" alt="">CQA · Freedom Broker</a>
+  <section class="auth-panel" aria-labelledby="auth-title">
+    <h1 id="auth-title">Войти в CQA</h1>
+    <p class="muted" id="auth-description">Ваши диалоги, оценки, чек-листы и API-ключ сохраняются в аккаунте.</p>
+    <form id="auth-form">
+      <label class="field" for="username">Имя пользователя<input class="input" id="username" name="username" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="40" required autofocus></label>
+      <label class="field" for="password">Пароль<input class="input" id="password" name="password" type="password" autocomplete="current-password" maxlength="256" required></label>
+      <p class="muted auth-help" id="auth-help" hidden>Имя: от 3 латинских букв или цифр. Пароль: не менее 12 символов.</p>
+      <p class="err-text" id="auth-error" role="alert"></p>
+      <button class="btn primary" type="submit" id="auth-submit">Войти</button>
+    </form>
+    <p class="auth-switch"><span id="auth-switch-label">Нет аккаунта?</span> <button type="button" class="btn ghost" id="auth-switch">Создать аккаунт</button></p>
+  </section>
+  <p class="muted auth-note">Своего ключа на стенде нет. Ключ Claude можно добавить после входа.</p>
+</main>
+<script type="module" src="/js/auth.js"></script>
+</body>
+</html>

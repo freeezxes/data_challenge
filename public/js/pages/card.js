@@ -1,4 +1,4 @@
-import { factsText, checklistPicker } from "../core.js";
+import { preferences, factsText, checklistPicker } from "../core.js";
 import { api, html, raw, hero, esc, fmtTotal, scoreClass, answerLabel, answerTone, role, toast, dialog, watchJobs, onJobs, money, CHANNEL } from "../core.js";
 
 const ROLE = { client: "Клиент", operator: "Оператор", bot: "Бот", system: "Система" };
@@ -164,7 +164,7 @@ export default async function card(root, params) {
     root.querySelector("#eval").onclick = async (e) => {
       e.target.disabled = true;
       try {
-        await api("/jobs", { dataset_id: ds, conversation_ids: [cid], checklist_key: pick, votes: Number(localStorage.getItem("cqa-votes")) || undefined });
+        await api("/jobs", { dataset_id: ds, conversation_ids: [cid], checklist_key: pick, votes: Number(preferences.getItem("cqa-votes")) || undefined });
         toast("Оценка запущена"); watchJobs();
       }
       catch (x) { toast(x.message, true); e.target.disabled = false; }
@@ -317,7 +317,7 @@ export default async function card(root, params) {
       try {
         const r = await api(`/evaluations/${ev.id}/variant`, { target_id: s.target_id, mode: s.mode, text: d.querySelector("[name=t]").value,
           note: s.criterion_id ? `подсказка по критерию «${(data.checklists[ev.checklist_key].criteria.find((x) => x.id === s.criterion_id) || {}).title}»` : "ручная правка",
-          votes: Number(localStorage.getItem("cqa-votes")) || undefined });
+          votes: Number(preferences.getItem("cqa-votes")) || undefined });
         d.close(); toast("Копия создана, идёт оценка"); watchJobs();
         location.hash = `#/c/${encodeURIComponent(r.dataset_id)}/${encodeURIComponent(r.conversation_id)}`;
       } catch (x) { err.textContent = x.message; e.target.disabled = false; }
