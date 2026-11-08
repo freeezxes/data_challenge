@@ -23,6 +23,8 @@ install -d -m 755 /var/www/cqa-acme
 RELEASE="/srv/cqa/releases/$RELEASE_ID"
 mkdir "$RELEASE"
 cp -a "$SOURCE_DIR/." "$RELEASE/"
+# cp -a also preserves the source directory's mode (staging is commonly 0700).
+chmod 755 "$RELEASE"
 python3 -m venv "$RELEASE/.venv"
 "$RELEASE/.venv/bin/pip" install -r "$RELEASE/requirements.lock.txt"
 cd "$RELEASE"
