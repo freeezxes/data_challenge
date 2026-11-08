@@ -35,9 +35,15 @@ python scripts/run_eval.py --dry-run
 
 ## Установка на подтверждённый сервер
 
-Нужны Ubuntu, Python 3.11+ с модулем venv, nginx, curl и действующий TLS-сертификат
-для ortaresearch.com. SSH-адрес и отпечаток проверяются по панели провайдера:
-не отключайте проверку host key ради деплоя.
+Подтверждённый сервер AstanaGB: `root@100.75.211.119` через Tailscale,
+публичный IP `92.38.49.113`, hostname `vds32206.vpsza500.kz`.
+ED25519: `SHA256:hvz+sn86NI6Dv7sUXidRcnuysBet/QG/hL0shEuA7Zg`.
+Старый адрес ortaresearch.com — `92.38.48.227`, это другая машина.
+Не отключайте проверку SSH host key ради деплоя.
+
+Нужны Ubuntu, Python 3.11+ с модулем venv, nginx и curl. На подтверждённой машине
+проверен Python 3.12. Установщик поддерживает первый запуск без TLS: приложение
+слушает только localhost, HTTP пока отдаёт ответ обслуживания и ACME-проверку.
 
 1. После тестов закоммитьте изменения в отдельной ветке.
 2. `bash deploy/package.sh /tmp/cqa-deploy.tar.gz` создаёт архив только из
@@ -47,11 +53,26 @@ python scripts/run_eval.py --dry-run
 4. Выполните `sudo bash /path/to/unpacked-release/deploy/install.sh`.
 
 Установщик сначала собирает окружение отдельного сервиса `cqa.service` на
-127.0.0.1:8100 и проверяет состояние без ключа. После этого переключает nginx
-и проверяет HTTPS; лишь после успешной проверки останавливает старый
-`ortaresearch.service`. Файлы и PostgreSQL прежнего сайта остаются на месте.
+127.0.0.1:8100 и проверяет состояние без ключа. После этого подключает только
+виртуальный хост ortaresearch.com. Другие конфигурации nginx, приложения и базы
+не меняет; старый `ortaresearch.service` на другой машине не останавливает.
 Автоматический откат при ошибке установки восстанавливает nginx и прежнюю
 версию CQA; резервная копия конфигурации — `/srv/cqa/shared/before-<дата>`.
+
+Для первого подключения домена измените в GoDaddy только A-запись `@` на
+`92.38.49.113`; `www` остаётся CNAME на `ortaresearch.com`. После обновления DNS:
+
+```bash
+certbot certonly --non-interactive --webroot -w /var/www/cqa-acme \
+  --cert-name ortaresearch.com -d ortaresearch.com -d www.ortaresearch.com
+install -m 644 /srv/cqa/current/deploy/ortaresearch.conf /etc/nginx/sites-available/ortaresearch.conf
+nginx -t && systemctl reload nginx
+```
+
+Используется существующий ACME-аккаунт сервера. Для продления сертификата
+`/.well-known/acme-challenge/` остаётся доступен через HTTP; nginx обслуживает
+остальной трафик через HTTPS. Переключать DNS следует после проверки backend,
+чтобы прежние проекты сервера продолжали работать.
 
 Код: `/srv/cqa/releases/<дата>`, ссылка `/srv/cqa/current`, база:
 `/srv/cqa/shared/cqa.db`. Логи: `journalctl -u cqa.service`. HTTP API не логирует
@@ -71,7 +92,9 @@ curl --fail https://ortaresearch.com/api/state
 страницы. Подключение ключа не делает запрос к модели; платная оценка начинается
 только после запуска пользователем.
 
-Для возврата прежнего сайта восстановите `ortaresearch.conf` из нужной папки
+Для возврата предыдущей версии CQA восстановите `ortaresearch.conf` из нужной папки
 `before-*` в `/etc/nginx/sites-available/ortaresearch.conf`, выполните `nginx -t`,
-`systemctl enable --now ortaresearch.service` и `systemctl reload nginx`.
+и `systemctl reload nginx`.
 Затем можно остановить CQA: `systemctl disable --now cqa.service`.
+Для возврата прежнего сайта со старой машины отдельно верните A-запись домена
+на сохранённый прежний адрес; его файлы и сервисы этим деплоем не меняются.

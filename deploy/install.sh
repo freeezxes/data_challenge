@@ -7,8 +7,11 @@ RELEASE_ID="${CQA_RELEASE_ID:-$(date -u +%Y%m%dT%H%M%SZ)}"
 [[ "$RELEASE_ID" =~ ^[a-zA-Z0-9._-]+$ ]] || exit 1
 command -v nginx >/dev/null
 command -v python3 >/dev/null
-test -f /etc/letsencrypt/live/ortaresearch.com/fullchain.pem
-test -f /etc/letsencrypt/live/ortaresearch.com/privkey.pem
+command -v curl >/dev/null
+TLS_READY=0
+if [[ -f /etc/letsencrypt/live/ortaresearch.com/fullchain.pem && -f /etc/letsencrypt/live/ortaresearch.com/privkey.pem ]]; then
+    TLS_READY=1
+fi
 if [[ -e /srv/cqa/releases/"$RELEASE_ID" ]]; then
     echo 'Release already exists; choose a new CQA_RELEASE_ID.' >&2
     exit 1
@@ -16,6 +19,7 @@ fi
 id cqa >/dev/null 2>&1 || useradd --system --home /srv/cqa --shell /usr/sbin/nologin cqa
 install -d -m 755 /srv/cqa/releases
 install -d -o cqa -g cqa -m 700 /srv/cqa/shared
+install -d -m 755 /var/www/cqa-acme
 RELEASE="/srv/cqa/releases/$RELEASE_ID"
 mkdir "$RELEASE"
 cp -a "$SOURCE_DIR/." "$RELEASE/"
@@ -29,7 +33,9 @@ chown -R root:root "$RELEASE"
 chown -R cqa:cqa "$RELEASE/data"
 BACKUP="/srv/cqa/shared/before-$RELEASE_ID"
 mkdir -m 700 "$BACKUP"
-install -m 600 /etc/nginx/sites-available/ortaresearch.conf "$BACKUP/ortaresearch.conf"
+if [[ -e /etc/nginx/sites-available/ortaresearch.conf ]]; then
+    install -m 600 /etc/nginx/sites-available/ortaresearch.conf "$BACKUP/ortaresearch.conf"
+fi
 if [[ -L /srv/cqa/current ]]; then
     readlink -f /srv/cqa/current > "$BACKUP/previous-release"
 else
@@ -38,9 +44,12 @@ fi
 if [[ -e /etc/systemd/system/cqa.service ]]; then
     cp -a /etc/systemd/system/cqa.service "$BACKUP/cqa.service"
 fi
-systemctl is-active ortaresearch.service > "$BACKUP/old-service-state" || true
 restore() {
-    install -m 644 "$BACKUP/ortaresearch.conf" /etc/nginx/sites-available/ortaresearch.conf
+    if [[ -f "$BACKUP/ortaresearch.conf" ]]; then
+        install -m 644 "$BACKUP/ortaresearch.conf" /etc/nginx/sites-available/ortaresearch.conf
+    else
+        rm -f /etc/nginx/sites-enabled/ortaresearch.conf /etc/nginx/sites-available/ortaresearch.conf
+    fi
     nginx -t && systemctl reload nginx
     PREVIOUS="$(cat "$BACKUP/previous-release")"
     if [[ -n "$PREVIOUS" && -d "$PREVIOUS" ]]; then
@@ -70,14 +79,18 @@ state = json.load(open(sys.argv[1]))
 assert state['credential_mode'] == 'per_request' and state['has_key'] is False
 assert state['datasets'] and state['active_checklist']
 PY
-install -m 644 "$RELEASE/deploy/ortaresearch.conf" /etc/nginx/sites-available/ortaresearch.conf
+if [[ "$TLS_READY" -eq 1 ]]; then
+    install -m 644 "$RELEASE/deploy/ortaresearch.conf" /etc/nginx/sites-available/ortaresearch.conf
+else
+    install -m 644 "$RELEASE/deploy/ortaresearch.bootstrap.conf" /etc/nginx/sites-available/ortaresearch.conf
+fi
 ln -sfn /etc/nginx/sites-available/ortaresearch.conf /etc/nginx/sites-enabled/ortaresearch.conf
 nginx -t
 systemctl reload nginx
-curl --fail --silent --resolve ortaresearch.com:443:127.0.0.1 https://ortaresearch.com/api/state | python3 -c 'import json,sys; s=json.load(sys.stdin); assert s["credential_mode"] == "per_request" and not s["has_key"]'
-trap - ERR
-# The previous app and its database remain on disk for rollback.
-if systemctl cat ortaresearch.service >/dev/null 2>&1; then
-    systemctl disable --now ortaresearch.service
+if [[ "$TLS_READY" -eq 1 ]]; then
+    curl --fail --silent --resolve ortaresearch.com:443:127.0.0.1 https://ortaresearch.com/api/state | python3 -c 'import json,sys; s=json.load(sys.stdin); assert s["credential_mode"] == "per_request" and not s["has_key"]'
+else
+    echo 'Backend ready; HTTP serves only ACME and a maintenance response until TLS is configured.'
 fi
-echo "CQA is live at https://ortaresearch.com; rollback backup: $BACKUP"
+trap - ERR
+echo "CQA installed (TLS ready: $TLS_READY); rollback backup: $BACKUP"
