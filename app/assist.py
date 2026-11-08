@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import json
+from uuid import uuid4
 
 from cqa.checklist import allowed_answers, criterion_map
 from cqa.dataset import normalize, render_transcript
@@ -86,7 +87,7 @@ def _context(app, ev: dict, checklist: dict, cid: str) -> tuple[dict, dict, str]
 def coach(app, ev_id: int, cid: str) -> dict:
     """Одна реплика оператора, которая закрыла бы проблему по критерию."""
     ev = app.store.evaluation(ev_id)
-    if not ev["result"]:
+    if not ev.get("final"):
         raise StoreError("подсказку можно получить только для готовой оценки")
     checklist = app.store.checklist(ev["checklist_key"])
     conv, c, head = _context(app, ev, checklist, cid)
@@ -153,9 +154,7 @@ def make_variant(app, ev_id: int, target_id: str, mode: str, text: str, note: st
         transcript.insert(idx + 1, {"timestamp": transcript[idx]["timestamp"], "speaker": "operator", "text": text.strip()})
         edited = idx + 1
     base = ev["conversation_id"].split("~")[0]
-    n = len([1 for r in app.store.records("SANDBOX") if r["conversation_id"].startswith(base + "~")]) \
-        if any(d["id"] == "SANDBOX" for d in app.store.datasets()) else 0
-    rec.update({"conversation_id": f"{base}~{n + 1}", "transcript": transcript,
+    rec.update({"conversation_id": f"{base}~{uuid4().hex}", "transcript": transcript,
                 "variant_of": {"dataset_id": ev["dataset_id"], "conversation_id": ev["conversation_id"],
                                "evaluation_id": ev["id"], "total": ev["final"]["score"]["total"],
                                "edited_id": f"m{edited + 1}", "mode": mode, "note": note}})

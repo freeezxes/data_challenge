@@ -1,0 +1,95 @@
+[
+  {
+    "dataset": "QA-live-UI",
+    "conversation_id": "qa-live-ui-001",
+    "evaluation_id": 3,
+    "checklist": "freedom-chat-quality@v10",
+    "status": "ok",
+    "model_total": 84.62,
+    "final_total": 84.62,
+    "answers": {
+      "c01": "no",
+      "c02": "na",
+      "c03": "na",
+      "c04": 100,
+      "c05": "yes",
+      "c06": 10,
+      "c07": "yes",
+      "c08": "no"
+    },
+    "appeals": []
+  },
+  {
+    "dataset": "QA-live-UI",
+    "conversation_id": "qa-live-ui-001",
+    "evaluation_id": 1,
+    "checklist": "freedom-chat-quality@v8",
+    "status": "ok",
+    "model_total": 84.62,
+    "final_total": 69.23,
+    "answers": {
+      "c01": "no",
+      "c02": "na",
+      "c03": "na",
+      "c04": 10,
+      "c05": "yes",
+      "c06": 10,
+      "c07": "yes",
+      "c08": "no"
+    },
+    "appeals": [
+      {
+        "criterion": "c01",
+        "status": "decided",
+        "action": "confirm",
+        "new_answer": null
+      },
+      {
+        "criterion": "c04",
+        "status": "decided",
+        "action": "change",
+        "new_answer": "10"
+      }
+    ]
+  },
+  {
+    "dataset": "SANDBOX",
+    "conversation_id": "qa-live-ui-001~13a0bb58e6644394b5e640b95b3111e9",
+    "evaluation_id": 2,
+    "checklist": "freedom-chat-quality@v8",
+    "status": "ok",
+    "model_total": 100.0,
+    "final_total": 100.0,
+    "answers": {
+      "c01": "yes",
+      "c02": "na",
+      "c03": "na",
+      "c04": 20,
+      "c05": "yes",
+      "c06": 10,
+      "c07": "yes",
+      "c08": "no"
+    },
+    "appeals": []
+  },
+  {
+    "dataset": "PRACTICE",
+    "conversation_id": "practice-1108-112755-ae379ada8fd947ac9dbfb98fe0b6071f",
+    "evaluation_id": 4,
+    "checklist": "freedom-chat-quality@v10",
+    "status": "ok",
+    "model_total": 100.0,
+    "final_total": 100.0,
+    "answers": {
+      "c01": "yes",
+      "c02": "na",
+      "c03": "na",
+      "c04": 100,
+      "c05": "yes",
+      "c06": 10,
+      "c07": "yes",
+      "c08": "no"
+    },
+    "appeals": []
+  }
+]

@@ -65,6 +65,8 @@ def normalize(record: dict) -> dict:
     if isinstance(raw, str):
         raw = json.loads(raw)
     parsed = [parse_timestamp(m["timestamp"]) for m in raw]
+    if any(b < a for a, b in zip(parsed, parsed[1:])):
+        raise ValueError("метки времени реплик должны идти по возрастанию")
     base = parsed[0] if parsed else 0.0
     messages = []
     for i, (m, p) in enumerate(zip(raw, parsed), start=1):

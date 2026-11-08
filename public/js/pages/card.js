@@ -37,7 +37,7 @@ export default async function card(root, params) {
   function paint() {
     const conv = data.conversation;
     const ev = data.evaluations[evIndex];
-    const ok = ev && ev.result;
+    const ok = ev && ev.final;
     const checklist = ev ? data.checklists[ev.checklist_key] : null;
     const fin = ok ? ev.final : null;
     const isCall = conv.channel === "voice call";
@@ -88,7 +88,7 @@ export default async function card(root, params) {
 
   function scoresPanel(conv, ev, checklist) {
     if (!ev) return html`<header><h2>Оценка</h2></header><div class="empty"><b>Диалог ещё не оценён</b>Выберите версию чек-листа и нажмите «Оценить»: модель проверит диалог, обычно за 20–40 секунд.</div>`;
-    if (!ev.result) return html`<header><h2>Оценка</h2></header><div class="alert"><b>Оценка не удалась</b>${ev.error}</div><div class="empty">Повторите попытку кнопкой «Оценить заново». Ошибка одного диалога не мешает остальным.</div>`;
+    if (!ev.final) return html`<header><h2>Оценка</h2></header><div class="alert"><b>Оценка не удалась</b>${ev.error}</div><div class="empty">Повторите попытку кнопкой «Оценить заново». Ошибка одного диалога не мешает остальным.</div><button class="link" id="trace">Как получена оценка</button>`;
     const fin = ev.final, rows = Object.fromEntries(fin.score.criteria.map((r) => [r.id, r]));
     const secs = Object.fromEntries((fin.score.sections || []).map((s) => [s.id, s]));
     const titles = Object.fromEntries((checklist.sections || []).map((s) => [s.id, s.title]));

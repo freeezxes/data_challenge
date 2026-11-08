@@ -13,6 +13,7 @@ from __future__ import annotations
 import json
 import re
 import time
+from uuid import uuid4
 
 from cqa.dataset import normalize
 from cqa.evaluator import _usage_dict, cost_usd
@@ -68,14 +69,30 @@ CLIENT_SCHEMA = {
 
 
 def _render(messages: list[dict]) -> str:
+    validate_messages(messages)
     lines = []
     for i, m in enumerate(messages, 1):
         lines.append(f"m{i} {ROLE.get(m['speaker'], m['speaker'].upper())}: {' '.join(m['text'].split())}")
     return "\n".join(lines) or "(чат ещё пуст)"
 
 
+def validate_messages(messages, draft="", language="RU"):
+    if not isinstance(messages, list):
+        raise StoreError("messages должен быть списком реплик")
+    for m in messages:
+        if not isinstance(m, dict) or (not isinstance(m.get("speaker"), str) or m.get("speaker") not in ROLE) or not isinstance(m.get("text"), str):
+            raise StoreError("каждая реплика должна содержать speaker и строку text")
+        if "timestamp" in m and not isinstance(m["timestamp"], str):
+            raise StoreError("timestamp должен быть строкой")
+    if not isinstance(draft, str):
+        raise StoreError("draft должен быть строкой")
+    if not isinstance(language, str) or language not in LANG_NAME:
+        raise StoreError("language должен быть RU, KZ или EN")
+
+
 def instant_checks(messages: list[dict], draft: str, language: str) -> list[dict]:
     """Проверки кодом: на каждый ход и на каждое изменение черновика. Без модели, мгновенно."""
+    validate_messages(messages, draft, language)
     out = []
     ops = [m for m in messages if m["speaker"] == "operator"]
     clients = " ".join(m["text"] for m in messages if m["speaker"] == "client")
@@ -132,6 +149,7 @@ def _haiku(app, system: str, user: str, schema: dict, max_tokens: int = 2000) ->
 
 
 def hints(app, messages: list[dict], language: str, operator_name: str, draft: str = "") -> dict:
+    validate_messages(messages, draft, language)
     checklist = app.store.checklist()
     system = ("Ты — суфлёр оператора контакт-центра Freedom Broker. Оператор прямо сейчас ведёт чат с клиентом. "
               "По чек-листу ниже подскажи, что важно сделать в СЛЕДУЮЩЕЙ реплике оператора, и предложи три разных готовых "
@@ -192,12 +210,21 @@ def opening(record: dict) -> tuple[list[dict], list[list[dict]]]:
 
 
 def finish(app, messages: list[dict], language: str, mode: str, base: dict, operator_name: str) -> dict:
+    validate_messages(messages, language=language)
+    if not app.has_key():
+        from .credentials import MISSING_KEY
+        raise StoreError(MISSING_KEY)
     if not any(m["speaker"] == "operator" for m in messages):
         raise StoreError("оператор ещё ничего не ответил — оценивать нечего")
-    cid = f"practice-{time.strftime('%m%d-%H%M%S')}"
+    cid = f"practice-{time.strftime('%m%d-%H%M%S')}-{uuid4().hex}"
     transcript = [{"timestamp": m.get("timestamp") or "00:00", "speaker": m["speaker"], "text": m["text"]} for m in messages]
     rec = {"conversation_id": cid, "channel": "agent chat", "language": language, "audio_url": None, "transcript": transcript,
            "practice": {"mode": mode, "base": base, "operator": operator_name}}
+    normalize(rec)
     app.store.save_dataset("PRACTICE", "Суфлёр и тренажёр", [rec], "copilot")
-    job = app.start_job("PRACTICE", [cid])
+    try:
+        job = app.start_job("PRACTICE", [cid])
+    except Exception:
+        app.store.discard_new_conversation("PRACTICE", cid)
+        raise
     return {"dataset_id": "PRACTICE", "conversation_id": cid, "job": job}

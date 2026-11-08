@@ -1,0 +1,116 @@
+{
+  "limit_usd": 0.95,
+  "spent_usd": 0.398229,
+  "reserved_usd": 0.0,
+  "calls": [
+    {
+      "model": "claude-opus-5-5",
+      "usage": {
+        "input_tokens": 573,
+        "output_tokens": 973,
+        "cache_read_input_tokens": 0,
+        "cache_creation_input_tokens": 23614
+      },
+      "cost_usd": 0.139822,
+      "reserved_bound": 0.454309,
+      "stop_reason": "end_turn"
+    },
+    {
+      "model": "claude-opus-5-5",
+      "usage": {
+        "input_tokens": 1028,
+        "output_tokens": 155,
+        "cache_read_input_tokens": 0,
+        "cache_creation_input_tokens": 5522
+      },
+      "cost_usd": 0.034822,
+      "reserved_bound": 0.197305,
+      "stop_reason": "end_turn"
+    },
+    {
+      "model": "claude-opus-5-5",
+      "usage": {
+        "input_tokens": 622,
+        "output_tokens": 950,
+        "cache_read_input_tokens": 23614,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.026211,
+      "reserved_bound": 0.454578,
+      "stop_reason": "end_turn"
+    },
+    {
+      "model": "claude-opus-5-5",
+      "usage": {
+        "input_tokens": 889,
+        "output_tokens": 170,
+        "cache_read_input_tokens": 0,
+        "cache_creation_input_tokens": 5502
+      },
+      "cost_usd": 0.034466,
+      "reserved_bound": 0.196431,
+      "stop_reason": "end_turn"
+    },
+    {
+      "model": "claude-opus-5-5",
+      "usage": {
+        "input_tokens": 573,
+        "output_tokens": 948,
+        "cache_read_input_tokens": 0,
+        "cache_creation_input_tokens": 22078
+      },
+      "cost_usd": 0.131642,
+      "reserved_bound": 0.44586,
+      "stop_reason": "end_turn"
+    },
+    {
+      "model": "claude-haiku-5-5",
+      "usage": {
+        "input_tokens": 135,
+        "output_tokens": 527,
+        "cache_read_input_tokens": 0,
+        "cache_creation_input_tokens": 5373
+      },
+      "cost_usd": 0.000949,
+      "reserved_bound": 0.071574,
+      "stop_reason": "end_turn"
+    },
+    {
+      "model": "claude-haiku-5-5",
+      "usage": {
+        "input_tokens": 197,
+        "output_tokens": 34,
+        "cache_read_input_tokens": 0,
+        "cache_creation_input_tokens": 938
+      },
+      "cost_usd": 0.000154,
+      "reserved_bound": 0.023522,
+      "stop_reason": "end_turn"
+    },
+    {
+      "model": "claude-opus-5-5",
+      "usage": {
+        "input_tokens": 599,
+        "output_tokens": 1151,
+        "cache_read_input_tokens": 22078,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.029832,
+      "reserved_bound": 0.446003,
+      "stop_reason": "end_turn"
+    },
+    {
+      "model": "claude-haiku-5-5",
+      "usage": {
+        "input_tokens": 293,
+        "output_tokens": 331,
+        "cache_read_input_tokens": 0,
+        "cache_creation_input_tokens": 1090
+      },
+      "cost_usd": 0.000331,
+      "reserved_bound": 0.038886,
+      "stop_reason": "end_turn"
+    }
+  ],
+  "cost_basis": "Actual SDK token usage multiplied by app PRICES; estimate, not provider invoice."
+}

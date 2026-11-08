@@ -263,8 +263,10 @@ def analyze(conv: dict, audio_path: Path) -> dict:
 
 def voice_report(conv: dict, src: str, public: Path, cache_dir: Path) -> dict:
     path = fetch_audio(src, public, cache_dir / "audio")
-    key = hashlib.sha1((conv["conversation_id"] + str(path.stat().st_size) +
-                        json.dumps([m["t"] for m in conv["messages"]])).encode()).hexdigest()[:16]
+    fingerprint = {"version": 2, "source": src, "path": str(path.resolve()),
+                   "audio_sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+                   "messages": conv["messages"]}
+    key = hashlib.sha256(json.dumps(fingerprint, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
     cache_dir.mkdir(parents=True, exist_ok=True)
     cached = cache_dir / f"{key}.json"
     if cached.exists():

@@ -224,13 +224,14 @@ def test_coach_variant_and_second_opinion(app, checklist):
 
     v = make_variant(app, ev["id"], "m10", "replace", tip["text"])
     rec = app.store.record("SANDBOX", v["conversation_id"])
-    assert v["conversation_id"] == "p1-ru-001~1" and rec["transcript"][9]["text"] == tip["text"]
+    assert v["conversation_id"].startswith("p1-ru-001~") and rec["transcript"][9]["text"] == tip["text"]
     assert rec["variant_of"]["evaluation_id"] == ev["id"] and rec["variant_of"]["edited_id"] == "m10"
     assert app.store.record("DEV", "p1-ru-001")["transcript"][9]["text"] != tip["text"]  # исходник не тронут
     with pytest.raises(StoreError):
         make_variant(app, ev["id"], "m1", "replace", "клиент так не говорил")  # чужие реплики не переписываем
     ins = make_variant(app, ev["id"], "m1", "insert_after", "Уточните, пожалуйста, номер договора.")
-    assert ins["conversation_id"] == "p1-ru-001~2" and len(app.store.record("SANDBOX", ins["conversation_id"])["transcript"]) == 13
+    assert ins["conversation_id"].startswith("p1-ru-001~") and ins["conversation_id"] != v["conversation_id"]
+    assert len(app.store.record("SANDBOX", ins["conversation_id"])["transcript"]) == 13
 
     app.fake.payloads = [model_payload(checklist, all_answers(checklist))]
     out = _variant(app, {"id": str(ev["id"])}, {}, {"target_id": "m10", "mode": "replace", "text": "Добрый день, я Алина."})

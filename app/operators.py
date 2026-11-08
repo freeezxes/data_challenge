@@ -51,8 +51,8 @@ def skills(app, ds_ids: list[str], checklist_key: str) -> dict:
     team = {c["id"]: [] for c in crits}
     for ds in ds_ids:
         records = {r["conversation_id"]: r for r in app.store.records(ds)}
-        for cid, ev in app.store.latest(ds).items():
-            if ev["checklist_key"] != checklist_key or not ev["result"] or cid not in records:
+        for cid, ev in app.store.latest(ds, checklist_key).items():
+            if not ev.get("final") or cid not in records:
                 continue
             name = operator_name(records[cid])
             row = rows.setdefault(name, {"name": name, "dialogs": [], "scores": {c["id"]: [] for c in crits}, "critical": 0, "fails": []})

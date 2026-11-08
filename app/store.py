@@ -38,6 +38,9 @@ create table if not exists evaluations(
   checklist_key text not null, job_id integer, status text not null, result text, error text,
   source text, created_at text not null);
 create index if not exists ev_conv on evaluations(dataset_id, conversation_id, id);
+create table if not exists job_items(
+  dataset_id text, conversation_id text, checklist_key text, job_id integer,
+  primary key(dataset_id, conversation_id, checklist_key));
 create table if not exists appeals(
   id integer primary key autoincrement, evaluation_id integer not null, criterion_id text not null,
   comment text not null, status text not null default 'open', action text, new_answer text, reason text,
@@ -56,6 +59,8 @@ class StoreError(ValueError):
 def checklist_problems(body: dict) -> list[str]:
     """Структурные ошибки + правило из чек-листа: веса применимых критериев дают 100."""
     errors = validate_checklist(body)
+    if errors:
+        return errors
     if not body.get("name"):
         errors.append("у чек-листа нет названия")
     for c in body.get("criteria", []):
@@ -105,6 +110,8 @@ class Store:
 
     # --- чек-листы ---
     def save_checklist(self, body: dict, note: str = "", activate: bool = True) -> str:
+        if not isinstance(body, dict):
+            raise StoreError("чек-лист должен быть объектом")
         body = json.loads(json.dumps(body))
         body["id"] = body.get("id") or "checklist"
         body.setdefault("rounding", 2)
@@ -172,12 +179,35 @@ class Store:
         rows = self.q("select * from datasets order by created_at")
         for d in rows:
             d["count"] = self.q("select count(*) n from conversations where dataset_id=?", (d["id"],))[0]["n"]
-            d["evaluated"] = self.q("select count(distinct conversation_id) n from evaluations where dataset_id=? and status!='error'", (d["id"],))[0]["n"]
+            d["evaluated"] = self.q("select count(*) n from evaluations where id in "
+                                      "(select max(id) from evaluations where dataset_id=? group by conversation_id) "
+                                      "and status!='error'", (d["id"],))[0]["n"]
         return rows
 
     def records(self, ds_id: str) -> list[dict]:
         return [json.loads(r["record"]) for r in
                 self.q("select record from conversations where dataset_id=? order by position", (ds_id,))]
+
+    def discard_new_conversation(self, ds_id, conv_id):
+        """Undo an unsuccessful save-and-evaluate of a newly generated, unique ID."""
+        with self.lock, self.db:
+            self.db.execute("delete from conversations where dataset_id=? and conversation_id=? "
+                            "and not exists (select 1 from evaluations where dataset_id=? and conversation_id=?) "
+                            "and not exists (select 1 from job_items where dataset_id=? and conversation_id=?)",
+                            (ds_id, conv_id, ds_id, conv_id, ds_id, conv_id))
+            self.db.execute("delete from datasets where id=? and not exists "
+                            "(select 1 from conversations where dataset_id=?)", (ds_id, ds_id))
+
+    def evaluation_cost(self, ds_id, checklist_key):
+        """All attempts plus warmup, without counting job-linked evaluations twice."""
+        jobs = self.q("select id,cost_usd from jobs where dataset_id=? and checklist_key=?", (ds_id, checklist_key))
+        ids = {j["id"] for j in jobs}
+        total = sum(j["cost_usd"] or 0 for j in jobs)
+        for ev in self.q("select job_id,result from evaluations where dataset_id=? and checklist_key=?",
+                         (ds_id, checklist_key)):
+            if ev["job_id"] not in ids and ev["result"]:
+                total += json.loads(ev["result"]).get("cost_usd") or 0
+        return round(total, 6)
 
     def record(self, ds_id: str, conv_id: str) -> dict:
         rows = self.q("select record from conversations where dataset_id=? and conversation_id=?", (ds_id, conv_id))
@@ -186,16 +216,32 @@ class Store:
         return json.loads(rows[0]["record"])
 
     # --- задания и оценки ---
-    def create_job(self, ds_id, checklist_key, total):
-        return self.x("insert into jobs(dataset_id,checklist_key,total,status,created_at) values(?,?,?,?,?)",
-                      (ds_id, checklist_key, total, "running", now()))
+    def recover_jobs(self):
+        """Single server owns a database; work left by its previous process cannot continue."""
+        with self.lock, self.db:
+            self.db.execute("update jobs set status='interrupted', error=?, finished_at=? where status='running'",
+                            ("Оценка прервана перезапуском сервера. Запустите оставшиеся диалоги заново.", now()))
+            self.db.execute("delete from job_items")
+
+    def create_job(self, ds_id, checklist_key, total, ids=()):
+        with self.lock, self.db:
+            self.db.execute("begin immediate")
+            if any(self.db.execute("select 1 from job_items where dataset_id=? and conversation_id=? and checklist_key=?",
+                                   (ds_id, cid, checklist_key)).fetchone() for cid in ids):
+                raise StoreError("выбранный диалог уже оценивается этой версией чек-листа")
+            job_id = self.db.execute("insert into jobs(dataset_id,checklist_key,total,status,created_at) values(?,?,?,?,?)",
+                                     (ds_id, checklist_key, total, "running", now())).lastrowid
+            self.db.executemany("insert into job_items values(?,?,?,?)", [(ds_id, cid, checklist_key, job_id) for cid in ids])
+            return job_id
 
     def job(self, job_id):
         rows = self.q("select * from jobs where id=?", (job_id,))
         return rows[0] if rows else None
 
     def jobs(self, active_only=False):
-        sql = "select * from jobs" + (" where status='running'" if active_only else "") + " order by id desc limit 20"
+        sql = "select * from jobs where status='running'" if active_only else (
+            "select * from jobs where status='running' or id in (select id from jobs order by id desc limit 20)")
+        sql += " order by id desc"
         return self.q(sql)
 
     def job_progress(self, job_id, ok: bool | None, cost: float | None):
@@ -206,7 +252,9 @@ class Store:
         self.x(f"update jobs set {col}={col}+1, cost_usd=cost_usd+? where id=?", (cost or 0, job_id))
 
     def finish_job(self, job_id, status="done", error=None):
-        self.x("update jobs set status=?, error=?, finished_at=? where id=?", (status, error, now(), job_id))
+        with self.lock, self.db:
+            self.db.execute("update jobs set status=?, error=?, finished_at=? where id=?", (status, error, now(), job_id))
+            self.db.execute("delete from job_items where job_id=?", (job_id,))
 
     def add_evaluation(self, ds_id, conv_id, checklist_key, status, result=None, error=None, job_id=None, source="live"):
         return self.x("insert into evaluations(dataset_id,conversation_id,checklist_key,job_id,status,result,error,source,created_at) "
@@ -224,7 +272,7 @@ class Store:
         row = dict(row)
         row["result"] = json.loads(row["result"]) if row.get("result") else None
         row["appeals"] = self.q("select * from appeals where evaluation_id=? order by id", (row["id"],))
-        if row["result"]:
+        if row["result"] and row["status"] != "error":
             row["final"] = self.final_result(row)
         return row
 
@@ -232,10 +280,11 @@ class Store:
         rows = self.q("select * from evaluations where dataset_id=? and conversation_id=? order by id desc", (ds_id, conv_id))
         return [self._expand(r) for r in rows]
 
-    def latest(self, ds_id) -> dict[str, dict]:
+    def latest(self, ds_id, checklist_key=None) -> dict[str, dict]:
         """Последняя оценка по каждому диалогу набора (кратко, для очереди)."""
         rows = self.q("select e.* from evaluations e join (select conversation_id, max(id) mid from evaluations "
-                      "where dataset_id=? group by conversation_id) m on e.id=m.mid", (ds_id,))
+                      "where dataset_id=?" + (" and checklist_key=?" if checklist_key else "") +
+                      " group by conversation_id) m on e.id=m.mid", (ds_id, checklist_key) if checklist_key else (ds_id,))
         return {r["conversation_id"]: self._expand(r) for r in rows}
 
     def latest_ready(self, ds_id, checklist_key) -> dict[str, dict]:
@@ -263,16 +312,22 @@ class Store:
 
     def create_appeal(self, ev_id: int, criterion_id: str, comment: str) -> int:
         ev = self.evaluation(ev_id)
-        if not ev["result"]:
+        if not ev.get("final"):
             raise StoreError("оспорить можно только готовую оценку")
         if criterion_id not in ev["result"]["answers"]:
             raise StoreError(f"в оценке нет критерия {criterion_id}")
-        if not comment.strip():
+        if not isinstance(comment, str) or not comment.strip():
             raise StoreError("добавьте комментарий: что не так с оценкой")
         if any(a["criterion_id"] == criterion_id and a["status"] == "open" for a in ev["appeals"]):
             raise StoreError("по этому критерию уже есть апелляция, которая ждёт решения")
-        return self.x("insert into appeals(evaluation_id,criterion_id,comment,status,created_at) values(?,?,?,?,?)",
-                      (ev_id, criterion_id, comment.strip(), "open", now()))
+        with self.lock, self.db:
+            cur = self.db.execute("insert into appeals(evaluation_id,criterion_id,comment,status,created_at) "
+                                  "select ?,?,?,?,? where not exists (select 1 from appeals "
+                                  "where evaluation_id=? and criterion_id=? and status='open')",
+                                  (ev_id, criterion_id, comment.strip(), "open", now(), ev_id, criterion_id))
+            if cur.rowcount != 1:
+                raise StoreError("по этому критерию уже есть открытая апелляция")
+            return cur.lastrowid
 
     def appeal(self, ap_id):
         rows = self.q("select * from appeals where id=?", (ap_id,))
@@ -293,7 +348,7 @@ class Store:
             raise StoreError("решение по апелляции уже принято")
         if action not in ("confirm", "change"):
             raise StoreError("решение — confirm или change")
-        if not (reason or "").strip():
+        if not isinstance(reason, str) or not reason.strip():
             raise StoreError("укажите причину решения")
         ev = self.evaluation(ap["evaluation_id"])
         if action == "change":
@@ -306,8 +361,12 @@ class Store:
                 raise StoreError("новая оценка совпадает с текущей — выберите «Подтвердить»")
         else:
             new_answer = None
-        self.x("update appeals set status='decided', action=?, new_answer=?, reason=?, decided_at=? where id=?",
-               (action, None if new_answer is None else str(new_answer), reason.strip(), now(), ap_id))
+        with self.lock, self.db:
+            cur = self.db.execute("update appeals set status='decided', action=?, new_answer=?, reason=?, decided_at=? "
+                                  "where id=? and status='open'",
+                                  (action, None if new_answer is None else str(new_answer), reason.strip(), now(), ap_id))
+            if cur.rowcount != 1:
+                raise StoreError("решение по апелляции уже принято")
         return self.evaluation(ap["evaluation_id"])
 
     def preview(self, ev_id: int, criterion_id: str, new_answer) -> dict:

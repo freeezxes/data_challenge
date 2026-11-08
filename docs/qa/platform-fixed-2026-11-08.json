@@ -1,0 +1,661 @@
+{
+  "passed": 48,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "http_evaluation_queue_analytics_export",
+      "expected": "Real product path completes and totals agree",
+      "passed": true,
+      "actual": {
+        "job": {
+          "id": 1,
+          "dataset_id": "QA",
+          "checklist_key": "freedom-chat-quality@v8",
+          "total": 1,
+          "done": 1,
+          "failed": 0,
+          "status": "done",
+          "error": null,
+          "cost_usd": 0.0024,
+          "created_at": "2026-11-08T06:35:58+00:00",
+          "finished_at": "2026-11-08T06:35:58+00:00"
+        },
+        "status": "ok",
+        "total": 100.0,
+        "SDK_calls": 1
+      }
+    },
+    {
+      "name": "import_atomic_validation_conflicts_one_use_token",
+      "expected": "Reject entire malformed import; never overwrite transcripts",
+      "passed": true,
+      "actual": {
+        "invalid": [
+          "Диалог bad, реплика 1: timestamp должен быть MM:SS, H:MM:SS или ISO 8601."
+        ],
+        "committed": {
+          "id": "QA",
+          "count": 1,
+          "skipped": 0,
+          "ids": [
+            "new"
+          ]
+        },
+        "replay": 400,
+        "skip": {
+          "id": "QA",
+          "count": 0,
+          "skipped": 1,
+          "ids": []
+        }
+      }
+    },
+    {
+      "name": "import_stale_preview",
+      "expected": "Reject append if dataset changed after preview",
+      "passed": true,
+      "actual": {
+        "code": 400,
+        "body": {
+          "error": "Набор изменился после предпросмотра. Проверьте импорт ещё раз."
+        }
+      }
+    },
+    {
+      "name": "appeal_na_preview_immutability_aggregates",
+      "expected": "Appeal recalculates N/A consistently; original stays immutable",
+      "passed": true,
+      "actual": {
+        "original": 80.0,
+        "final": 100.0,
+        "duplicate": 400,
+        "repeat_decision": 400
+      }
+    },
+    {
+      "name": "invalid_job_votes_6",
+      "expected": "400 and no persistent job for invalid votes",
+      "passed": true,
+      "actual": {
+        "code": 400,
+        "response": {
+          "error": "число прогонов — от 1 до 5"
+        },
+        "persisted_jobs": []
+      }
+    },
+    {
+      "name": "invalid_job_votes_bad",
+      "expected": "400 and no persistent job for invalid votes",
+      "passed": true,
+      "actual": {
+        "code": 400,
+        "response": {
+          "error": "invalid literal for int() with base 10: 'bad'"
+        },
+        "persisted_jobs": []
+      }
+    },
+    {
+      "name": "invalid_job_votes_0",
+      "expected": "400 and no persistent job for invalid votes",
+      "passed": true,
+      "actual": {
+        "code": 400,
+        "response": {
+          "error": "число прогонов — от 1 до 5"
+        },
+        "persisted_jobs": []
+      }
+    },
+    {
+      "name": "running_conversation_not_evaluated_twice",
+      "expected": "Second click/only_missing does not duplicate an in-flight paid evaluation",
+      "passed": true,
+      "actual": {
+        "statuses": [
+          200,
+          400
+        ],
+        "evaluations": 1,
+        "SDK_calls": 1
+      }
+    },
+    {
+      "name": "restart_recovers_abandoned_jobs",
+      "expected": "Restart marks interrupted jobs terminal or resumes them",
+      "passed": true,
+      "actual": {
+        "id": 1,
+        "dataset_id": "QA",
+        "checklist_key": "freedom-chat-quality@v8",
+        "total": 1,
+        "done": 0,
+        "failed": 0,
+        "status": "interrupted",
+        "error": "Оценка прервана перезапуском сервера. Запустите оставшиеся диалоги заново.",
+        "cost_usd": 0.0,
+        "created_at": "2026-11-08T06:36:02+00:00",
+        "finished_at": "2026-11-08T06:36:02+00:00"
+      }
+    },
+    {
+      "name": "polling_cannot_hide_older_running_job",
+      "expected": "Polling list always exposes running work even after 20 newer completed jobs",
+      "passed": true,
+      "actual": {
+        "running_job": 1,
+        "returned_jobs": 21,
+        "running_returned": 1
+      }
+    },
+    {
+      "name": "practice_unique_ids_same_second",
+      "expected": "Two completed chats in the same second preserve both transcripts",
+      "passed": true,
+      "actual": {
+        "ids": [
+          "practice-qa-fixed-second-41acf30acee647eba19fd0b9ec11f1bc",
+          "practice-qa-fixed-second-b6034a9529484da68ffa9bf95a9bedcc"
+        ],
+        "stored_records": 2,
+        "evaluations": 1
+      }
+    },
+    {
+      "name": "practice_no_key_atomic_failure",
+      "expected": "Rejected finish must not create an undisclosed saved chat",
+      "passed": true,
+      "actual": {
+        "code": 400,
+        "response": {
+          "error": "Добавьте свой ключ Claude API (ANTHROPIC_API_KEY) кнопкой «API-ключ» перед запуском"
+        },
+        "saved_chats_despite_error": 0
+      }
+    },
+    {
+      "name": "explicit_historical_version_views",
+      "expected": "Selecting v1 returns its saved result even after v2 evaluation",
+      "passed": true,
+      "actual": {
+        "v1": "freedom-chat-quality@v8",
+        "v2": "freedom-chat-quality@v9",
+        "v1_analytics_evaluated": 1,
+        "v1_export_status": "ok",
+        "v1_operators": 1
+      }
+    },
+    {
+      "name": "state_counters_match_latest_evaluation",
+      "expected": "Dataset counters and queue use the same latest-result semantics",
+      "passed": true,
+      "actual": {
+        "state_evaluated": 0,
+        "queue_evaluated": 0,
+        "latest_status": "error"
+      }
+    },
+    {
+      "name": "editable_consultation_scale_evaluates",
+      "expected": "Saved 0/50/100 scale works through normal evaluator",
+      "passed": true,
+      "actual": {
+        "saved": 200,
+        "job": "done",
+        "evaluation_error": null
+      }
+    },
+    {
+      "name": "reject_scale_with_zero_maximum",
+      "expected": "Unscorable scale rejected before activation",
+      "passed": true,
+      "actual": {
+        "save_code": 400,
+        "activated": null
+      }
+    },
+    {
+      "name": "reject_fractional_scale_decision",
+      "expected": "7.9 is rejected rather than silently truncated to 7",
+      "passed": true,
+      "actual": {
+        "code": 400,
+        "saved_answer": null
+      }
+    },
+    {
+      "name": "concurrent_duplicate_appeals",
+      "expected": "Only one open appeal per evaluation and criterion",
+      "passed": true,
+      "actual": {
+        "codes": [
+          400,
+          200
+        ],
+        "appeals": [
+          {
+            "id": 1,
+            "evaluation_id": 1,
+            "criterion_id": "c01",
+            "comment": "Параллельная апелляция",
+            "status": "open",
+            "action": null,
+            "new_answer": null,
+            "reason": null,
+            "created_at": "2026-11-08T06:36:07+00:00",
+            "decided_at": null,
+            "assist": null,
+            "dataset_id": "QA",
+            "conversation_id": "qa-chat",
+            "checklist_key": "freedom-chat-quality@v8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "concurrent_reviewer_decisions",
+      "expected": "Only first decision succeeds; second cannot overwrite audit trail",
+      "passed": true,
+      "actual": {
+        "codes": [
+          400,
+          200
+        ],
+        "appeals": [
+          {
+            "id": 1,
+            "evaluation_id": 1,
+            "criterion_id": "c01",
+            "comment": "Параллельная апелляция",
+            "status": "decided",
+            "action": "confirm",
+            "new_answer": null,
+            "reason": "Reviewer B",
+            "created_at": "2026-11-08T06:36:08+00:00",
+            "decided_at": "2026-11-08T06:36:08+00:00",
+            "assist": null,
+            "dataset_id": "QA",
+            "conversation_id": "qa-chat",
+            "checklist_key": "freedom-chat-quality@v8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "checklist_null",
+      "expected": "Invalid JSON field types return 400, never 500",
+      "passed": true,
+      "actual": {
+        "code": 400,
+        "body": {
+          "error": "чек-лист должен быть объектом"
+        }
+      }
+    },
+    {
+      "name": "checklist_weight_string",
+      "expected": "Invalid JSON field types return 400, never 500",
+      "passed": true,
+      "actual": {
+        "code": 400,
+        "body": {
+          "error": "c01: вес должен быть числом ≥ 0"
+        }
+      }
+    },
+    {
+      "name": "appeal_comment_object",
+      "expected": "Invalid JSON field types return 400, never 500",
+      "passed": true,
+      "actual": {
+        "code": 400,
+        "body": {
+          "error": "добавьте комментарий: что не так с оценкой"
+        }
+      }
+    },
+    {
+      "name": "copilot_invalid_messages",
+      "expected": "Invalid JSON field types return 400, never 500",
+      "passed": true,
+      "actual": {
+        "code": 400,
+        "body": {
+          "error": "каждая реплика должна содержать speaker и строку text"
+        }
+      }
+    },
+    {
+      "name": "copilot_draft_object",
+      "expected": "Invalid JSON field types return 400, never 500",
+      "passed": true,
+      "actual": {
+        "code": 400,
+        "body": {
+          "error": "draft должен быть строкой"
+        }
+      }
+    },
+    {
+      "name": "reject_backwards_timestamps",
+      "expected": "Out-of-order timestamps rejected before timing/facts calculations",
+      "passed": true,
+      "actual": {
+        "errors": [
+          "Диалог qa-chat: несовместимые метки времени (ValueError)."
+        ],
+        "has_commit_token": false
+      }
+    },
+    {
+      "name": "recording_scoped_to_dataset",
+      "expected": "Imported audio wins over unrelated DEV recording with same conversation ID",
+      "passed": true,
+      "actual": {
+        "requested_audio": "https://example.invalid/own.wav",
+        "actual_audio": "https://example.invalid/own.wav"
+      }
+    },
+    {
+      "name": "failed_model_call_keeps_usage_cost_and_trace",
+      "expected": "Billed SDK response remains traceable even when model refuses",
+      "passed": true,
+      "actual": {
+        "SDK_calls_with_usage": 1,
+        "job_cost": 0.0024,
+        "trace_calls": 1,
+        "trace_usage": {
+          "input_tokens": 100,
+          "output_tokens": 100,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0
+        }
+      }
+    },
+    {
+      "name": "analytics_total_cost_includes_cache_warmup",
+      "expected": "Analytics total spent includes cache preparation billed in job",
+      "passed": true,
+      "actual": {
+        "job_total": 0.0096,
+        "analytics_total": 0.0096
+      }
+    },
+    {
+      "name": "withdrawn_critical_violation_removed_from_queue",
+      "expected": "Final queue does not show a violation overturned on appeal",
+      "passed": true,
+      "actual": {
+        "critical": false,
+        "violations": []
+      }
+    },
+    {
+      "name": "concurrent_variants_do_not_overwrite",
+      "expected": "Concurrent edits allocate distinct immutable variant IDs",
+      "passed": true,
+      "actual": {
+        "responses": [
+          200,
+          200
+        ],
+        "variants": [
+          [
+            "qa-chat~8dd83e3713334c438c7c124dbfa6558c",
+            "Здравствуйте, меня зовут Алина. Variant B"
+          ],
+          [
+            "qa-chat~ae529bc538664eb3b739c6ad3e825d04",
+            "Здравствуйте, меня зовут Алина. Variant A"
+          ]
+        ]
+      }
+    },
+    {
+      "name": "exhaustive_default_scoring_independent_decimal_oracle",
+      "expected": "Every allowed default answer combination matches an independent decimal calculation",
+      "passed": true,
+      "actual": {
+        "combinations": 5184
+      }
+    },
+    {
+      "name": "invalid_quote_repair_then_needs_review",
+      "expected": "Invalid proof gets one repair, then remains explicitly unverified",
+      "passed": true,
+      "actual": {
+        "status": "needs_review",
+        "issues": [
+          "c01: цитата «This quote never occurs in the transcript» не найдена в репликах ['m4', 'm5']"
+        ],
+        "SDK_calls_including_repair": 2
+      }
+    },
+    {
+      "name": "saving_checklist_does_not_mutate_history",
+      "expected": "New weights leave historical evaluation and score unchanged",
+      "passed": true,
+      "actual": {
+        "old_key": "freedom-chat-quality@v8",
+        "new_key": "freedom-chat-quality@v9",
+        "original_unchanged": true
+      }
+    },
+    {
+      "name": "encoded_unicode_special_character_ids",
+      "expected": "Imported special-character IDs remain addressable through API",
+      "passed": true,
+      "actual": {
+        "code": 200,
+        "exact_ID_preserved": true
+      }
+    },
+    {
+      "name": "missing_static_and_non_public_paths_return_404",
+      "expected": "Missing/forbidden static paths return valid 404 responses",
+      "passed": true,
+      "actual": {
+        "/qa-missing-file": {
+          "code": 404
+        },
+        "/.env": {
+          "code": 404
+        },
+        "/../app/store.py": {
+          "code": 404
+        },
+        "/%2e%2e/app/store.py": {
+          "code": 404
+        },
+        "/app/store.py": {
+          "code": 404
+        }
+      }
+    },
+    {
+      "name": "practice_without_operator_rejected",
+      "expected": "Empty practice never creates an evaluation or saved chat",
+      "passed": true,
+      "actual": {
+        "code": 400,
+        "response": {
+          "error": "Добавьте свой ключ Claude API (ANTHROPIC_API_KEY) кнопкой «API-ключ» перед запуском"
+        }
+      }
+    },
+    {
+      "name": "invalid_decisions_have_no_side_effects",
+      "expected": "Disallowed N/A, unchanged answer, empty reason, unknown action are rejected",
+      "passed": true,
+      "actual": {
+        "codes": [
+          400,
+          400,
+          400,
+          400
+        ],
+        "status": "open"
+      }
+    },
+    {
+      "name": "all_na_no_fabricated_score",
+      "expected": "All N/A returns null score with explanation",
+      "passed": true,
+      "actual": {
+        "total": null,
+        "total_reason": "нет применимых критериев с весом",
+        "critical": false,
+        "critical_criteria": [],
+        "criteria": [
+          {
+            "id": "only",
+            "section": null,
+            "answer": "na",
+            "weight": 100,
+            "raw_points": null,
+            "effective_weight": null,
+            "points": null
+          }
+        ],
+        "sections": []
+      }
+    },
+    {
+      "name": "live_partial_json_and_cleanup",
+      "expected": "Partial JSON publishes completed criteria; finish removes live state",
+      "passed": true,
+      "actual": {
+        "during": "writing",
+        "criteria": 8,
+        "after": "none"
+      }
+    },
+    {
+      "name": "real_local_audio_decode_and_analysis",
+      "expected": "Real generated WAV decodes to bounded waveform and voice report",
+      "passed": true,
+      "actual": {
+        "duration": 6.0,
+        "waveform_bins": 1200,
+        "talk_share": 0.75
+      }
+    },
+    {
+      "name": "voice_cache_includes_transcript_roles",
+      "expected": "Same ID/timestamps with different speaker roles gets its own voice report",
+      "passed": true,
+      "actual": {
+        "current_transcript_m4": "client",
+        "report_m4": "client",
+        "cached_report_reused": false
+      }
+    },
+    {
+      "name": "coach_target_safety_and_cached_nonbinding_opinion",
+      "expected": "Coach cannot replace client text; second opinion caches and does not decide appeal",
+      "passed": true,
+      "actual": {
+        "coach_mode_for_client_target": "insert_after",
+        "opinion_cached": true,
+        "SDK_calls": 2,
+        "appeal_remains_open": true
+      }
+    },
+    {
+      "name": "copilot_start_hints_client_model_routing",
+      "expected": "Copilot API uses Haiku and returns usable opening, hints, simulated client",
+      "passed": true,
+      "actual": {
+        "opening_roles": [
+          "client",
+          "bot",
+          "system"
+        ],
+        "reply_count": 3,
+        "client_leaves": true,
+        "models": [
+          "claude-haiku-5-5",
+          "claude-haiku-5-5"
+        ]
+      }
+    },
+    {
+      "name": "instant_disclosure_guard_ru_kz_en",
+      "expected": "Account details warn before identity confirmation and stop warning after it",
+      "passed": true,
+      "actual": [
+        {
+          "language": "RU",
+          "before": true,
+          "after": false
+        },
+        {
+          "language": "KZ",
+          "before": true,
+          "after": false
+        },
+        {
+          "language": "EN",
+          "before": true,
+          "after": false
+        }
+      ]
+    },
+    {
+      "name": "variant_copies_then_evaluates_without_mutating_source",
+      "expected": "Sequential variant edit preserves original and evaluates the copy",
+      "passed": true,
+      "actual": {
+        "variant": "qa-chat~16ad4bc01e29433e807cbcdf053e5a62",
+        "job": "done",
+        "source_unchanged": true
+      }
+    },
+    {
+      "name": "submission_appeals_types_and_explicit_error_ack",
+      "expected": "Official export uses final answers and blocks silent errors",
+      "passed": true,
+      "actual": {
+        "first_score": {
+          "final_score": 90.0,
+          "critical_flag": false
+        },
+        "without_ack": 400,
+        "with_ack": 200
+      }
+    },
+    {
+      "name": "submission_historical_ready_after_other_version_and_failed_retry",
+      "expected": "Official submission retains chosen version's ready result after other versions and failed retries",
+      "passed": true,
+      "actual": {
+        "download_code": 200,
+        "submission_ready": 1,
+        "submission_errors": 0,
+        "submission_notices": [
+          "Ожидалось 10 диалогов для PROD; в наборе 1. Проверьте, что выбран нужный набор."
+        ],
+        "historical_total": {
+          "final_score": 100.0,
+          "critical_flag": false
+        },
+        "same_version_analytics_evaluated": 0
+      }
+    },
+    {
+      "name": "submission_needs_review_exports_with_visible_warning",
+      "expected": "Current export contract permits needs_review and wrong set size with explicit report warnings",
+      "passed": true,
+      "actual": {
+        "download_code": 200,
+        "export_status": "ok",
+        "warnings": 1,
+        "warning": "Часть цитат не совпала дословно хотя бы в одном прогоне; выгружены ответы модели по голосованию.",
+        "count_notices": [
+          "Ожидалось 10 диалогов для PROD; в наборе 1. Проверьте, что выбран нужный набор."
+        ]
+      }
+    }
+  ]
+}

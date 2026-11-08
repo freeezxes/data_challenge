@@ -24,7 +24,7 @@ def deployment(tmp_path, monkeypatch, checklist):
 
     def factory(**kwargs):
         assert kwargs["base_url"] == "https://api.anthropic.com"
-        assert kwargs["auth_token"] == ""
+        assert "auth_token" not in kwargs
         key = kwargs["api_key"]
         fake = FakeAPI([model_payload(checklist, all_answers(checklist))])
         clients[key] = fake

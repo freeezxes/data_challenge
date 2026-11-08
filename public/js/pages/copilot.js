@@ -14,6 +14,7 @@ export default async function copilot(root, params = {}) {
     name: localStorage.getItem("cqa-cp-name") || "Алина", started: 0, ended: false, busy: false, cost: 0,
     hints: null, instant: [], typing: false, armed: false, draftTimer: null,
   };
+  let active = true, checkSequence = 0;
   const fromLink = params.sc && scenarios.find((x) => `${x.dataset_id}|${x.conversation_id}` === params.sc);
   const pickDefault = fromLink || scenarios.find((x) => x.conversation_id === "p1-ru-009") || scenarios[0];
 
@@ -55,6 +56,7 @@ export default async function copilot(root, params = {}) {
   const elapsed = () => { const t = Math.floor((Date.now() - s.started) / 1000); return `${String(Math.floor(t / 60)).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}`; };
 
   function paintChat() {
+    if (!active) return;
     const b = $("#bubbles");
     if (!b) return;
     b.innerHTML = String(html`${s.messages.map((m) => html`<div class="bubble ${m.speaker}">${m.speaker !== "system" ? html`<span class="by">${m.speaker === "operator" ? s.name : WHO[m.speaker]} · ${m.timestamp}</span>` : ""}<div>${m.text}</div></div>`)}
@@ -67,6 +69,7 @@ export default async function copilot(root, params = {}) {
   }
 
   function paintHelp(loading) {
+    if (!active) return;
     const h = $("#help");
     if (!h) return;
     // код и модель часто говорят об одном: по критерию оставляем подсказку модели, «стоп» кода — всегда
@@ -96,18 +99,20 @@ export default async function copilot(root, params = {}) {
     paintHelp(true);
     try {
       const r = await api("/copilot/hint", { messages: s.messages, language: s.language, operator_name: s.name, draft });
-      s.hints = r; s.instant = r.instant; s.cost += r.cost_usd || 0;
+      if (!active) return;
+      s.hints = r; s.cost += r.cost_usd || 0;
     } catch (x) { toast(x.message, true); s.hints = null; }
     paintHelp(false);
   }
 
   async function onDraft() {
     clearTimeout(s.draftTimer);
+    const sequence = ++checkSequence;
     s.armed = false; $("#send").textContent = "Отправить"; $("#send").classList.remove("danger");
     s.draftTimer = setTimeout(async () => {
       if (!$("#draft")) return;  // ушли со страницы
       const r = await api("/copilot/check", { messages: s.messages, draft: $("#draft").value, language: s.language }).catch(() => null);
-      if (!r || !$("#instant")) return;
+      if (!active || sequence !== checkSequence || !r || !$("#instant")) return;
       s.instant = r.instant;
       const stops = r.instant.filter((x) => x.severity === "stop");
       $("#instant").innerHTML = String(html`${stops.map((x) => html`<div class="hint stop"><span class="sev">Стоп</span><div><b>${x.text}</b></div></div>`)}`);
@@ -139,10 +144,27 @@ export default async function copilot(root, params = {}) {
   }
 
   async function send() {
+    if (!active || s.busy || !s.started || s.ended) return;
     const text = $("#draft").value.trim();
     if (!text) return;
-    if (s.instant.some((x) => x.severity === "stop") && !s.armed) {
-      s.armed = true; $("#send").textContent = "Нарушение — отправить всё равно"; $("#send").classList.add("danger"); return;
+    clearTimeout(s.draftTimer); ++checkSequence;
+    const context = JSON.stringify([text, s.messages, s.language]);
+    s.busy = true; paintChat();
+    try {
+      const r = await api("/copilot/check", { messages: s.messages, draft: text, language: s.language });
+      if (!active || context !== JSON.stringify([$("#draft").value.trim(), s.messages, s.language])) return;
+      s.instant = r.instant;
+      const stops = r.instant.filter((x) => x.severity === "stop");
+      $("#instant").innerHTML = String(html`${stops.map((x) => html`<div class="hint stop"><span class="sev">Стоп</span><div><b>${x.text}</b></div></div>`)}`);
+      paintHelp(false);
+      if (stops.length && s.armed !== context) {
+        s.armed = context; $("#send").textContent = "Нарушение — отправить всё равно"; $("#send").classList.add("danger"); return;
+      }
+    } catch (x) {
+      if (active) toast("Сообщение не отправлено: " + x.message, true);
+      return;
+    } finally {
+      s.busy = false; paintChat();
     }
     s.messages.push({ speaker: "operator", text, timestamp: elapsed() });
     $("#draft").value = ""; $("#instant").innerHTML = ""; s.instant = []; s.hints = null; s.armed = false;
@@ -156,6 +178,7 @@ export default async function copilot(root, params = {}) {
     root.querySelectorAll("[data-mode]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
   }));
   $("#go").onclick = async () => {
+    if (s.busy) return;
     const [ds, cid] = $("#sc").value.split("|");
     s.name = $("#nm").value.trim() || "Алина"; localStorage.setItem("cqa-cp-name", s.name);
     const r = await api("/copilot/start", { dataset_id: ds, conversation_id: cid });
@@ -179,5 +202,5 @@ export default async function copilot(root, params = {}) {
     } catch (x) { toast(x.message, true); $("#finish").disabled = false; }
   };
   paintChat();
-  return () => clearTimeout(s.draftTimer);
+  return () => { active = false; ++checkSequence; clearTimeout(s.draftTimer); };
 }

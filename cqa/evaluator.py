@@ -277,8 +277,8 @@ class Evaluator:
         criteria = aggregate(self.checklist, runs)
         answers = {cid: d["answer"] for cid, d in criteria.items()}
         usage: dict = {}
-        for r in runs:
-            _add_usage(usage, r["usage"])
+        for call in calls:
+            _add_usage(usage, call["usage"])
         return {
             "conversation_id": conv["conversation_id"],
             "model": self.config.model,

@@ -71,6 +71,14 @@ def kind_of(criterion: dict) -> str | None:
     title = criterion.get("title", "").lower()
     for k, word in KINDS.items():
         if word in title:
+            # Fixed fact rules only describe the original answer scales. A user
+            # scale is evaluated from its own definitions by the model.
+            expected = {"consult": {0, 5, 10, 15, 20}, "flow": {0, 4, 7, 10}}
+            if k in expected:
+                if criterion.get("type") != "scale" or {s["value"] for s in criterion.get("scale", [])} != expected[k]:
+                    return None
+            elif criterion.get("type") != "binary":
+                return None
             return k
     return None
 

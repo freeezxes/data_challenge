@@ -27,7 +27,7 @@ sys.path.insert(0, str(ROOT))
 
 from cqa.checklist import load_checklist  # noqa: E402
 from cqa.dataset import fetch_dataset, normalize  # noqa: E402
-from cqa.evaluator import EvalConfig, Evaluator, PRICES  # noqa: E402
+from cqa.evaluator import EvalConfig, Evaluator, PRICES, cost_usd, _add_usage  # noqa: E402
 from cqa.prompt import build_system_prompt, build_user_message  # noqa: E402
 from cqa.gold import load_gold  # noqa: E402
 from cqa.metrics import compare  # noqa: E402
@@ -54,6 +54,7 @@ class App:
 
     def __init__(self, db_path, client_factory=None, workers=None):
         self.store = Store(db_path)
+        self.store.recover_jobs()
         self.imports = ImportManager(self.store)
         self.config = EvalConfig(model=os.environ.get("CQA_MODEL", "claude-opus-5-5"),
                                  effort=os.environ.get("CQA_EFFORT", "high"),
@@ -81,31 +82,41 @@ class App:
         if not self.has_key():
             raise StoreError(MISSING_KEY)
         import anthropic
-        return anthropic.Anthropic(api_key=request_key.get(), auth_token="", base_url="https://api.anthropic.com",
+        return anthropic.Anthropic(api_key=request_key.get(), base_url="https://api.anthropic.com",
                                    timeout=180.0, max_retries=4)
 
     # --- оценка ---
+    def validated_votes(self, votes):
+        votes = self.config.votes if votes is None else votes
+        if isinstance(votes, bool) or not isinstance(votes, (int, str)):
+            raise StoreError("число прогонов — целое от 1 до 5")
+        votes = int(votes)
+        if not 1 <= votes <= 5:
+            raise StoreError("число прогонов — от 1 до 5")
+        return votes
+
     def start_job(self, ds_id, ids=None, checklist_key=None, only_missing=False, votes=None):
         if not self.has_key():
             raise StoreError(MISSING_KEY)
         checklist_key = checklist_key or self.store.get_setting("active_checklist")
         checklist = self.store.checklist(checklist_key)
         records = {r["conversation_id"]: r for r in self.store.records(ds_id)}
-        ids = ids or list(records)
+        if ids is not None and (not isinstance(ids, list) or any(not isinstance(i, str) for i in ids)):
+            raise StoreError("conversation_ids должен быть списком строк")
+        ids = list(dict.fromkeys(ids if ids is not None else records))
         unknown = [i for i in ids if i not in records]
         if unknown:
             raise StoreError(f"нет таких диалогов: {', '.join(unknown[:5])}")
-        if only_missing:
-            latest = self.store.latest(ds_id)
-            ids = [i for i in ids if not (i in latest and latest[i]["checklist_key"] == checklist_key
-                                          and latest[i]["status"] != "error")]
-        if not ids:
-            raise StoreError("все выбранные диалоги уже оценены этой версией чек-листа")
-        votes = int(votes or self.config.votes)
-        if not 1 <= votes <= 5:
-            raise StoreError("число прогонов — от 1 до 5")
+        votes = self.validated_votes(votes)
         evaluator = Evaluator(checklist, client=self.client(), config=dataclasses.replace(self.config, votes=votes))
-        job_id = self.store.create_job(ds_id, checklist_key, len(ids))
+        # Selection and reservation share the lock with completed result writes.
+        with self.store.lock:
+            if only_missing:
+                latest = self.store.latest(ds_id, checklist_key)
+                ids = [i for i in ids if not (i in latest and latest[i]["status"] != "error")]
+            if not ids:
+                raise StoreError("все выбранные диалоги уже оценены этой версией чек-листа")
+            job_id = self.store.create_job(ds_id, checklist_key, len(ids), ids)
         credential = request_key.get()  # captured only for redacting background errors
         remaining = {"n": len(ids)}
         lock = threading.Lock()
@@ -121,7 +132,16 @@ class App:
                 self.store.add_evaluation(ds_id, conv_id, checklist_key, result["status"], result, job_id=job_id)
                 ok = True
             except Exception as exc:  # ошибка одного диалога не останавливает остальные
-                self.store.add_evaluation(ds_id, conv_id, checklist_key, "error", error=_short(exc, credential), job_id=job_id)
+                calls = getattr(exc, "calls", [])
+                usage = {}
+                for call in calls:
+                    _add_usage(usage, call.get("usage") or {})
+                prices = [cost_usd(c.get("model", self.config.model), c.get("usage") or {}) for c in calls]
+                cost = sum(prices) if all(p is not None for p in prices) else None
+                trace = {"model": self.config.model, "calls": [_trim_call(c) for c in calls],
+                         "usage": usage, "cost_usd": cost}
+                self.store.add_evaluation(ds_id, conv_id, checklist_key, "error", trace,
+                                          error=_short(exc, credential), job_id=job_id)
                 print(f"CQA evaluation failed: {type(exc).__name__}", file=sys.stderr)
             finally:
                 self.live.finish(ds_id, conv_id)
@@ -178,9 +198,10 @@ class App:
                 row["evaluation"] = {
                     "id": ev["id"], "status": ev["status"], "checklist_key": ev["checklist_key"], "error": ev["error"],
                     "total": fin["score"]["total"] if fin else None,
-                    "original_total": ev["result"]["score"]["total"] if ev["result"] else None,
+                    "original_total": ev["result"]["score"]["total"] if fin else None,
                     "critical": fin["score"]["critical"] if fin else False,
-                    "violations": sorted({v for d in (ev["result"] or {}).get("criteria", {}).values() for v in d.get("violations", [])}),
+                    "violations": sorted({v for cid, d in (ev["result"] or {}).get("criteria", {}).items()
+                                          if fin and fin["answers"].get(cid) == "yes" for v in d.get("violations", [])}),
                     "open_appeals": sum(a["status"] == "open" for a in ev["appeals"]),
                     "uncertain": sum(1 for d in (ev["result"] or {}).get("criteria", {}).values() if (d.get("confidence") or 1) < 1),
                     "votes": (ev["result"] or {}).get("votes"),
@@ -192,7 +213,7 @@ class App:
     def conversation(self, ds_id, conv_id):
         record = self.store.record(ds_id, conv_id)
         conv = normalize(record)
-        audio = RECORDINGS.get(conv_id) or record.get("audio_url")
+        audio = record.get("audio_url") or (RECORDINGS.get(conv_id) if ds_id == "DEV" else None)
         evs = self.store.evaluations(ds_id, conv_id)
         checklists = {e["checklist_key"]: self.store.checklist(e["checklist_key"]) for e in evs}
         return {"conversation": conv, "audio": audio, "evaluations": evs, "checklists": checklists,
@@ -201,11 +222,11 @@ class App:
     def analytics(self, ds_id, checklist_key=None):
         checklist_key = checklist_key or self.store.get_setting("active_checklist")
         checklist = self.store.checklist(checklist_key)
-        latest = {k: v for k, v in self.store.latest(ds_id).items()
-                  if v["checklist_key"] == checklist_key and v["result"]}
+        latest = {k: v for k, v in self.store.latest(ds_id, checklist_key).items() if v.get("final")}
         records = {r["conversation_id"]: r for r in self.store.records(ds_id)}
         out = {"checklist_key": checklist_key, "n_total": len(records), "n_evaluated": len(latest),
-               "criteria": [], "by_language": {}, "by_channel": {}, "critical": 0, "cost_usd": 0.0,
+               "criteria": [], "by_language": {}, "by_channel": {}, "critical": 0,
+               "cost_usd": self.store.evaluation_cost(ds_id, checklist_key),
                "appeals": {"open": 0, "confirmed": 0, "changed": 0}, "needs_review": 0, "gold": None}
         if not latest:
             return out
@@ -218,7 +239,6 @@ class App:
                 for field, key in (("language", "by_language"), ("channel", "by_channel")):
                     out[key].setdefault(records[cid].get(field) or "—", []).append(t)
             out["critical"] += int(fin["score"]["critical"])
-            out["cost_usd"] += ev["result"].get("cost_usd") or 0
             out["needs_review"] += int(ev["status"] == "needs_review")
             for a in ev["appeals"]:
                 out["appeals"]["open" if a["status"] == "open" else ("changed" if a["action"] == "change" else "confirmed")] += 1
@@ -502,7 +522,7 @@ def _voice(app, m, q, body):
     record = app.store.record(m["ds"], m["cid"])
     if record.get("variant_of"):
         raise StoreError("у изменённой копии расшифровка не совпадает с записью — голос смотрите в исходном звонке")
-    src = RECORDINGS.get(m["cid"]) or record.get("audio_url")
+    src = record.get("audio_url") or (RECORDINGS.get(m["cid"]) if m["ds"] == "DEV" else None)
     if not src:
         raise StoreError("у диалога нет записи")
     try:
@@ -519,9 +539,14 @@ def _coach(app, m, q, body):
 @route("POST", r"/api/evaluations/(?P<id>\d+)/variant")
 def _variant(app, m, q, body):
     """Копия диалога с правкой и сразу её оценка — увидеть, как правка меняет баллы."""
+    votes = app.validated_votes(body.get("votes"))
     v = make_variant(app, int(m["id"]), body["target_id"], body.get("mode", "replace"), body.get("text", ""), body.get("note", ""))
     ev = app.store.evaluation(int(m["id"]))
-    job = app.start_job(v["dataset_id"], [v["conversation_id"]], ev["checklist_key"], votes=body.get("votes"))
+    try:
+        job = app.start_job(v["dataset_id"], [v["conversation_id"]], ev["checklist_key"], votes=votes)
+    except Exception:
+        app.store.discard_new_conversation(v["dataset_id"], v["conversation_id"])
+        raise
     return {**v, "job": job}
 
 
@@ -577,15 +602,13 @@ def _export(app, m, q, body):
     """Результаты набора для сверки с эталоном: финальные ответы (после апелляций) и исходные."""
     key = q.get("checklist") or app.store.get_setting("active_checklist")
     checklist = app.store.checklist(key)
-    latest = app.store.latest(m["ds"])
-    if q.get("checklist"):
-        latest = {k: v for k, v in latest.items() if v["checklist_key"] == key}
+    latest = app.store.latest(m["ds"], key if q.get("checklist") else None)
     ids = [c["id"] for c in checklist["criteria"]]
     rows = []
     for r in app.store.records(m["ds"]):
         ev = latest.get(r["conversation_id"])
         row = {"conversation_id": r["conversation_id"], "channel": r.get("channel"), "language": r.get("language")}
-        if ev and ev["result"]:
+        if ev and ev.get("final"):
             fin = ev["final"]
             row.update({"checklist": ev["checklist_key"], "status": ev["status"], "total": fin["score"]["total"],
                         "total_model": ev["result"]["score"]["total"], "critical": fin["score"]["critical"],
@@ -698,7 +721,7 @@ def make_handler(app: App):
             path = "/index.html" if path == "/" else path
             file = (PUBLIC / path.lstrip("/")).resolve()
             if PUBLIC.resolve() not in file.parents or not file.is_file():
-                return self.send_error(404, "Файл не найден")
+                return self.send_error(404)
             data = file.read_bytes()
             ctype = MIME.get(file.suffix.lower()) or mimetypes.guess_type(file.name)[0] or "application/octet-stream"
             if ctype.startswith("text/") or ctype in ("application/javascript", "application/json"):
