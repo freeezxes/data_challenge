@@ -14,6 +14,7 @@ from cqa.facts import extract_facts, render_facts
 from cqa.prompt import build_system_prompt
 
 from .store import StoreError
+from .credentials import MISSING_KEY
 
 ANSWER_RU = {"yes": "Да", "no": "Нет", "na": "N/A"}
 
@@ -47,7 +48,7 @@ def opinion_schema(criterion: dict) -> dict:
 
 def _call(app, checklist: dict, user_text: str, schema: dict, effort: str = "high") -> tuple[dict, dict]:
     if not app.has_key():
-        raise StoreError("Не задан ANTHROPIC_API_KEY: добавьте его в .env и перезапустите сервер")
+        raise StoreError(MISSING_KEY)
     client = app.client()
     kwargs = dict(
         model=app.config.model, max_tokens=8000,

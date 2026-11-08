@@ -1,0 +1,26 @@
+[Unit]
+Description=CQA deployment edition (bring your own API key)
+After=network.target
+
+[Service]
+Type=simple
+User=cqa
+Group=cqa
+WorkingDirectory=/srv/cqa/current
+Environment=HOST=127.0.0.1
+Environment=PORT=8100
+Environment=CQA_DB=/srv/cqa/shared/cqa.db
+Environment=CQA_QUIET=1
+UnsetEnvironment=ANTHROPIC_API_KEY ANTHROPIC_AUTH_TOKEN ANTHROPIC_BASE_URL
+ExecStart=/srv/cqa/current/.venv/bin/python -m app.server
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/srv/cqa/shared /srv/cqa/current/data
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

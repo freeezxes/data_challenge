@@ -1,4 +1,4 @@
-import { api, role, esc } from "./core.js";
+import { api, role, esc, apiKeyDialog, hasApiKey } from "./core.js";
 import home from "./pages/home.js";
 import queue from "./pages/queue.js";
 import card from "./pages/card.js";
@@ -50,5 +50,14 @@ document.querySelectorAll(".role button").forEach((b) => (b.onclick = () => role
 window.addEventListener("rolechange", () => { paintRole(); render(); });
 window.addEventListener("hashchange", render);
 window.addEventListener("cqa:changed", refreshBadge);
+document.getElementById("api-key-settings").onclick = apiKeyDialog;
+document.addEventListener("click", (event) => {
+  if (event.target.closest("[data-add-api-key]")) apiKeyDialog();
+});
+window.addEventListener("cqa:keychange", () => {
+  const button = document.getElementById("api-key-settings");
+  button.textContent = hasApiKey() ? "API-ключ добавлен" : "API-ключ";
+  document.querySelectorAll("[data-key-notice]").forEach((notice) => { notice.hidden = hasApiKey(); });
+});
 paintRole();
 render();
