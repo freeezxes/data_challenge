@@ -41,6 +41,15 @@ button,input,select,textarea{font:inherit;color:inherit}
 .tab[aria-current=page]::after{content:"";position:absolute;left:12px;right:12px;bottom:-15px;height:2px;border-radius:2px;background:var(--green)}
 .tab .count{margin-left:6px;padding:1px 6px;border-radius:10px;background:var(--amber-soft);color:var(--amber);font-size:12px;font-weight:600}
 .role{margin-left:auto;display:flex;padding:4px;border-radius:10px;background:var(--panel2);border:1px solid var(--line)}
+.top-controls{display:flex;align-items:center;gap:10px;margin-left:auto;flex-shrink:0}
+.key-notice{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 20px}
+.key-notice[hidden],[data-key-notice][hidden]{display:none}
+.api-key-dialog p{margin:0}
+.api-key-dialog input{font-size:16px;min-height:44px}
+.api-key-dialog .btn{min-height:44px}
+.api-key-dialog footer{flex-wrap:wrap}
+@media(max-width:1350px){.top{flex-wrap:wrap;gap:14px}.tabs{order:3;width:100%;overflow-x:auto}.tab[aria-current=page]::after{bottom:0}}
+@media(max-width:600px){.key-notice{align-items:flex-start;flex-direction:column}.top-controls{gap:6px}.top-controls .role button{padding:6px 8px}.top-controls>.btn{padding:6px 8px}}
 .role button{border:0;background:none;padding:6px 12px;border-radius:7px;color:var(--muted);cursor:pointer;font-size:13px}
 .role button[aria-pressed=true]{background:var(--green-soft);color:var(--green)}
 

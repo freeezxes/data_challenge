@@ -113,7 +113,8 @@ def instant_checks(messages: list[dict], draft: str, language: str) -> list[dict
 
 def _haiku(app, system: str, user: str, schema: dict, max_tokens: int = 2000) -> tuple[dict, dict]:
     if not app.has_key():
-        raise StoreError("Не задан ANTHROPIC_API_KEY: добавьте его в .env и перезапустите сервер")
+        from .credentials import MISSING_KEY
+        raise StoreError(MISSING_KEY)
     t0 = time.monotonic()
     resp = app.client().messages.create(
         model=MODEL, max_tokens=max_tokens,

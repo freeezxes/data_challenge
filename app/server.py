@@ -16,7 +16,6 @@ import os
 import re
 import sys
 import threading
-import traceback
 from concurrent.futures import ThreadPoolExecutor
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -38,6 +37,7 @@ from .live import LiveBoard  # noqa: E402
 from .store import Store, StoreError  # noqa: E402
 from .imports import ImportManager  # noqa: E402
 from .submission import build_submission  # noqa: E402
+from .credentials import MISSING_KEY, MODEL_ROUTES, request_key, validate_key  # noqa: E402
 
 PUBLIC = ROOT / "public"
 RECORDINGS = json.loads((PUBLIC / "recordings.json").read_text(encoding="utf-8")) if (PUBLIC / "recordings.json").exists() else {}
@@ -45,11 +45,8 @@ GOLD_PATH = ROOT / "data/gold/dev_gold.json"
 
 
 def load_env():
-    try:
-        from dotenv import load_dotenv
-        load_dotenv(ROOT / ".env")
-    except ImportError:
-        pass
+    # This deployment edition deliberately never loads a local developer's .env.
+    pass
 
 
 class App:
@@ -76,18 +73,21 @@ class App:
             self.store.save_dataset("DEV", "DEV · 65 диалогов", payload["data"]["records"], "public/dataset.json")
 
     def has_key(self):
-        return bool(os.environ.get("ANTHROPIC_API_KEY")) or self.client_factory is not None
+        return bool(request_key.get()) or self.client_factory is not None
 
     def client(self):
         if self.client_factory:
             return self.client_factory()
+        if not self.has_key():
+            raise StoreError(MISSING_KEY)
         import anthropic
-        return anthropic.Anthropic(timeout=180.0, max_retries=4)
+        return anthropic.Anthropic(api_key=request_key.get(), auth_token="", base_url="https://api.anthropic.com",
+                                   timeout=180.0, max_retries=4)
 
     # --- оценка ---
     def start_job(self, ds_id, ids=None, checklist_key=None, only_missing=False, votes=None):
         if not self.has_key():
-            raise StoreError("Не задан ANTHROPIC_API_KEY: добавьте его в .env и перезапустите сервер")
+            raise StoreError(MISSING_KEY)
         checklist_key = checklist_key or self.store.get_setting("active_checklist")
         checklist = self.store.checklist(checklist_key)
         records = {r["conversation_id"]: r for r in self.store.records(ds_id)}
@@ -101,11 +101,12 @@ class App:
                                           and latest[i]["status"] != "error")]
         if not ids:
             raise StoreError("все выбранные диалоги уже оценены этой версией чек-листа")
-        job_id = self.store.create_job(ds_id, checklist_key, len(ids))
         votes = int(votes or self.config.votes)
         if not 1 <= votes <= 5:
             raise StoreError("число прогонов — от 1 до 5")
         evaluator = Evaluator(checklist, client=self.client(), config=dataclasses.replace(self.config, votes=votes))
+        job_id = self.store.create_job(ds_id, checklist_key, len(ids))
+        credential = request_key.get()  # captured only for redacting background errors
         remaining = {"n": len(ids)}
         lock = threading.Lock()
 
@@ -120,8 +121,8 @@ class App:
                 self.store.add_evaluation(ds_id, conv_id, checklist_key, result["status"], result, job_id=job_id)
                 ok = True
             except Exception as exc:  # ошибка одного диалога не останавливает остальные
-                self.store.add_evaluation(ds_id, conv_id, checklist_key, "error", error=_short(exc), job_id=job_id)
-                traceback.print_exc()
+                self.store.add_evaluation(ds_id, conv_id, checklist_key, "error", error=_short(exc, credential), job_id=job_id)
+                print(f"CQA evaluation failed: {type(exc).__name__}", file=sys.stderr)
             finally:
                 self.live.finish(ds_id, conv_id)
                 self.store.job_progress(job_id, ok, cost)
@@ -136,8 +137,8 @@ class App:
             if votes * min(len(ids), self.pool._max_workers) > 1:
                 try:
                     self.store.job_progress(job_id, None, evaluator.warm_cache())
-                except Exception:
-                    traceback.print_exc()
+                except Exception as exc:
+                    print(f"CQA cache warmup failed: {type(exc).__name__}", file=sys.stderr)
             for conv_id in ids:
                 self.pool.submit(run, conv_id)
 
@@ -153,7 +154,8 @@ class App:
             "active_checklist_name": self.store.checklist(key).get("name"),
             "model": self.config.model, "effort": self.config.effort, "votes": self.config.votes,
             "price_per_mtok": price,
-            "has_key": self.has_key(), "has_api_url": bool(os.environ.get("CQA_API_URL")),
+            "has_key": self.has_key(), "credential_mode": "per_request",
+            "has_api_url": bool(os.environ.get("CQA_API_URL")),
             "datasets": self.store.datasets(),
             "open_appeals": len(self.store.appeals("open")),
             "jobs": self.store.jobs(active_only=True),
@@ -271,8 +273,11 @@ class FileResponse:
         self.name, self.ctype, self.data = name, ctype, data
 
 
-def _short(exc: Exception) -> str:
+def _short(exc: Exception, credential="") -> str:
     text = str(exc) or type(exc).__name__
+    for secret in (credential, request_key.get()):
+        if secret:
+            text = text.replace(secret, "[скрытый ключ]")
     text = re.sub(r"sk-ant-[\w-]+", "sk-ant-…", text)
     return text[:400]
 
@@ -628,6 +633,19 @@ def make_handler(app: App):
             self.wfile.write(raw)
 
         def _api(self, method):
+            try:
+                credential = validate_key(self.headers.get("X-CQA-API-Key", ""))
+            except StoreError as exc:
+                return self._json(400, {"error": str(exc)})
+            token = request_key.set(credential)
+            try:
+                if method == "POST" and MODEL_ROUTES.fullmatch(urlsplit(self.path).path) and not app.has_key():
+                    return self._json(400, {"error": MISSING_KEY})
+                return self._dispatch_api(method)
+            finally:
+                request_key.reset(token)
+
+        def _dispatch_api(self, method):
             url = urlsplit(self.path)
             q = {k: v[0] for k, v in parse_qs(url.query).items()}
             body = {}
@@ -656,9 +674,9 @@ def make_handler(app: App):
                         return self._json(200, out)
                     except (StoreError, KeyError, ValueError) as exc:
                         msg = str(exc) if not isinstance(exc, KeyError) else f"не хватает поля {exc}"
-                        return self._json(400, {"error": msg})
+                        return self._json(400, {"error": _short(StoreError(msg))})
                     except Exception as exc:
-                        traceback.print_exc()
+                        print(f"CQA request failed: {type(exc).__name__}", file=sys.stderr)
                         return self._json(500, {"error": _short(exc)})
             return self._json(404, {"error": "нет такого адреса API"})
 
@@ -715,7 +733,7 @@ def main():
     host = os.environ.get("HOST", "127.0.0.1")
     app = App(os.environ.get("CQA_DB", ROOT / "data/cqa.db"))
     srv = ThreadingHTTPServer((host, port), make_handler(app))
-    key = "есть" if app.has_key() else "НЕТ — оценка недоступна, добавьте ANTHROPIC_API_KEY в .env"
+    key = "свой ключ перед запуском, серверный ключ отключён"
     print(f"CQA: http://{host}:{port}  ·  модель {app.config.model}  ·  ключ API: {key}")
     try:
         srv.serve_forever()

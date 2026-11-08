@@ -9,7 +9,7 @@ export default async function home(root) {
     ${hero({ title: "Контроль качества диалогов", art: "home",
       text: "Модель проверяет каждый чат и звонок по чек-листу, показывает реплику-доказательство для каждого балла. Спорную оценку можно оспорить, проверяющий решает и итог пересчитывается.",
       actions: html`<a class="btn" href="#/checklists">Чек-лист</a><a class="btn primary" href="#/queue">Открыть очередь</a>` })}
-    ${!st.has_key ? html`<div class="alert warn" style="margin:0 0 20px"><b>Оценка выключена: нет ключа Claude API</b>Добавьте ANTHROPIC_API_KEY в файл .env и перезапустите сервер. Сохранённые оценки, апелляции и чек-листы работают и без него.</div>` : ""}
+    <div class="alert warn key-notice" data-key-notice ${st.has_key ? html`hidden` : ""}><div><b>Перед запуском добавьте свой ключ Claude API</b>Сохранённые оценки, апелляции и чек-листы доступны без ключа.</div><button class="btn small" type="button" data-add-api-key>Добавить ключ</button></div>
     <div class="home">
       <section class="panel"><header><h2>Наборы диалогов</h2></header><div class="body">
         ${st.datasets.map((d) => html`<div class="dsrow"><div class="t"><b>${d.name}</b><small>оценено ${d.evaluated} из ${d.count}</small></div>

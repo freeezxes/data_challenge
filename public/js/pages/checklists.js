@@ -125,7 +125,7 @@ export default async function checklists(root, params) {
       <p class="muted" style="margin:0">Модель заново оценит диалоги набора по новому чек-листу. Прежние оценки останутся в истории карточки.</p>
       <label class="field">Набор<select class="input" name="ds">${st.datasets.map((x) => html`<option value="${x.id}" ${raw(x.id === store.dataset ? "selected" : "")}>${x.name}</option>`)}</select></label>
       <label class="field">Какие диалоги<select class="input" name="scope"><option value="missing">Ещё не оценённые этой версией</option><option value="evaluated">Только уже оценённые раньше</option></select></label>
-      ${!st.has_key ? html`<div class="alert warn" style="margin:0"><b>Нет ключа Claude API</b>Добавьте ANTHROPIC_API_KEY в .env.</div>` : ""}
+      ${!st.has_key ? html`<div class="alert warn" style="margin:0" data-key-notice><b>Для оценки нужен ваш ключ Claude API</b>При запуске откроется поле для ввода ключа.</div>` : ""}
       <div class="err-text"></div></div>
       <footer><button class="btn ghost" value="c">Позже</button><button class="btn primary" value="ok">Оценить</button></footer>`);
     const err = d.querySelector(".err-text");

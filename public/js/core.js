@@ -2,9 +2,61 @@
 // как веб-ресурс Dynamics 365 — адрес API задаётся атрибутом data-api у <body>.
 
 export const API = (document.body.dataset.api || "").replace(/\/$/, "");
+let apiKey = ""; // Memory only: never localStorage, sessionStorage, cookies or URL.
+let keyPrompt = null;
+const modelRoute = /^\/(jobs|operators\/plan|copilot\/(hint|client|finish)|evaluations\/\d+\/(coach|variant)|appeals\/\d+\/assist)$/;
+
+export function hasApiKey() { return Boolean(apiKey); }
+
+export function apiKeyDialog() {
+  if (keyPrompt) return keyPrompt;
+  keyPrompt = new Promise((resolve) => {
+    const d = dialog(html`<header><h2 id="api-key-title">Свой ключ Claude API</h2></header>
+      <form><div class="content">
+        <p class="muted">Ключ используется для оценки, суфлёра и подсказок. Стоимость вызовов оплачивается с вашего аккаунта Anthropic.</p>
+        <label class="field" for="api-key-input">API-ключ<input class="input" id="api-key-input" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="sk-ant-…" aria-describedby="api-key-help api-key-error" required></label>
+        <p class="muted" id="api-key-help">Ключ остаётся в памяти этой вкладки и передаётся серверу для запросов к Claude. В базу и файлы он не записывается. После обновления страницы введите его заново.</p>
+        ${apiKey ? html`<p class="muted">Ключ уже добавлен. Можно заменить его или удалить из этой вкладки. Уже запущенные оценки продолжатся.</p>` : ""}
+        <p class="err-text" id="api-key-error" role="alert"></p>
+      </div><footer>${apiKey ? html`<button class="btn ghost" type="button" data-clear>Удалить ключ</button>` : ""}
+        <button class="btn ghost" type="button" data-cancel>Отмена</button><button class="btn primary" type="submit">${apiKey ? "Заменить ключ" : "Использовать ключ"}</button>
+      </footer></form>`);
+    d.classList.add("api-key-dialog");
+    d.setAttribute("aria-labelledby", "api-key-title");
+    const input = d.querySelector("input");
+    let accepted = false;
+    const changed = () => window.dispatchEvent(new Event("cqa:keychange"));
+    d.querySelector("[data-cancel]").onclick = () => d.close();
+    d.querySelector("[data-clear]")?.addEventListener("click", () => { apiKey = ""; changed(); d.close(); toast("Ключ удалён из вкладки"); });
+    d.querySelector("form").onsubmit = (event) => {
+      event.preventDefault();
+      const value = input.value.trim();
+      if (!/^sk-ant-[A-Za-z0-9_-]{20,500}$/.test(value)) {
+        d.querySelector(".err-text").textContent = "Проверьте ключ: он должен начинаться с sk-ant- и не содержать пробелов.";
+        input.setAttribute("aria-invalid", "true"); input.focus(); return;
+      }
+      apiKey = value; accepted = true; changed(); d.close();
+      toast("Ключ добавлен для этой вкладки");
+    };
+    d.addEventListener("close", () => { input.value = ""; resolve(accepted); });
+    input.focus();
+  }).finally(() => { keyPrompt = null; });
+  return keyPrompt;
+}
 
 export async function api(path, body) {
+  const paid = body !== undefined && modelRoute.test(path);
+  if (paid && !apiKey) {
+    if (path === "/copilot/hint") throw new Error("Для подсказок добавьте свой ключ кнопкой «API-ключ».");
+    if (!await apiKeyDialog()) throw new Error("Запуск отменён: добавьте свой ключ Claude API.");
+  }
   const opt = body === undefined ? {} : { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) };
+  if (apiKey && (paid || path === "/state")) {
+    const target = new URL(API || location.origin, location.href);
+    if (target.protocol !== "https:" && !["localhost", "127.0.0.1", "[::1]"].includes(target.hostname))
+      throw new Error("Откройте сайт по HTTPS для передачи API-ключа.");
+    opt.headers = { ...opt.headers, "X-CQA-API-Key": apiKey };
+  }
   let res;
   try { res = await fetch(API + "/api" + path, opt); }
   catch { throw new Error("Сервер не отвечает. Проверьте, что он запущен: python -m app.server"); }
